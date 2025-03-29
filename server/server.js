@@ -1,56 +1,27 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-// const { createHandler } = require('graphql-http/lib/use/express');
-const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
-const { ApolloServer } = require('@apollo/server');
-const { startStandaloneServer } = require('@apollo/server/standalone');
-// const jwt = require('jsonwebtoken');
+import express from 'express';
+import { ApolloServer } from 'apollo-server-express';
+import { ApolloGateway } from '@apollo/gateway';
+import cors from 'cors';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors({
+    origin: ['http://localhost:3000','http://localhost:3002'], 
+    credentials: true,
+  }));
 
-// Connect to mongodb
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-  });
-
-// Temp schema
-const schema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: 'Query',
-    fields: {
-      hello: {
-        type: GraphQLString,
-        resolve: () => 'HELLLOOOO'
-      }
-    }
-  })
+const gateway = new ApolloGateway({
+    serviceList: [       
+        { name: 'events', url: 'http://localhost:3001/graphql' }
+    ],
 });
 
-async function startServer() {
-  const server = new ApolloServer({
-    schema: schema,
-  });
+const server = new ApolloServer({  gateway, subscriptions: false });
 
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: PORT },
-    context: async ({ req }) => {
-      return { token: req.headers.token };
-    },
-  });
+server.start().then(() => {
+    server.applyMiddleware({ app, cors: false });
 
-  console.log(`🚀 GraphQL server ready at ${url}`);
-}
-
-startServer();
+    app.listen({ port: 4000 }, () => 
+        console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+    );
+});
