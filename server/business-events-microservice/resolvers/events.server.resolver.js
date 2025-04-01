@@ -1,10 +1,12 @@
+import { getToday } from "../../shared/utils.js";
 import EventModel from "../models/events.server.model.js";
 
 export const eventsResolvers = {
     Query: {
         events: async () => {
             try {
-                const events = await EventModel.find();
+                const today = getToday();
+                const events = await EventModel.find({to: { $gte: today }});
                 return events || [];
             } catch(error) {
                 console.error(`An error occurred while fetching events`, error);

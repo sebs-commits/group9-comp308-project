@@ -15,3 +15,19 @@ export const CREATE_EVENT = gql`
         }
     }
 `;
+
+export const GET_NON_EXPIRED_EVENTS = gql`
+    query Events{
+        events {
+            id
+            title
+            description
+            summary
+            type
+            from
+            to
+            price
+            location
+        }
+    }
+`;

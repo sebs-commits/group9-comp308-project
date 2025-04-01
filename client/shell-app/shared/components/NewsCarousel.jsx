@@ -10,7 +10,7 @@ import { Label, Message } from "../../shared/resources"
 //#endregion
 
 const NewsCarouselComponent = () => {    
-    const [news, setNews] = useState(null);
+    const [news, setNews] = useState([]);
 
     const { refetch: fetchingNews } = useQuery(GET_NON_EXPIRED_NEWS)
 
