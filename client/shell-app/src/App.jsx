@@ -1,49 +1,102 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+//#region External Imports
+import { Route, Routes, Link, useNavigate } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import React from 'react';
+import { useMutation } from "@apollo/client"
+//#endregion
 
+//#region Internal Imports
 import HomeComponent from './HomeComponent';
+import { LOGOUT } from '../../authentication-user-management-app/shared/gql/authentication.gql';
+import { Label } from '../shared/resources';
+import Dashboard from './Dashboard';
+//#endregion
 
 //#region Exposed Components
 const CreateUpdateEvent = lazy(() => import('eventsAndAdministrationApp/CreateUpdateEvent'));
+const RegisterComponent = lazy(() => import('authenticationApp/RegisterComponent'));
+const LoginComponent = lazy(() => import('authenticationApp/LoginComponent'));
+const CreateUpdateNews = lazy(() => import('communityBusinessApp/CreateUpdateNews'));
+const CreateUpdateRequests = lazy(() => import('communityBusinessApp/CreateUpdateRequests'))
+const CreateUpdateAlerts = lazy(() => import('communityBusinessApp/CreateUpdateAlerts'))
 //#endregion
 
 function App() {
+  const navigate = useNavigate();
+
+  //#region States
+  const [token, setToken] = useState(sessionStorage.getItem("token") || 'auth');
+  const [type, setType] = useState(sessionStorage.getItem("type") || '');
+  //#endregion
+  
+  const [logout] = useMutation(LOGOUT);
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      sessionStorage.clear()
+      sessionStorage.setItem("token", "auth")
+      setToken(sessionStorage.getItem("token"));
+      setType(sessionStorage.getItem("type"));
+      window.postMessage({ type: 'SESSION_CLEARED' }, '*');  
+      navigate("/login")    
+    } catch(error) {
+      console.log(`An error occurred while loging out: `, error);
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('message', (event) => {
+        if (event.data.type === 'LOGIN_IN') {
+          setToken(sessionStorage.getItem("token"));
+          setType(sessionStorage.getItem("type"));
+        }
+    });
+  }, [])
+
   return (
-    <Router>
-        <div className='App'>
-          <header className='App-header'>
-            <Navbar className="navbar-custom" bg="secondary" variant="dark" expand="lg">
+    
+        <div>
+          <header>
+            <Navbar bg="secondary" variant="dark" expand="lg">
               <Container>
-                <Navbar.Brand as={Link} to={"/home"}>Home</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/home">{Label.HOME}</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                   <Nav className="mr-auto">
-                    <Nav.Link as={Link} to="/home">Home</Nav.Link>
-                    <Nav.Link as={Link} to="/eventsAndAdmin">Events</Nav.Link>
+                    <Nav.Link as={Link} to="/home">{Label.HOME}</Nav.Link>                    
+                    {token === 'auth' && <Nav.Link as={Link} to="/register">{Label.REGISTER}</Nav.Link>}
+                    {token !== 'auth' && <Nav.Link as={Link} to="/dashboard">{Label.DASHBOARD}</Nav.Link>}
+                    {token !== 'auth' ? <Nav.Link as={Link} onClick={async () => await handleLogout()}>{Label.LOGOUT}</Nav.Link> : <Nav.Link as={Link} to="/login">{Label.LOGIN}</Nav.Link> }                    
                   </Nav>
                 </Navbar.Collapse>
               </Container>
             </Navbar>
 
             <div>
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<div>{Label.LOADING}</div>}>
                 <Routes>
                   <Route index element={<HomeComponent />} />
                   <Route path="home" element={<HomeComponent />} />
-                  <Route path="eventsAndAdmin" element={<CreateUpdateEvent />} />
+                  {token !== 'auth' && <Route path="event" element={<CreateUpdateEvent />} /> }
+                  {token === 'auth' && <Route path="register" element={<RegisterComponent />} />}
+                  {token !== 'auth' && <Route path="dashboard" element= { <Dashboard /> } />}
+                  {token === 'auth' && <Route path="login" element={<LoginComponent />} />}
+                  {token !== 'auth' && <Route path="news" element={<CreateUpdateNews />}/>}
+                  {token !== 'auth' && <Route path="requests" element={<CreateUpdateRequests />}/>}
+                  {token !== 'auth' && <Route path="alerts" element={<CreateUpdateAlerts />}/>}
                 </Routes>
               </Suspense>
             </div>
           </header>
-        </div>
-      </Router>
+        </div>      
   )
 }
 

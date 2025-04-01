@@ -1,0 +1,23 @@
+export const Label = {
+    setNewsTitle: (status) => { return `${status} News` },
+    setRequestsTitle: (status) => { return `${status} Request` },
+    setAlertTitle: (status) => { return `${status} Alert` },
+    ERROR: "Error",
+    HEADLINE: "Headline",
+    SUMMARY: "Summary",
+    NEWS: "News",
+    EXPIRY_DATE: "Expiry Date",
+    BACK: "Back",
+    SUBMIT: "Submit",
+    CREATE: "Create",
+    UPDATE: "Update",
+    TITLE: "Title",
+    TYPE: "Type",
+    HELP: "Help",
+    MAINTENANCE: "Maintenance",
+    ACCOMMODATION: "Accommodation",
+    DONATION: "Donation",
+    REQUEST: "Request",
+    SUCCESS: "Success",
+    SUBTITLE: "Subtitle"
+}
