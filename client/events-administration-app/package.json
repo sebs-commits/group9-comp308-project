@@ -1,13 +1,14 @@
 {
-  "name": "shell-app",
+  "name": "events-and-administration-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --strictPort",
+    "dev": "vite  --port=3002 --strictPort",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --port=3002 --strictPort",
+    "start-mf": "npm run build && npm run preview"
   },
   "dependencies": {
     "@apollo/client": "^3.13.4",
