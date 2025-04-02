@@ -1,12 +1,11 @@
-import { ApolloServer } from "apollo-server-express";
-import { buildFederatedSchema } from "@apollo/federation";
-import express from 'express';
-import cors from 'cors';
-import mongoose from '../config/mongoose.js';
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
+import express from "express";
+import cors from "cors";
+import mongoose from "../config/mongoose.js";
 import cookieParser from "cookie-parser";
-import bodyParser from 'body-parser';
-import { combinedTypeDefs } from "./schemas/combined-typedefs.js"
-import { combinedResolvers } from "./resolvers/combined.resolver.js"
+import { combinedTypeDefs } from "./schemas/combined-typedefs.js";
+import { combinedResolvers } from "./resolvers/combined.resolver.js";
 
 const port = 3005;
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
@@ -15,27 +14,39 @@ console.log(`Running in ${process.env.NODE_ENV} mode`);
 mongoose();
 
 const app = express();
+
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:3006"],
+    credentials: true,
+  })
+);
 
-app.use(cors({
-    origin: [`http://localhost:3000, http://localhost:3006`],
-    credentials: true
-}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+const startServer = async () => {
+  const server = new ApolloServer({
+    typeDefs: combinedTypeDefs,
+    resolvers: combinedResolvers,
+  });
 
-const server = new ApolloServer({
-    schema: buildFederatedSchema([{
-            typeDefs: combinedTypeDefs,
-            resolvers: combinedResolvers
-        }]),
-    context: ({ req, res }) => ({ req, res })
-})
+  await server.start();
 
-app.listen(port, async () => {
-    await server.start();
-    server.applyMiddleware({ app });
+  // This middleware is used to connect apollo with express | I think this was what was missing before
+  app.use(
+    "/graphql",
+    expressMiddleware(server, {
+      context: async ({ req, res }) => ({ req, res }),
+    })
+  );
 
-    console.log(`Events microservice ready at http://localhost:${port}${server.graphqlPath}`);
-});
+  app.listen(port, () => {
+    console.log(
+      `Events microservice ready at http://localhost:${port}/graphql`
+    );
+  });
+};
+
+startServer();
