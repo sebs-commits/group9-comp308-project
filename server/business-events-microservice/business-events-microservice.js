@@ -1,5 +1,5 @@
 import { ApolloServer } from "apollo-server-express";
-import { buildFederatedSchema } from "@apollo/federation";
+import { buildSubgraphSchema } from "@apollo/federation";
 import express from 'express';
 import cors from 'cors';
 import mongoose from '../config/mongoose.js';
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 const server = new ApolloServer({
-    schema: buildFederatedSchema([{
+    schema: buildSubgraphSchema([{
         typeDefs: eventTypeDefs,
         resolvers: eventsResolvers
     }]),
