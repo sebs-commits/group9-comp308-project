@@ -11,7 +11,8 @@ export default defineConfig({
       exposes: {
         './CreateUpdateNews': './src/components/CreateUpdateNews',
         './CreateUpdateRequests': './src/components/CreateUpdateRequests',
-        './CreateUpdateAlerts': './src/components/CreateUpdateAlerts'
+        './CreateUpdateAlerts': './src/components/CreateUpdateAlerts',
+        './CreateUpdateBusinessListing': './src/components/CreateUpdateBusinessListing',
       },
       shared: [ 'react', 'react-dom', '@apollo/client', 'graphql', 'react-router-dom' ]
     })

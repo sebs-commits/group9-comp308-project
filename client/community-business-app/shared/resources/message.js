@@ -11,5 +11,7 @@ export const Message = {
     TRY_AGAIN: "An error occurred. Try again.",
     REQUEST_SAVED_SUCCESSFULLY: "Your request has been saved successfully.",
     NEWS_SAVED_SUCCESSFULLY: "Your news has been saved successfully.",
-    ALERT_SAVED_SUCCESSFULLY: "Your alert has been saved successfully."
+    ALERT_SAVED_SUCCESSFULLY: "Your alert has been saved successfully.",
+    BUSINESS_LISTING_SAVED_SUCCESSFULLY: "Your business listing has been saved/updated successfully.",
+    BUSINESS_LISTING_SAVE_UNSUCCESSFULLY: "Your business listing has been saved/updated unsuccessfully.",
 }
