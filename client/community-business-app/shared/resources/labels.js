@@ -19,5 +19,15 @@ export const Label = {
     DONATION: "Donation",
     REQUEST: "Request",
     SUCCESS: "Success",
-    SUBTITLE: "Subtitle"
+    SUBTITLE: "Subtitle",
+    BUSINESS_PAGE_TITLE: "Create/Update Business Listing",
+    BUSINESS_TICKET_ID_DESCRIPTION:" Business Listing Ticket ID.",
+    BUSINESS_TICKET_ID_DESCRIPTION: "Business Listing Ticket ID. Please keep this for your records.",
+    BUSINESS_NAME: "Business Name",
+    ADDRESS: "Address",
+    BUSINESS_DESCRIPTION: "Business Description",
+    BUSINESS_PHONE: "Phone Number",
+    IMAGE_LIST: "Image List",
+    BUSINESS_DEALS: "Deals",
+    BUSINESS_DEALS_DESCRIPTION: "Enter any deals or discounts that your business is offering.",
 }

@@ -10,5 +10,6 @@ export const Label = {
     NEWS: "News",
     ALERT: "Alert",
     REQUEST: "Request",
-    LEARN_MORE: "Learn More"
+    LEARN_MORE: "Learn More",
+    LISTING: "Business Listings",
 }
