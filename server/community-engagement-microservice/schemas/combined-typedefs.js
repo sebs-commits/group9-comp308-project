@@ -1,94 +1,106 @@
 import { gql } from "apollo-server-express";
 
 export const combinedTypeDefs = gql`
-    type News {
-        _id: ID!
-        creatorId: String!
-        headline: String!
-        summary: String!
-        fullnews: String!
-        creationDate: String!
-        expiryDate: String!
-    }
-    
-    type Requests {
-        id: ID!
-        creatorId: String!
-        title: String!        
-        type: String!
-        request: String!
-    }
+  type News {
+    _id: ID!
+    creatorId: String!
+    headline: String!
+    summary: String!
+    fullnews: String!
+    creationDate: String!
+    expiryDate: String!
+  }
 
-    type Alert {
-        id: ID!
-        creatorId: String!
-        title: String!
-        subtitle: String!
-    }
+  type Requests {
+    id: ID!
+    creatorId: String!
+    title: String!
+    type: String!
+    request: String!
+  }
 
-    type Query {
-        allNoneExpiredNews: [News]
-        news(_id: ID!): News
+  type Alert {
+    id: ID!
+    creatorId: String!
+    title: String!
+    subtitle: String!
+  }
 
-        requests: [Requests]
-        request(_id: ID!): Requests
+  type Discussion {
+    _id: ID!
+    title: String!
+    description: String!
+    createdAt: String!
+  }
 
-        alerts: [Alert]
-        alert(_id: ID!): Alert
-    }
+  type Query {
+    allNoneExpiredNews: [News]
+    news(_id: ID!): News
 
-    type Mutation {
-        createNews(
-            creatorId: String!,
-            headline: String!,
-            summary: String!,
-            fullnews: String!,
-            creationDate: String!,
-            expiryDate: String!
-        ): News
+    requests: [Requests]
+    request(_id: ID!): Requests
 
-        updateNews(
-            _id: ID!,
-            creatorId: String!,
-            headline: String!,
-            summary: String!,
-            fullnews: String!,
-            creationDate: String!,
-            expiryDate: String!
-        ): News
+    alerts: [Alert]
+    alert(_id: ID!): Alert
 
-        deleteNews(_id: ID!): News
+    discussions: [Discussion]
+    discussion(_id: ID!): Discussion
+  }
 
-        createRequest(
-            creatorId: String!
-            title: String!        
-            type: String!
-            request: String!           
-        ): Requests
+  type Mutation {
+    createNews(
+      creatorId: String!
+      headline: String!
+      summary: String!
+      fullnews: String!
+      creationDate: String!
+      expiryDate: String!
+    ): News
 
-        updateRequest(
-            _id: ID!,
-            creatorId: String!
-            title: String!        
-            type: String!
-            request: String!  
-        ): Requests
+    updateNews(
+      _id: ID!
+      creatorId: String!
+      headline: String!
+      summary: String!
+      fullnews: String!
+      creationDate: String!
+      expiryDate: String!
+    ): News
 
-        deleteRequest( _id: ID! ): Requests
+    deleteNews(_id: ID!): News
 
-        createAlert(
-            creatorId: String!
-            title: String!
-            subtitle: String!
-        ): Alert
+    createRequest(
+      creatorId: String!
+      title: String!
+      type: String!
+      request: String!
+    ): Requests
 
-        updateAlert(
-            _id: ID!
-            creatorId: String!
-            title: String!
-            subtitle: String!
-        ): Alert
+    updateRequest(
+      _id: ID!
+      creatorId: String!
+      title: String!
+      type: String!
+      request: String!
+    ): Requests
 
-        deleteAlert( _id: ID! ): Alert
-    }
+    deleteRequest(_id: ID!): Requests
+
+    createAlert(creatorId: String!, title: String!, subtitle: String!): Alert
+
+    updateAlert(
+      _id: ID!
+      creatorId: String!
+      title: String!
+      subtitle: String!
+    ): Alert
+
+    deleteAlert(_id: ID!): Alert
+
+    createDiscussion(title: String!, description: String!): Discussion
+
+    updateDiscussion(_id: ID!, title: String!, description: String!): Discussion
+
+    deleteDiscussion(_id: ID!): Discussion
+  }
 `;
