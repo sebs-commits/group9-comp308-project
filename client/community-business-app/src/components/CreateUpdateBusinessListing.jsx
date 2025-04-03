@@ -7,17 +7,20 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { FaUndo, FaPaperPlane } from "react-icons/fa";
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
 //#endregion
 
 //#region Internal Imports
-import { CREATE_NEWS } from '../../shared/gql/news.gql'; 
+import { CREATE_BUSINESS_LISTING, GET_BUSINESS_LISTING, UPDATE_BUSINESS_LISTING } from '../../shared/gql/business-listing.gql'; 
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
 import { Label, Message } from '../../shared/resources';
 //#endregion
 
-const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/;
+//github co-pilot suggestion on 2025-04-02: 'how could I add a regex to validate the phone number?'
+const phoneNumberRegex = /^\(?([2-9][0-9]{2})\)?[-.●]?([2-9][0-9]{2})[-.●]?([0-9]{4})$/;
+//end of suggestion
+
 
 const CreateUpdateNewsComponent = () => {
         const navigate = useNavigate();
@@ -46,57 +49,93 @@ const CreateUpdateNewsComponent = () => {
             setBg(bg);
         }
         //#endregion
-
+        const [createBusinessListing] = useMutation(CREATE_BUSINESS_LISTING);
+        const [updateBusinessListing] = useMutation(UPDATE_BUSINESS_LISTING);
+        const { data, refetch } = useQuery(GET_BUSINESS_LISTING, {
+            variables: { listingTicketId: businessListingId },
+            skip: !businessListingId 
+        });
         //#region GQL
+
+
+        //makes sure to send deals to the news or dashboard?
+        // or have them visible to users on the view business listing page
 
         //creeate a business listing later...
 
         //#endregion
 
-
         const handleSubmit = async (event) => {
             event.preventDefault();
-            const form = event.currentTarget; 
+            // Validate phone number
+            if (!phoneNumberRegex.test(businessPhone)) {
+                displayToastMsg(Label.ERROR, Message.PHONE_NUMBER_INVALID, "danger");
+                return;
+            }
+            // Validate required fields
+            if (businessListingId == "" || businessName == "" || businessAddress == "" || businessPhone == "" || businessDescription == "") {
+                displayToastMsg(Label.ERROR, Message.MISSING_FIELDS, "danger");
+                return;
+            }
+            // ***validate image list*** --> later!
             
-            const date = new Date();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const year = date.getFullYear();
 
-            const formattedDate = `${month}/${day}/${year}`;
-                                            
-            if (form.checkValidity() === false) {                
-                displayToastMsg(Label.ERROR, Message.INVALID_FORM, "danger");
-                event.stopPropagation();
-                return;
+
+            //validate if businessListingId already exists in the DB. If so, update it. If not, create a new one.
+            //suggestion from copilot 2025-04-02: 'why does refetch({businessListingId}) return a nothing?'})'
+            if(refetchData) {
+            //end of suggestion
+                // Business Listing ID already exists so then update the business listing
+                try {
+                    updateBusinessListing({
+                        variables: {
+                            listingTicketId: businessListingId,
+                            businessName: businessName,
+                            address: businessAddress,
+                            phoneNumber: businessPhone,
+                            businessDescription: businessDescription,
+                            images: [], // --> **To be implemented later**
+                            discounts: businessDeals
+                        }
+                    });
+                    displayToastMsg(Label.SUCCESS, Message.BUSINESS_LISTING_UPDATED_SUCCESSFULLY, "success");
+                } catch(error) {
+                    displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
+                    console.error(`An error occurred while creating or updating a businessListing: `, error);
+                    throw error;
+                }            
+            } else {
+                //create a new business listing
+                try {
+                    createBusinessListing({
+                        variables: {
+                            listingTicketId: businessListingId,
+                            businessName: businessName,
+                            address: businessAddress,
+                            phoneNumber: businessPhone,
+                            businessDescription: businessDescription,
+                            images: [], // --> **To be implemented later**
+                            discounts: businessDeals
+                        }
+                    });
+                    displayToastMsg(Label.SUCCESS, Message.BUSINESS_LISTING_SAVED_SUCCESSFULLY, "success");
+                } catch(error) {
+                    displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
+                    console.error(`An error occurred while creating or updating a businessListing: `, error);
+                    throw error;
+                }
             }
-
-            if(!regex.test(expiryDate)) {
-                displayToastMsg(Label.ERROR, Message.BUSINESS_LISTING_SAVE_UNSUCCESSFULLY, "danger");
-                return;
-            }
-    
-            try {
-
-                displayToastMsg(Label.SUCCESS, Message>BUSINESS_LISTING_SAVE_UNSUCCESSFULLY, "success");
-
                 setBusinessListingId('');
                 setBusinessName('');
                 setAddress('');
                 setBusinessPhone('');
                 setBusinessDescription('');
                 setBusinessDeals('');
-
-            } catch(error) {
-                displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
-                console.error(`An error occurred while creating or updating a businessListing: `, error);
-                throw error;
-            }
         };       
 
     return <>
         <div className="px-5 pb-4">
-            <h4 className="pt-4 pb-2">{Label.BUSINESS_TICKET_ID}</h4>
+            <h4 className="pt-4 pb-2">{Label.BUSINESS_PAGE_TITLE}</h4>
             <Form noValidate onSubmit={handleSubmit}>
                 <Row>
 
@@ -104,7 +143,7 @@ const CreateUpdateNewsComponent = () => {
                     <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="businessListingId">
                         <Form.Label>{Label.BUSINESS_TICKET_ID}</Form.Label>
                         <Form.Control required
-                                      type="number"
+                                      type="text"
                                       placeholder={Label.BUSINESS_TICKET_ID_DESCRIPTION}
                                       value={businessListingId}
                                       onChange={(e) => setBusinessListingId(e.target.value)}/>
@@ -168,7 +207,7 @@ const CreateUpdateNewsComponent = () => {
                                 <tr>
                                     <td>
                                         <img 
-                                            src="https://via.placeholder.com/150" 
+                                            //src="" 
                                             alt="Image 1" 
                                             style={{ width: "100%", height: "auto" }} 
                                         />
@@ -181,7 +220,7 @@ const CreateUpdateNewsComponent = () => {
                                     </td>
                                     <td>
                                         <img 
-                                            src="https://via.placeholder.com/150" 
+                                            //src=
                                             alt="Image 2" 
                                             style={{ width: "100%", height: "auto" }} 
                                         />
@@ -194,7 +233,7 @@ const CreateUpdateNewsComponent = () => {
                                     </td>
                                     <td>
                                         <img 
-                                            src="https://via.placeholder.com/150" 
+                                            //src= 
                                             alt="Image 3" 
                                             style={{ width: "100%", height: "auto" }} 
                                         />

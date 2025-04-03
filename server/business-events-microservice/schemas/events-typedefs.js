@@ -14,12 +14,12 @@ export const eventTypeDefs = gql`
         location: String!        
     }
 
-    type Query {
+    extend type Query {
         events: [Events]
         event(_id: ID!): Events
     }
 
-    type Mutation {
+    extend type Mutation {
         createEvent(
             creatorId: String!,
             title: String!,

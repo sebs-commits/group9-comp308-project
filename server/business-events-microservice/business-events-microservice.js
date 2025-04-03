@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import bodyParser from 'body-parser';
 import { eventTypeDefs } from "./schemas/events-typedefs.js";
 import { eventsResolvers } from "./resolvers/events.server.resolver.js";
+import { businessListingTypeDefs } from "./schemas/business-listing-typedefs.js";
+import { businessListingResolvers } from "./resolvers/business-listing.server.resolver.js";
 
 const port = 3001;
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
@@ -26,12 +28,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 const server = new ApolloServer({
-    schema: buildFederatedSchema([{
-        typeDefs: eventTypeDefs,
-        resolvers: eventsResolvers
-    }]),
-    context: ({ req, res }) => ({ req, res })
-})
+    schema: buildFederatedSchema([
+        {
+            typeDefs: eventTypeDefs,
+            resolvers: eventsResolvers,
+        },
+        {
+            typeDefs: businessListingTypeDefs,
+            resolvers: businessListingResolvers,
+        },
+    ]),
+    context: ({ req, res }) => ({ req, res }),
+});
 
 app.listen(port, async () => {
     await server.start();

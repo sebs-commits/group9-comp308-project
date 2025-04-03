@@ -12,6 +12,9 @@ export const Message = {
     REQUEST_SAVED_SUCCESSFULLY: "Your request has been saved successfully.",
     NEWS_SAVED_SUCCESSFULLY: "Your news has been saved successfully.",
     ALERT_SAVED_SUCCESSFULLY: "Your alert has been saved successfully.",
-    BUSINESS_LISTING_SAVED_SUCCESSFULLY: "Your business listing has been saved/updated successfully.",
-    BUSINESS_LISTING_SAVE_UNSUCCESSFULLY: "Your business listing has been saved/updated unsuccessfully.",
+    BUSINESS_LISTING_SAVED_SUCCESSFULLY: "Your business listing has been created successfully.",
+    BUSINESS_LISTING_SAVE_UNSUCCESSFULLY: "Your business listing has been nnot been created successfully.",
+    PHONE_NUMBER_INVALID: "The phone number must be in XXX-XXX-XXXX format.",
+    BUSINESS_LISTING_UPDATED_SUCCESSFULLY: "Your business listing has been updated successfully.",
+    MISSING_FIELDS: "Please enter all fields with an asterisk (*)",
 }
