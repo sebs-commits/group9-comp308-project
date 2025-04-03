@@ -27,6 +27,8 @@ export const combinedTypeDefs = gql`
     }
 
     type Query {
+        _microservice: String
+
         allNoneExpiredNews: [News]
         news(_id: ID!): News
 

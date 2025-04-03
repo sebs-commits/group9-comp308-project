@@ -1,8 +1,10 @@
-import { getToday } from "../../shared/utils.js";
+import { getToday } from "../../../shared/utils.js";
 import EventModel from "../models/events.server.model.js";
 
 export const eventsResolvers = {
     Query: {
+        _microservice: () => "This is a micro service query",
+
         events: async () => {
             try {
                 const today = getToday();

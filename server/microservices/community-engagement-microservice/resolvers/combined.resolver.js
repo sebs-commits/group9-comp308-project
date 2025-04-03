@@ -4,6 +4,7 @@ import { requestsResolvers } from "./requests.server.resolver.js";
 
 export const combinedResolvers = {
     Query: {
+        _microservice: () => "This is a micro service query",
         ...newsResolvers.Query,
         ...requestsResolvers.Query,
         ...alertResolvers.Query

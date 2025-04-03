@@ -10,6 +10,8 @@ export const userTypeDefs = gql`
     }
 
     type Query {
+        _microservice: String
+
         user(id: ID!): User
     }
 

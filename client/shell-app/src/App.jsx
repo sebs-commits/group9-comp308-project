@@ -13,7 +13,7 @@ import { useMutation } from "@apollo/client"
 
 //#region Internal Imports
 import HomeComponent from './HomeComponent';
-import { LOGOUT } from '../../authentication-user-management-app/shared/gql/authentication.gql';
+import { LOGOUT } from '../../authentication-app/shared/gql/authentication.gql';
 import { Label } from '../shared/resources';
 import Dashboard from './Dashboard';
 //#endregion

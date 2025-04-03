@@ -1,11 +1,13 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import UserModel from "./user.server.model.js"
+import UserModel from "../models/user.server.model.js"
 
 const JWT_SECRET = "some_secret_key";
 
 export const userResolvers = {
     Query: {
+        _microservice: () => "This is a micro service query",
+
         user: async (_, { id }) => {
             try {
                 await UserModel.findById(id)

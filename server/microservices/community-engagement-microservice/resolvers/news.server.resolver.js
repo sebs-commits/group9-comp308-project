@@ -1,4 +1,4 @@
-import { getToday } from "../../shared/utils.js";
+import { getToday } from "../../../shared/utils.js";
 import NewsModel from "../models/news.server.model.js";
 
 export const newsResolvers = {

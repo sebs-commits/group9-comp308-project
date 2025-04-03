@@ -4,9 +4,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
-    "start": "nodemon server.js"
+    "start:auth": "nodemon ./microservices/authentication-microservice/authentication-microservice",
+    "start:business": "nodemon ./microservices/business-events-microservice/business-microservice",
+    "start:community": "nodemon ./microservices/community-engagement-microservice/community-microservice",
+    "start:server": "nodemon ./server",
+    "start:all": "npm-run-all --parallel start:auth start:business start:community start:server",
+    "start": "nodemon server",
+    "dev": "nodemon server",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +22,7 @@
     "@apollo/gateway": "^2.10.0",
     "@apollo/server": "^4.11.3",
     "apollo-server-express": "^3.13.0",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -25,6 +31,7 @@
     "mongoose": "^8.12.1"
   },
   "devDependencies": {
+    "npm-run-all": "^4.1.5",
     "nodemon": "^3.1.9"
   }
 }
