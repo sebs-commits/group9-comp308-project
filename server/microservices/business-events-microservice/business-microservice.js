@@ -1,11 +1,11 @@
-import { ApolloServer } from "apollo-server-express";
-import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
-import { buildFederatedSchema, buildSubgraphSchema } from "@apollo/federation";
-import express from 'express';
-import cors from 'cors';
-import mongoose from '../../config/mongoose.js';
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
+import { buildSubgraphSchema } from "@apollo/federation";
+import { ApolloServerPluginInlineTraceDisabled } from "@apollo/server/plugin/disabled";
+import express from "express";
+import cors from "cors";
+import mongoose from "../../config/mongoose.js";
 import cookieParser from "cookie-parser";
-import bodyParser from 'body-parser';
 import { eventTypeDefs } from "./schemas/events-typedefs.js";
 import { eventsResolvers } from "./resolvers/events.server.resolver.js";
 
@@ -16,25 +16,42 @@ console.log(`Running in ${process.env.NODE_ENV} mode`);
 mongoose();
 
 const app = express();
+
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:3002"],
+    credentials: true,
+  })
+);
 
-app.use(cors({
-    origin: [`http://localhost:3000, http://localhost:3002`],
-    credentials: true
-}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+const startServer = async () => {
+  const server = new ApolloServer({
+    schema: buildSubgraphSchema([
+      { typeDefs: eventTypeDefs, resolvers: eventsResolvers },
+    ]),
+    plugins: [ApolloServerPluginInlineTraceDisabled()],
+  });
 
-const server = new ApolloServer({
-    schema: buildSubgraphSchema([{ typeDefs: eventTypeDefs, resolvers: eventsResolvers }]),
-    plugins: [ApolloServerPluginInlineTraceDisabled()], // Disable Apollo Tracing
-    context: ({ req, res }) => ({ req, res })
-})
+  await server.start();
 
-server.start().then(() => {
-    server.applyMiddleware({ app, cors: false });
-    app.listen({ port }, () => {
-        console.log(`🚀 Business-Events Server ready at http://localhost:${port}${server.graphqlPath}`);
-    });
+  app.use(
+    "/graphql",
+    expressMiddleware(server, {
+      context: async ({ req, res }) => ({ req, res }),
+    })
+  );
+
+  app.listen(port, () => {
+    console.log(
+      `🚀 Business-Events Server ready at http://localhost:${port}/graphql`
+    );
+  });
+};
+
+startServer().catch((err) => {
+  console.error("Failed to start server:", err);
 });
