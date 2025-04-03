@@ -8,9 +8,9 @@ export default defineConfig({
     federation({
       name: 'shellApp',
       remotes: {
-        eventsAndAdministrationApp: 'http://localhost:3002/assets/remoteEntry.js',
-        authenticationApp: 'http://localhost:3004/assets/remoteEntry.js',
-        communityBusinessApp: 'http://localhost:3006/assets/remoteEntry.js'
+        authenticationApp: 'http://localhost:3001/assets/remoteEntry.js',
+        communityBusinessApp: 'http://localhost:3002/assets/remoteEntry.js',
+        eventsAndAdministrationApp: 'http://localhost:3003/assets/remoteEntry.js'
       },
       shared: [ 'react', 'react-dom', '@apollo/client', 'graphql', 'react-router-dom' ],
     }),

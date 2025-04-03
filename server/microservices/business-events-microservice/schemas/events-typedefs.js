@@ -15,6 +15,8 @@ export const eventTypeDefs = gql`
     }
 
     type Query {
+        _microservice: String
+        
         events: [Events]
         event(_id: ID!): Events
     }
