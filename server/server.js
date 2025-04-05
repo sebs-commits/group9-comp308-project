@@ -1,20 +1,25 @@
-import express from 'express';
-import { ApolloServer } from 'apollo-server-express';
-import { ApolloGateway, IntrospectAndCompose } from '@apollo/gateway';
-import cors from 'cors';
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
+import { ApolloGateway, IntrospectAndCompose } from "@apollo/gateway";
+import cors from "cors";
 
 const app = express();
 
-app.use(cors({
-  //origin: '*', //for sandbox use.
-  origin: ['http://localhost:3000', 'http://localhost:3002', 'http://localhost:3004', 'http://localhost:3006'],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "*", //for sandbox use.
+    //origin: ['http://localhost:3000', 'http://localhost:3002', 'http://localhost:3004', 'http://localhost:3006'], // uncomment this line for production use
+    credentials: true,
+  })
+);
 
 const serviceUrls = [
-  { name: 'business-events-microservice', url: 'http://localhost:3001/graphql' },
-  { name: 'user-auth-microservice', url: 'http://localhost:3003/graphql' },
-  { name: 'community-eng-microservice', url: 'http://localhost:3005/graphql' }
+  {
+    name: "business-events-microservice",
+    url: "http://localhost:3001/graphql",
+  },
+  { name: "user-auth-microservice", url: "http://localhost:3003/graphql" },
+  { name: "community-eng-microservice", url: "http://localhost:3005/graphql" },
 ];
 
 const supergraphSdl = new IntrospectAndCompose({ subgraphs: serviceUrls });
