@@ -8,7 +8,7 @@
     "start:business": "nodemon ./microservices/business-events-microservice/business-microservice",
     "start:community": "nodemon ./microservices/community-engagement-microservice/community-microservice",
     "start:server": "nodemon ./server",
-    "start:all": "npm-run-all --parallel start:auth start:business start:community --sequential start:server",
+    "start:all": "npm-run-all --parallel start:auth start:business start:community start:server",
     "start": "nodemon server",
     "dev": "nodemon server",
     "test": "echo \"Error: no test specified\" && exit 1"
