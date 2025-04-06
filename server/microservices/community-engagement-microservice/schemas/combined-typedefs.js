@@ -5,10 +5,8 @@ export const combinedTypeDefs = gql`
     _id: ID!
     creatorId: String!
     headline: String!
-    summary: String!
-    fullnews: String!
+    textBody: String!
     creationDate: String!
-    expiryDate: String!
   }
 
   type Requests {
@@ -36,7 +34,7 @@ export const combinedTypeDefs = gql`
   type Query {
     _microservice: String
 
-    allNoneExpiredNews: [News]
+    allNews: [News]
     news(_id: ID!): News
 
     requests: [Requests]
@@ -50,23 +48,13 @@ export const combinedTypeDefs = gql`
   }
 
   type Mutation {
-    createNews(
-      creatorId: String!
-      headline: String!
-      summary: String!
-      fullnews: String!
-      creationDate: String!
-      expiryDate: String!
-    ): News
+    createNews(creatorId: String!, headline: String!, textBody: String!): News
 
     updateNews(
       _id: ID!
       creatorId: String!
       headline: String!
-      summary: String!
-      fullnews: String!
-      creationDate: String!
-      expiryDate: String!
+      textBody: String!
     ): News
 
     deleteNews(_id: ID!): News
