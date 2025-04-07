@@ -19,14 +19,13 @@ import Dashboard from './Dashboard';
 //#endregion
 
 //#region Exposed Components
-const CreateUpdateEvent = lazy(() => import('eventsAndAdministrationApp/CreateUpdateEvent'));
+export const EventManagement = lazy(() => import('eventsAndAdministrationApp/EventManagement'));
 const RegisterComponent = lazy(() => import('authenticationApp/RegisterComponent'));
 const LoginComponent = lazy(() => import('authenticationApp/LoginComponent'));
 const CreateUpdateNews = lazy(() => import('communityBusinessApp/CreateUpdateNews'));
 const CreateUpdateRequests = lazy(() => import('communityBusinessApp/CreateUpdateRequests'))
 const CreateUpdateAlerts = lazy(() => import('communityBusinessApp/CreateUpdateAlerts'))
 const CreateUpdateBusinessListing = lazy(() => import('communityBusinessApp/CreateUpdateBusinessListing'))
-
 //#endregion
 
 function App() {
@@ -88,7 +87,7 @@ function App() {
                 <Routes>
                   <Route index element={<HomeComponent />} />
                   <Route path="home" element={<HomeComponent />} />
-                  {token !== 'auth' && <Route path="event" element={<CreateUpdateEvent />} /> }
+                  {token !== 'auth' && <Route path="event" element={<EventManagement />} /> }
                   {token === 'auth' && <Route path="register" element={<RegisterComponent />} />}
                   {token !== 'auth' && <Route path="dashboard" element= { <Dashboard /> } />}
                   {token === 'auth' && <Route path="login" element={<LoginComponent />} />}

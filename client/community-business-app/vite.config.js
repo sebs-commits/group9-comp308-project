@@ -9,7 +9,7 @@ export default defineConfig({
       name: 'communityBusinessApp',
       filename: 'remoteEntry.js',
       exposes: {
-        './CreateUpdateNews': './src/components/CreateUpdateNews',
+        './CreateNews': './src/components/CreateNews',
         './CreateUpdateRequests': './src/components/CreateUpdateRequests',
         './CreateUpdateAlerts': './src/components/CreateUpdateAlerts',
         './CreateUpdateBusinessListing': './src/components/CreateUpdateBusinessListing',
