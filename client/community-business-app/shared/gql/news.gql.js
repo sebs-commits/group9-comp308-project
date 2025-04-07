@@ -19,7 +19,17 @@ export const CREATE_NEWS = gql`
     }
   }
 `;
-
+export const GET_ALL_NEWS = gql`
+  query AllNews {
+    allNews {
+      _id
+      creatorId
+      headline
+      textBody
+      creationDate
+    }
+  }
+`;
 // Removing this for now, not sure if it is still needed
 // export const GET_NON_EXPIRED_NEWS = gql`
 //   query AllNoneExpiredNews {
