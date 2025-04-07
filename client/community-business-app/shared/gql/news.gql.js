@@ -1,27 +1,35 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_NEWS = gql`
-    mutation CreateNews($creatorId: String!, $headline: String!, $summary: String!, $fullnews: String!, $creationDate: String!, $expiryDate: String!) {
-        createNews(creatorId: $creatorId, headline: $headline, summary: $summary, fullnews: $fullnews, creationDate: $creationDate, expiryDate: $expiryDate) {
-            creatorId
-            headline
-            summary
-            fullnews
-            creationDate
-            expiryDate
-        }
+  mutation CreateNews(
+    $creatorId: String!
+    $headline: String!
+    $textBody: String!
+  ) {
+    createNews(
+      creatorId: $creatorId
+      headline: $headline
+      textBody: $textBody
+    ) {
+      _id
+      creatorId
+      headline
+      textBody
+      creationDate
     }
+  }
 `;
 
-export const GET_NON_EXPIRED_NEWS = gql`
-    query AllNoneExpiredNews {
-        allNoneExpiredNews {
-            _id
-            headline
-            summary
-            fullnews
-            creationDate
-            expiryDate
-        }
-    }
-`;
+// Removing this for now, not sure if it is still needed
+// export const GET_NON_EXPIRED_NEWS = gql`
+//   query AllNoneExpiredNews {
+//     allNoneExpiredNews {
+//       _id
+//       headline
+//       summary
+//       fullnews
+//       creationDate
+//       expiryDate
+//     }
+//   }
+// `;
