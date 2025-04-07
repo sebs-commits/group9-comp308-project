@@ -3,8 +3,6 @@ import EventModel from "../models/events.server.model.js";
 
 export const eventsResolvers = {
     Query: {
-        _microservice: () => "This is a micro service query",
-
         events: async () => {
             try {
                 const today = getToday();
@@ -13,6 +11,16 @@ export const eventsResolvers = {
             } catch(error) {
                 console.error(`An error occurred while fetching events`, error);
                 throw new Error("Error in events query - events.server.resolver.js");
+            }
+        },
+
+        userEvents: async (_, { creatorId }) => {
+            try {
+                const events = await EventModel.find({creatorId});
+                return events || [];
+            } catch(error) {
+                console.error(`An error occurred while fetching the user events`, error);
+                throw new Error("Error in user events query - events.server.resolver.js");
             }
         },
 
@@ -30,22 +38,22 @@ export const eventsResolvers = {
             }            
         },
 
-        updateEvent: async (_, { _id, creatorId, title, description, summary, type, from, to, price, location }) => { 
+        updateEvent: async (_, { id, creatorId, title, description, summary, type, from, to, price, location }) => { 
             try {
-                const existingEvent = await EventModel.findOne({ _id });
+                const existingEvent = await EventModel.findOne({ _id: id });
                 if(!existingEvent)
                     throw new Error("You are trying to update a non-existent event.")
 
-                return await EventModel.findByIdAndUpdate(_id, { creatorId, title, description, summary, type, from, to, price, location });
+                return await EventModel.findByIdAndUpdate(id, { creatorId, title, description, summary, type, from, to, price, location });
             } catch(error) {
                 console.error(`An error occurred while updating an event: `, error);
                 throw new Error("Error in updateEvent - events.server.resolver.js");
             }            
         },
         
-        deleteEvent: async (_, { _id }) => {  
+        deleteEvent: async (_, { id }) => {
             try {
-                return await EventModel.findByIdAndDelete(_id);                
+                return await EventModel.findByIdAndDelete({_id: id});                
             } catch(error) {
                 console.error(`An error occurred while deleting an event: `, error);
                 throw new Error("Error in deleteEvent - events.server.resolver.js");

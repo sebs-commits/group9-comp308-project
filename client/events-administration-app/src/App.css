@@ -10,3 +10,20 @@
 .button {
     width: 125px !important;
 }
+
+.form-col-bg {
+    background: linear-gradient(to bottom,rgb(211, 211, 211), rgb(211, 211, 211));
+    border-radius: 7px;     
+    border-style: outset;
+    border-width: 1px;
+    border-color: black;
+
+}
+
+@media (max-width: 992px) {
+    .main-col  {
+      margin-right: 0 !important;
+      margin-left: 0 !important;
+      margin-top: 0 !important;
+    }
+  }

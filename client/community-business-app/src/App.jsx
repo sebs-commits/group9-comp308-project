@@ -6,7 +6,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import React from 'react';
-import CreateUpdateNewsComponent from './components/CreateUpdateNews';
 import CreateUpdateRequestComponent from './components/CreateUpdateRequests';
 import CreateUpdateAlertComponent from './components/CreateUpdateAlerts';
 
@@ -31,8 +30,7 @@ function App() {
 
             <div>
             <Routes>
-                  <Route index element={<CreateUpdateNewsComponent />} />
-                  <Route path="news" element={<CreateUpdateNewsComponent />} />
+                  <Route index element={<CreateUpdateRequestComponent />} />
                   <Route path="requests" element={<CreateUpdateRequestComponent/>}/>
                   <Route path="alerts" element={<CreateUpdateAlertComponent/>}/>
                 </Routes>

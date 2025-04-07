@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 //#region Internal
 import { Label } from '../../shared/resources';
-import NewsCarouselComponent from '../../shared/components/NewsCarousel';
+// import NewsCarouselComponent from '../../shared/components/NewsCarousel';
 //#endregion
 
 const data = [
@@ -44,7 +44,7 @@ export const ResidentDashboardComponent = () => {
                 <Row className="pb-4"> <h3>{Label.setTitle(username)}</h3> </Row>
 
                 {/**Carousel News */}
-                <Row> <NewsCarouselComponent/> </Row>
+                {/* <Row> <NewsCarouselComponent/> </Row> */}
 
                 {/**Add News, Alert, Request Buttons */}
                 <Row className="justify-content-center pb-4">
