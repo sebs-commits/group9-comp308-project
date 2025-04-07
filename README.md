@@ -15,6 +15,3 @@ git checkout dev
 ```
 git pull
 ```
-
-
-
