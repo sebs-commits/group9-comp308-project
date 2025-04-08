@@ -8,6 +8,8 @@ import mongoose from "../../config/mongoose.js";
 import cookieParser from "cookie-parser";
 import { eventTypeDefs } from "./schemas/events-typedefs.js";
 import { eventsResolvers } from "./resolvers/events.server.resolver.js";
+import { businessListingTypeDefs } from "./schemas/business-listing-typedefs.js";
+import { businessListingResolvers } from "./resolvers/business-listing.server.resolver.js";
 
 const port = 4002;
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
@@ -32,6 +34,7 @@ const startServer = async () => {
   const server = new ApolloServer({
     schema: buildSubgraphSchema([
       { typeDefs: eventTypeDefs, resolvers: eventsResolvers },
+      { typeDefs: businessListingTypeDefs, resolvers: businessListingResolvers },
     ]),
     plugins: [ApolloServerPluginInlineTraceDisabled()],
   });
