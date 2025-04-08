@@ -4,8 +4,9 @@ import { useMutation } from "@apollo/client";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
+import NewsList from "./NewsList";
 
-import { CREATE_NEWS } from "../../shared/gql/news.gql";
+import { CREATE_NEWS, GET_ALL_NEWS } from "../../shared/gql/news.gql";
 
 const CreateNews = () => {
   const navigate = useNavigate();
@@ -16,7 +17,9 @@ const CreateNews = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const [createNews, { loading }] = useMutation(CREATE_NEWS);
+  const [createNews, { loading }] = useMutation(CREATE_NEWS, {
+    refetchQueries: [{ query: GET_ALL_NEWS }],
+  });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -82,6 +85,8 @@ const CreateNews = () => {
           </Button>
         </div>
       </Form>
+
+      <NewsList />
     </Container>
   );
 };

@@ -5,7 +5,13 @@ export const newsResolvers = {
     allNews: async () => {
       try {
         const news = await NewsModel.find({});
-        return news || [];
+        return news.map((item) => {
+          const plainItem = item.toObject();
+          if (plainItem.creationDate) {
+            plainItem.creationDate = plainItem.creationDate.toISOString();
+          }
+          return plainItem;
+        });
       } catch (error) {
         console.error(`An error occurred while fetching news`, error);
         throw new Error("Error in news query - news.server.resolver.js");
