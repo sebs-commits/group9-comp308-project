@@ -18,6 +18,7 @@ export const eventTypeDefs = gql`
         _microservice: String
         
         events: [Events]
+        userEvents(creatorId: ID!): [Events]
         event(_id: ID!): Events
     }
 
@@ -35,7 +36,7 @@ export const eventTypeDefs = gql`
         ): Events
 
         updateEvent(
-            _id: ID!,
+            id: ID!,
             creatorId: String!,
             title: String!,
             description: String!,
@@ -47,6 +48,6 @@ export const eventTypeDefs = gql`
             location: String!            
         ): Events
 
-        deleteEvent(_id: ID!): Events
+        deleteEvent(id: ID!): Events
     }
 `;

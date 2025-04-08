@@ -1,5 +1,5 @@
 //#region External Imports
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -7,13 +7,13 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import { useNavigate } from 'react-router-dom';
 import { FaUndo, FaPaperPlane } from "react-icons/fa";
+import { RxReset } from "react-icons/rx";
 //#endregion
 
 //#region Internal Imports
 import { Label, Message } from '../../shared/resources';
-import { CREATE_EVENT } from '../../shared/gql/event.gql';
-import { useMutation } from '@apollo/client';
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
+import { EventContext } from '../../shared/contexts/events';
 //#endregion
 
 //Matches the backend type list
@@ -28,16 +28,11 @@ const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/;
 const CreateUpdateEvent = () => {
     const navigate = useNavigate();
 
+    const { event, initEvent, addEventToEvents, updateEventInEvents, emptyEvent } = useContext(EventContext);
+    useEffect(() => { setIsEditing(!!event.id); }, [event]);
+
     //#region States
-    const [creatorId, setCreatorId] = useState(sessionStorage.getItem("uid") || 'id');
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [summary, setSummary] = useState('');
-    const [type, setType] = useState(EVENT_TYPE.WORKSHOPS);
-    const [from, setFrom] = useState('');
-    const [to, setTo] = useState('');
-    const [price, setPrice] = useState(0);
-    const [location, setLocation] = useState('');
+    const [isEditing, setIsEditing] = useState(false);    
 
     const [message, setMessage] = useState("");
     const [header, setHeader] = useState("");
@@ -45,140 +40,145 @@ const CreateUpdateEvent = () => {
     const [showA, setShowA] = useState(false);
     //#endregion
 
-     //#region CustomToast Related
-     const toggleShowA = () => setShowA(!showA);
-     const displayToastMsg = (header, message, bg) => {
-         toggleShowA();
-         setHeader(header);
-         setMessage(message);
-         setBg(bg);
-     }
-     //#endregion
-
-    //#region GQL
-    const [createEvent] = useMutation(CREATE_EVENT);
+    //#region CustomToast Related
+    const toggleShowA = () => setShowA(!showA);
+    const displayToastMsg = (header, message, bg) => {
+        toggleShowA();
+        setHeader(header);
+        setMessage(message);
+        setBg(bg);
+    }
     //#endregion
 
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      const form = event.currentTarget;
+    const handleReset = (e) => {
+        e.preventDefault();
+        emptyEvent();
+        setIsEditing(false);
+    }
 
-      if (form.checkValidity() === false) {
-        displayToastMsg(Label.ERROR, Message.INVALID_FORM, "danger");
-        event.stopPropagation();
-        return;
-      }
+    const handleSubmit = async (e) => {
+        e.preventDefault();    
+        const data = {...event, type: event.type ? event.type : EVENT_TYPE.WORKSHOPS};
+        
+        if(!data.title || !data.summary || !data.description || !data.type || !data.from || !data.to || !data.location || !data.price) {
+            displayToastMsg(Label.ERROR, Message.INVALID_FORM, "danger");
+            event.stopPropagation();
+            return;
+        }
 
-      if(!regex.test(from) || !regex.test(to)) {
-        displayToastMsg(Label.ERROR, Message.INVALID_DATE, "danger");
-        return;
-      }           
+        if(!regex.test(event.from) || !regex.test(event.to)) {
+            displayToastMsg(Label.ERROR, Message.INVALID_DATE, "danger");
+            return;
+        }
 
-      try {
-        await createEvent({ variables: { creatorId, title, description, summary, type: type ? type : EVENT_TYPE.WORKSHOPS, from, to, price, location } })
-        displayToastMsg(Label.SUCCESS, Message.EVENT_SAVED_SUCCESSFULLY, "success");
+        try {     
+            isEditing ? await updateEventInEvents(data) : await addEventToEvents(data);            
+            displayToastMsg(Label.SUCCESS, Message.EVENT_SAVED_SUCCESSFULLY, "success");
+            setIsEditing(false);
 
-        setTitle('');
-        setDescription('');
-        setSummary('');
-        setType(EVENT_TYPE.WORKSHOPS);
-        setFrom('');
-        setTo('');
-        setPrice(0);
-        setLocation('');
-
-      } catch(error) {
-        displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
-        console.error(`An error occurred while creating or updating an event: `, error);
-        throw error;
-      }
+        } catch(error) {
+            displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
+            console.error(`An error occurred while creating or updating an event: `, error);
+            throw error;
+        }
     };       
 
     return <>
-        <div className="px-5 pb-4">
-            <h4 className="pt-4 pb-2">{Label.formEventTitle(true ? Label.CREATE : Label.UPDATE)}</h4>
-            <Form noValidate onSubmit={handleSubmit}>
-                <Row>
-                    {/**Event Title */}
-                    <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="title">
-                        <Form.Label>{Label.TITLE}</Form.Label>
-                        <Form.Control required
-                                      type="text"
-                                      placeholder={Label.TITLE}
-                                      value={title}
-                                      onChange={(e) => setTitle(e.target.value)}/>
-                    </Form.Group>
-
-                    {/**Event Description */}
-                    <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="description">
-                        <Form.Label>{Label.DESCRIPTION}</Form.Label>
-                        <Form.Control required 
-                                      as="textarea" 
-                                      rows={3} 
-                                      placeholder={Label.DESCRIPTION}
-                                      value={description}
-                                      onChange={(e) => setDescription(e.target.value)}/>
-                    </Form.Group>
-
-                     {/**Event Summary */}
-                     <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="summary">
-                        <Form.Label >{Label.SUMMARY}</Form.Label>
-                        <Form.Control required
-                                      type="text"
-                                      placeholder={Label.SUMMARY}
-                                      value={summary}
-                                      onChange={(e) => setSummary(e.target.value)}/>
-                    </Form.Group>
-
-                    {/**Event Type */}
-                    <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="type">
-                        <Form.Label>{Label.TYPE}</Form.Label>
-                        <Form.Select required onChange={(e) => setType(e.target.value)} value={type}>
-                            <option value={EVENT_TYPE.WORKSHOPS}>{Label.WORKSHOP}</option>
-                            <option value={EVENT_TYPE.MEETUPS}>{Label.MEETUP}</option>
-                            <option value={EVENT_TYPE.CLEAN_UP_DRIVES}>{Label.CLEAN_UP_DRIVE}</option>
-                        </Form.Select>
-                    </Form.Group>
-
-                    {/**Event's Start and End Dates */}
-                    <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="dates">
-                        <Form.Label>{Label.EVENT_START_END_DATES}</Form.Label>
-                        <InputGroup className="mb-3">                        
-                            <Form.Control required placeholder={Label.START_DATE} onChange={(e) => setFrom(e.target.value)} value={from}/>
-                            <Form.Control required placeholder={Label.END_DATE} onChange={(e) => setTo(e.target.value)} value={to}/>
-                        </InputGroup>
-                    </Form.Group>
-
-                    {/**Event Location */}
-                    <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="location">
-                        <Form.Label>{Label.LOCATION}</Form.Label>
-                        <Form.Control required
-                                      type="text"
-                                      placeholder={Label.LOCATION}
-                                      value={location}
-                                      onChange={(e) => setLocation(e.target.value)}/>
-                    </Form.Group>
-
-                    {/**Event Price */}
-                    <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="price">
-                        <Form.Label>{Label.PRICE}</Form.Label>                        
-                        <InputGroup className="mb-3">                            
-                            <InputGroup.Text>{Label.DOLLAR_SIGN}</InputGroup.Text>
-                            <Form.Control type="number" required onChange={(e) => setPrice(e.target.value)} value={price}/>
-                            <InputGroup.Text>{Label.TRAILING_AMT}</InputGroup.Text>
-                        </InputGroup>
-                    </Form.Group>                    
+        <div className="pb-4">
+            <Form noValidate onSubmit={handleSubmit}>                
+                <Row className="d-flex justify-content-center align-items-center">
+                    <Col xs={12} md={8}>
+                        <h4 className="pt-4 pb-2">{Label.formEventTitle(!isEditing ? Label.CREATE : Label.UPDATE)}</h4>
+                    </Col>
                 </Row>
-    
-                <Button variant="secondary" className="button mx-2 my-2" onClick={() => { navigate("/dashboard"); }}>
-                    <FaUndo />
-                    <span style={{paddingLeft: "5px"}} >{Label.BACK}</span>                    
-                </Button>
                
-                <Button type="submit" variant="success" className="button">
-                    <FaPaperPlane />
-                    <span style={{paddingLeft: "5px"}}>{Label.SUBMIT} </span>
-                </Button>
+                <Row className="d-flex justify-content-center align-items-center">   
+                    <Col md={8} xs={12} className='form-col-bg'>
+                        {/**Event Title */}
+                        <Form.Group className="py-3" as={Col} controlId="title">                            
+                            <Form.Control required
+                                        type="text"
+                                        placeholder={Label.TITLE}
+                                        value={event?.title}
+                                        onChange={(e) => {initEvent({ ...event, title: e.target.value})}}/>
+                        </Form.Group>
+
+                        {/**Event Description */}
+                        <Form.Group className="py-3" as={Col} controlId="description">
+                            <Form.Control required 
+                                        as="textarea" 
+                                        rows={3} 
+                                        placeholder={Label.DESCRIPTION}
+                                        value={event?.description}
+                                        onChange={(e) => {initEvent({ ...event, description: e.target.value})}}/>
+                        </Form.Group>
+
+                        {/**Event Summary */}
+                        <Form.Group className="py-3" as={Col} controlId="summary">
+                            <Form.Control required
+                                        type="text"
+                                        placeholder={Label.SUMMARY}
+                                        value={event?.summary}
+                                        onChange={(e) => {initEvent({ ...event, summary: e.target.value})}}/>
+                        </Form.Group>
+
+                        {/**Event Type */}
+                        <Form.Group className="py-3" as={Col} controlId="type">
+                            <Form.Select required onChange={(e) => {initEvent({ ...event, type: e.target.value})}} value={event?.type}>
+                                <option value={EVENT_TYPE.WORKSHOPS}>{Label.WORKSHOP}</option>
+                                <option value={EVENT_TYPE.MEETUPS}>{Label.MEETUP}</option>
+                                <option value={EVENT_TYPE.CLEAN_UP_DRIVES}>{Label.CLEAN_UP_DRIVE}</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        {/**Event's Start and End Dates */}
+                        <Form.Group className="py-3" as={Col} controlId="dates">
+                            <InputGroup>                        
+                                <Form.Control required placeholder={Label.START_DATE} onChange={(e) => {initEvent({ ...event, from: e.target.value})}} value={event?.from}/>
+                                <Form.Control required placeholder={Label.END_DATE} onChange={(e) => {initEvent({ ...event, to: e.target.value})}} value={event?.to}/>
+                            </InputGroup>
+                        </Form.Group>
+
+                        {/**Event Location */}
+                        <Form.Group className="py-3" as={Col} controlId="location">
+                            <Form.Control required
+                                        type="text"
+                                        placeholder={Label.LOCATION}
+                                        value={event?.location}
+                                        onChange={(e) => {initEvent({ ...event, location: e.target.value})}}/>
+                        </Form.Group>
+
+                        {/**Event Price */}
+                        <Form.Group className="py-3" as={Col} controlId="price">                  
+                            <InputGroup>                            
+                                <InputGroup.Text>{Label.DOLLAR_SIGN}</InputGroup.Text>
+                                <Form.Control type="number" required onChange={(e) => {initEvent({ ...event, price: e.target.value})}} value={event?.price}/>
+                                <InputGroup.Text>{Label.TRAILING_AMT}</InputGroup.Text>
+                            </InputGroup>
+                        </Form.Group>    
+                    </Col>                
+                </Row>
+                    
+                <Row className="d-flex justify-content-center align-items-center mt-4">
+                    <Col xs={12} md={8}>
+                        {isEditing &&
+                            <Button title={Label.RESET} type="button" variant="info" className="my-3" onClick={(e) => handleReset(e)}>
+                                <RxReset />
+                            </Button>
+                        }
+                      
+                        <Button variant="secondary" className="button mx-2 my-2" onClick={() => { navigate("/dashboard"); }}>
+                            <FaUndo />
+                            <span style={{paddingLeft: "5px"}} >{Label.BACK}</span>                    
+                        </Button>
+                    
+                        <Button type="submit" variant={!isEditing ? "success" : "warning"} className="button">
+                            <FaPaperPlane />
+                            <span style={{paddingLeft: "5px"}}>{!isEditing ? Label.CREATE: Label.UPDATE} </span>
+                        </Button>
+                    </Col>                    
+                </Row>     
+                                
             </Form>
 
             <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>

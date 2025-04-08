@@ -6,15 +6,14 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import React from 'react';
-import CreateUpdateEvent from './components/CreateUpdateEvent';
+import EventMagagement from './components/EventManagement';
 
 function App() {
   return (
     <Router>
-        <div>
           <header>
             <Navbar bg="secondary" variant="dark" expand="lg">
-              <Container>
+              <Container fluid>
                 <Navbar.Brand as={Link} to={"/events"}>Events</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -25,14 +24,11 @@ function App() {
               </Container>
             </Navbar>
 
-            <div>
             <Routes>
-                  <Route index element={<CreateUpdateEvent />} />
-                  <Route path="events" element={<CreateUpdateEvent />} />
-                </Routes>
-            </div>
+                  <Route index element={<EventMagagement />} />
+                  <Route path="events" element={<EventMagagement />} />
+            </Routes>
           </header>
-        </div>
       </Router>
   )
 }

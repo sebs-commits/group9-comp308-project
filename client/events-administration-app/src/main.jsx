@@ -5,7 +5,7 @@ import App from './App.jsx'
 import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink } from '@apollo/client';
 
 const link = createHttpLink({
-  uri: 'http://localhost:4003/graphql',
+  uri: 'http://localhost:4002/graphql',
   credentials: 'include'
 });
 

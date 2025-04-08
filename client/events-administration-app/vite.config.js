@@ -9,7 +9,7 @@ export default defineConfig({
       name: 'eventsAndAdministrationApp',
       filename: 'remoteEntry.js',
       exposes: {
-        './CreateUpdateEvent': './src/components/CreateUpdateEvent'
+        './EventManagement': './src/components/EventManagement'
       },
       shared: [ 'react', 'react-dom', '@apollo/client', 'graphql', 'react-router-dom' ]
     })

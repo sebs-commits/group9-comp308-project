@@ -39,19 +39,15 @@ function App() {
 
           <div>
             <Routes>
-              <Route index element={<CreateUpdateNewsComponent />} />
-              <Route path="news" element={<CreateUpdateNewsComponent />} />
-              <Route
-                path="requests"
-                element={<CreateUpdateRequestComponent />}
-              />
-              <Route path="alerts" element={<CreateUpdateAlertComponent />} />
-            </Routes>
-          </div>
-        </header>
-      </div>
-    </Router>
-  );
+                  <Route index element={<CreateUpdateRequestComponent />} />
+                  <Route path="requests" element={<CreateUpdateRequestComponent/>}/>
+                  <Route path="alerts" element={<CreateUpdateAlertComponent/>}/>
+                </Routes>
+            </div>
+          </header>
+        </div>
+      </Router>
+  )
 }
 
 export default App;

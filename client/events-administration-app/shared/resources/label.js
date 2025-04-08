@@ -20,5 +20,10 @@ export const Label = {
     SUBMIT: "Submit",
     BACK: "Back",
     ERROR: "Error",
-    SUCCESS: "Success"
+    SUCCESS: "Success",
+    YOUR_EVENTS: "Your Events",
+    TITLE: "Event Title",
+    RESET: "Reset",
+    DELETE: "Delete",
+    CANCEL: "Cancel"
 }
