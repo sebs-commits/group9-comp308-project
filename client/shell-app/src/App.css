@@ -10,3 +10,7 @@
 .button {
   width: 125px !important;
 }
+
+.event-subtitle {
+  font-weight: bold;  
+}
