@@ -27,7 +27,9 @@ app.use(
   })
 );
 
-app.use(express.json());
+//increase payload size to allow images to be inserted to the database as base64
+app.use(express.json({limit: "10mb"})); 
+
 app.use(express.urlencoded({ extended: true }));
 
 const startServer = async () => {

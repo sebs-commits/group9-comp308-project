@@ -22,7 +22,8 @@ app.use(
   })
 );
 
-app.use(express.json());
+//increase payload size to allow images to be inserted to the database as base64 strings
+app.use(express.json({limit: "10mb"}));
 
 // Function to check if a microservice is running
 const checkService = async (url, retries = 10, delay = 3000) => {
