@@ -1,0 +1,16 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start:community": "cd community-business-app && npm run dev",
+    "start:events": "cd events-business-app && npm run dev",
+    "start:auth": "cd authentication-app && npm run dev",
+    "start:shell": "cd shell-app && npm run dev",
+    "start:all": "npm run start:community & npm run start:events & npm run start:auth & npm run start:shell"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
