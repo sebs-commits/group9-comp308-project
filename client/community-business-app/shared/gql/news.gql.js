@@ -34,6 +34,18 @@ export const GET_ALL_NEWS = gql`
     }
   }
 `;
+export const GET_NEWS = gql`
+  query GetNews($_id: ID!) {
+    news(_id: $_id) {
+      _id
+      creatorId
+      headline
+      textBody
+      creationDate
+      image
+    }
+  }
+`;
 // Removing this for now, not sure if it is still needed
 // export const GET_NON_EXPIRED_NEWS = gql`
 //   query AllNoneExpiredNews {
