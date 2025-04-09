@@ -1,14 +1,19 @@
+//#region External Imports
 import { createContext, useEffect, useState } from "react";
-import { CREATE_EVENT, DELETE_EVENT, GET_YOUR_EVENTS, UPDATE_EVENT } from "../gql/event.gql";
 import { useMutation, useQuery } from "@apollo/client";
+//#endregion
 
-const EMPTY_EVENT = { creatorId: '', title: '', description: '', summary: '',
+//#region Internal Imports
+import { CREATE_EVENT, DELETE_EVENT, GET_YOUR_EVENTS, UPDATE_EVENT } from "../gql/event.gql";
+//#endregion
+
+export const EMPTY_EVENT = { creatorId: '', title: '', description: '', summary: '',
                       type: '', from: '', to: '', location: '', price: '' }
 
-export const EventContext = createContext(null);
+export const EventsContext = createContext(null);
 
-export const EventProvider = ({children}) => {
-    //#region States
+export const EventsProvider = ({children}) => {    
+    //#region States    
     const [event, setEvent] = useState(EMPTY_EVENT);
     const [events, setEvents] = useState([]);
     const [creatorId, setCreatorId] = useState(sessionStorage.getItem('uid') || "id");
@@ -22,9 +27,10 @@ export const EventProvider = ({children}) => {
     const { refetch: fetchingEvents } = useQuery(GET_YOUR_EVENTS, {
             variables: { creatorId },
             skip: !creatorId,
-    });
+    });        
     //#endregion
 
+    //#region Effects
     useEffect(() => {
         const fetch = async () => {
             try {
@@ -37,7 +43,8 @@ export const EventProvider = ({children}) => {
         }
 
         fetch();
-    }, []);
+    }, []);   
+    //#endregion
 
     const initEvent = (event) => {  setEvent({...event}); }
 
@@ -80,15 +87,15 @@ export const EventProvider = ({children}) => {
     const emptyEvent = () => { setEvent(EMPTY_EVENT); }
 
     return (
-        <EventContext.Provider value={{event, 
-                                       initEvent, 
-                                       events, 
-                                       initEvents, 
-                                       addEventToEvents, 
-                                       updateEventInEvents, 
-                                       removeEventFromEvents, 
-                                       emptyEvent}}>
+        <EventsContext.Provider value={{ event, 
+                                         initEvent, 
+                                         events, 
+                                         initEvents, 
+                                         addEventToEvents, 
+                                         updateEventInEvents, 
+                                         removeEventFromEvents, 
+                                         emptyEvent}}>
             {children}
-        </EventContext.Provider>
+        </EventsContext.Provider>
     )
 }

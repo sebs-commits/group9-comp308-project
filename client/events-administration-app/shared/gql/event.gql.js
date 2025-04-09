@@ -83,3 +83,20 @@ export const GET_YOUR_EVENTS = gql`
         }
     }
 `;
+
+export const GET_EVENT = gql`
+    query Event($id: ID!) {
+        event(_id: $id) {
+            id
+            creatorId
+            title
+            description
+            summary
+            type
+            from
+            to
+            price
+            location
+        }
+    }
+`;

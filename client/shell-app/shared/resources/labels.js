@@ -12,4 +12,10 @@ export const Label = {
     REQUEST: "Request",
     LEARN_MORE: "Learn More",
     LISTING: "Business Listings",
+    BACK: "Back",
+    TYPE: "Type",
+    EVENT_DATE: "Event Date(s)",
+    LOCATION: "Location",
+    PRICE: "Price",
+    WELCOME: "Welcome"    
 }
