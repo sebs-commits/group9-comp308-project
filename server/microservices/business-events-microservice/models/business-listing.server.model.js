@@ -13,8 +13,7 @@ const businessListingSchema = new Schema({
 
     businessDescription: { type: String, required: true },
 
-    images: [{ type: String, required: false }], // Store multiple images as an array of base64 strings
-    /*end of suggestion*/
+    images: {type: [String], default: [] }, // Store multiple images as an array of base64 strings
 
     discounts: { type: String, required: false }
 })

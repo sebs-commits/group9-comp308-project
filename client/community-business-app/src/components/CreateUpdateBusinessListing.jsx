@@ -23,6 +23,7 @@ const phoneNumberRegex = /^\(?([2-9][0-9]{2})\)?[-.●]?([2-9][0-9]{2})[-.●]?(
 
 
 const CreateUpdateNewsComponent = () => {
+
         const navigate = useNavigate();
 
         //#region States
@@ -38,6 +39,11 @@ const CreateUpdateNewsComponent = () => {
         const [header, setHeader] = useState("");
         const [bg, setBg] = useState("");        
         const [showA, setShowA] = useState(false);
+
+        //listing images
+        const [getImage1, setGetImage1] = useState(null);
+        const [getImage2, setGetImage2] = useState(null);
+        const [getImage3, setGetImage3] = useState(null);
         //#endregion
         
         //#region CustomToast Related
@@ -77,9 +83,9 @@ const CreateUpdateNewsComponent = () => {
                 displayToastMsg(Label.ERROR, Message.MISSING_FIELDS, "danger");
                 return;
             }
-            // ***validate image list*** --> later!
-            
 
+            //makes sure imageList is not null
+            const imageList = [getImage1, getImage2, getImage3].filter((image) => image !== null);
 
             //validate if businessListingId already exists in the DB. If so, update it. If not, create a new one.
             //suggestion from copilot 2025-04-02: 'why does refetch({businessListingId}) return a nothing?'})'
@@ -94,7 +100,7 @@ const CreateUpdateNewsComponent = () => {
                             address: businessAddress,
                             phoneNumber: businessPhone,
                             businessDescription: businessDescription,
-                            images: [], // --> **To be implemented later**
+                            images: imageList, //pass the images
                             discounts: businessDeals
                         }
                     });
@@ -114,7 +120,7 @@ const CreateUpdateNewsComponent = () => {
                             address: businessAddress,
                             phoneNumber: businessPhone,
                             businessDescription: businessDescription,
-                            images: [], // --> **To be implemented later**
+                            images: imageList, //pass the images
                             discounts: businessDeals
                         }
                     });
@@ -125,13 +131,60 @@ const CreateUpdateNewsComponent = () => {
                     throw error;
                 }
             }
+
+                // Reset fields
                 setBusinessListingId('');
                 setBusinessName('');
                 setAddress('');
                 setBusinessPhone('');
                 setBusinessDescription('');
                 setBusinessDeals('');
+                setGetImage1(null);
+                setGetImage2(null);
+                setGetImage3(null);
+                navigate("/dashboard"); //go back to dashboard after submitting the form
         };       
+
+        //get first image from the image from file (after btn click)
+        const handleImage1Selected = (e) => {
+            const image = e.target.files[0]; //get first file chosen
+            //suggestion from copilot on 2025-04-02: 'how could I get the image URL from the file?'
+            if (image) {
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                    setGetImage1(fileReader.result); // Set the image to base64
+                };
+                fileReader.readAsDataURL(image); // Read the file as a Data URL
+            }
+            //end of suggestion
+        };
+
+        //get second image from the image from file (after btn click)
+        const handleImage2Selected = (e) => {
+            const image = e.target.files[0];//get first file chosen
+            //suggestion from copilot on 2025-04-02: 'how could I get the image URL from the file?'
+            if (image) {
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                    setGetImage2(fileReader.result); // Set the image to base64
+                };
+                fileReader.readAsDataURL(image); // Read the file as a Data URL
+            }
+            //end of suggestion
+        };
+        //get third image from the image from file (after btn click)
+        const handleImage3Selected = (e) => {
+            const image = e.target.files[0]; //get first file chosen
+            //suggestion from copilot on 2025-04-02: 'how could I get the image URL from the file?'
+            if (image) {
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                    setGetImage3(fileReader.result); // Set the image to base64
+                };
+                fileReader.readAsDataURL(image); // Read the file as a Data URL
+            }
+            //end of suggestion
+        };
 
     return <>
         <div className="px-5 pb-4">
@@ -190,59 +243,39 @@ const CreateUpdateNewsComponent = () => {
                                       onChange={(e) => setBusinessDescription(e.target.value)}/>
                     </Form.Group>     
 
-                    {/**Image List ***TO BE ADDED LATER** */}
                      <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="imageList">
                         <Form.Label>{Label.IMAGE_LIST}</Form.Label>
 
-                        {/*Copilot boilerplate suggestion on 2025-04-02" 'how could I add a 1 row 3 column table at line 149?' and 'then how could I add images in each cell?'*/}
+                        {/*Copilot boilerplate suggestion on 2025-04-02" 'how could I add a 1 row 3 column table at line 149?' and 
+                        'then how could I add images in each cell?'. Mofifications include each table cell contents, removing the thead elements,
+                        and cell as adding cells and content as needed*/}
                         <Table bordered className="mt-2">
-                            <thead>
-                                <tr>
-                                    <th>Image 1</th>
-                                    <th>Image 2</th>
-                                    <th>Image 3</th>
-                                </tr>
-                            </thead>
                             <tbody>
                                 <tr>
                                     <td>
                                         <img 
-                                            //src="" 
+                                            src={getImage1} 
                                             alt="Image 1" 
                                             style={{ width: "100%", height: "auto" }} 
                                         />
-                                        <Button 
-                                            variant="primary" 
-                                            className="mt-2"
-                                            onClick={() => console.log('Button 1 clicked')}>
-                                                Find Image 1
-                                        </Button>
+                                        <input type='file' className='form-control' onChange={handleImage1Selected}/>
+
                                     </td>
                                     <td>
                                         <img 
-                                            //src=
+                                            src={getImage2}
                                             alt="Image 2" 
                                             style={{ width: "100%", height: "auto" }} 
                                         />
-                                        <Button 
-                                            variant="primary" 
-                                            className="mt-2"
-                                            onClick={() => console.log('Button 2 clicked')}>
-                                                Find Image 2
-                                        </Button>
+                                        <input type='file' className='form-control' onChange={handleImage2Selected}/>
                                     </td>
                                     <td>
                                         <img 
-                                            //src= 
+                                            src={getImage3} 
                                             alt="Image 3" 
                                             style={{ width: "100%", height: "auto" }} 
                                         />
-                                        <Button 
-                                            variant="primary" 
-                                            className="mt-2"
-                                            onClick={() => console.log('Button 3 clicked')}>
-                                                Find Image 3
-                                        </Button>
+                                        <input type='file' className='form-control' onChange={handleImage3Selected}/>
                                     </td>
                                 </tr>
                             </tbody>

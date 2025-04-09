@@ -12,8 +12,6 @@ export const businessListingResolvers = {
             }
         },
 
-        //copilot suggested this code, but I had to modify it. Modds include: changing _id to listingTicketId,
-        // changing the Model name, and changing the error messages on 2025-04-02 for prompt: 'do lines 14-21 fetch a listing by the ticketId properly?'.
         listing: async (_, { listingTicketId }) => {
             const listing = await BusinessListingModel.findOne({ listingTicketId });
 
@@ -22,7 +20,6 @@ export const businessListingResolvers = {
             }
             return listing;
         },
-        //end of copilot suggestion
     },
     
     Mutation: {
@@ -42,7 +39,7 @@ export const businessListingResolvers = {
             return await BusinessListingModel.findByIdAndUpdate(existingListingTicketId, {
                 businessName, address, phoneNumber, businessDescription, images, discounts}, { new: true });
         },
-        deleteBusinnessListing: async (_, { listingTicketId }) => {
+        deleteBusinessListing: async (_, { listingTicketId }) => {
             const existingBusinessListing = await BusinessListingModel.findOne({ listingTicketId });
             if (!existingBusinessListing) {
                 throw new Error("Error, this businness listing doesn't exist in the DB.");
