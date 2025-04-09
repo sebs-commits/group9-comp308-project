@@ -18,7 +18,22 @@ export const newsResolvers = {
       }
     },
 
-    news: async (_, { _id }) => await NewsModel.findOne({ _id }),
+    news: async (_, { _id }) => {
+      try {
+        const item = await NewsModel.findOne({ _id });
+        if (item) {
+          const plainItem = item.toObject();
+          if (plainItem.creationDate) {
+            plainItem.creationDate = plainItem.creationDate.toISOString();
+          }
+          return plainItem;
+        }
+        return null;
+      } catch (error) {
+        console.error("Error occurred fetching this news item", error);
+        throw new Error("Error in news query - news.server.resolver.js");
+      }
+    },
   },
 
   Mutation: {
