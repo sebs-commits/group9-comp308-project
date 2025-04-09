@@ -5,12 +5,12 @@ import { FaTrash } from "react-icons/fa";
 //#endregion
 
 //#region Internal Imports
-import { EventContext } from '../../shared/contexts/events';
+import { EventsContext } from '../../shared/contexts/events';
 import { Label, Message } from '../../shared/resources';
 //#endregion
 
 const DisplayEvents = () => { 
-    const { initEvent, events, removeEventFromEvents } = useContext(EventContext);
+    const { initEvent, events, removeEventFromEvents } = useContext(EventsContext);
 
     //#region States
     const [page, setPage] = useState(1);

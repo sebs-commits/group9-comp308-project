@@ -13,7 +13,7 @@ import { RxReset } from "react-icons/rx";
 //#region Internal Imports
 import { Label, Message } from '../../shared/resources';
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
-import { EventContext } from '../../shared/contexts/events';
+import { EventsContext } from '../../shared/contexts/events';
 //#endregion
 
 //Matches the backend type list
@@ -28,7 +28,7 @@ const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/;
 const CreateUpdateEvent = () => {
     const navigate = useNavigate();
 
-    const { event, initEvent, addEventToEvents, updateEventInEvents, emptyEvent } = useContext(EventContext);
+    const { event, initEvent, addEventToEvents, updateEventInEvents, emptyEvent } = useContext(EventsContext);
     useEffect(() => { setIsEditing(!!event.id); }, [event]);
 
     //#region States
