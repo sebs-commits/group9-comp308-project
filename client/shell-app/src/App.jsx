@@ -17,7 +17,7 @@ import { LOGOUT } from '../../authentication-app/shared/gql/authentication.gql';
 import { Label } from '../shared/resources';
 import Dashboard from './Dashboard';
 import DisplaySelectedEventComponent from '../shared/components/DisplaySelectedEvent';
-import { EventProvider } from '../../events-administration-app/shared/contexts/events';
+import { EventProvider } from '../../events-administration-app/shared/contexts/event';
 //#endregion
 
 //#region Exposed Components
@@ -85,33 +85,27 @@ function App() {
             </Navbar>
 
             <div>
-              <Routes>
-                  {/**Unprotected Routes */}
-                  <Route index element={<HomeComponent />} />
-                  <Route path="home" element={<HomeComponent />} />
-                  
-                  {/**Pass event id here... */}
-                  <Route path="displayevent/:id" element={<EventProvider><DisplaySelectedEventComponent /></EventProvider> } /> 
-              </Routes>
+                <Suspense fallback={<div>{Label.LOADING}</div>}>
+                  <Routes>
+                    {/**Unprotected Routes */}
+                    <Route index element={<HomeComponent />} />
+                    <Route path="home" element={<HomeComponent />} />                  
+                    <Route path="displayevent/:id" element={<EventProvider><DisplaySelectedEventComponent /></EventProvider> } /> 
 
-              <Suspense fallback={<div>{Label.LOADING}</div>}>
-                <Routes>
-              
+                    {/**Protected Routes */}
+                    {token !== 'auth' && <Route path="event" element={<EventManagement /> }/>}
+                    {token === 'auth' && <Route path="register" element={<RegisterComponent />} />}
+                    {token !== 'auth' && <Route path="dashboard" element= { <Dashboard /> } />}
+                    {token === 'auth' && <Route path="login" element={<LoginComponent />} />}
+                    {token !== 'auth' && <Route path="news" element={<CreateUpdateNews />}/>}
+                    {token !== 'auth' && <Route path="requests" element={<CreateUpdateRequests />}/>}
+                    {token !== 'auth' && <Route path="alerts" element={<CreateUpdateAlerts />}/>}
+                    {token === 'auth' && <Route path="*" element={<HomeComponent />} />}
+                    {token !== 'auth' && <Route path="/listing" element={<CreateUpdateBusinessListing />} />}
 
-                  {/**Protected Routes */}
-                  {token !== 'auth' && <Route path="event" element={<EventManagement />} /> }
-                  {token === 'auth' && <Route path="register" element={<RegisterComponent />} />}
-                  {token !== 'auth' && <Route path="dashboard" element= { <Dashboard /> } />}
-                  {token === 'auth' && <Route path="login" element={<LoginComponent />} />}
-                  {token !== 'auth' && <Route path="news" element={<CreateUpdateNews />}/>}
-                  {token !== 'auth' && <Route path="requests" element={<CreateUpdateRequests />}/>}
-                  {token !== 'auth' && <Route path="alerts" element={<CreateUpdateAlerts />}/>}
-                  {token === 'auth' && <Route path="*" element={<HomeComponent />} />}
-                  {token !== 'auth' && <Route path="/listing" element={<CreateUpdateBusinessListing />} />}
-
-                  
-                </Routes>
-              </Suspense>
+                    
+                  </Routes>
+                </Suspense>
             </div>
           </header>
         </div>      

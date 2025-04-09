@@ -1,18 +1,19 @@
+//#region External Imports
 import { createContext, useEffect, useState } from "react";
-import { CREATE_EVENT, DELETE_EVENT, GET_EVENT, GET_YOUR_EVENTS, UPDATE_EVENT } from "../gql/event.gql";
 import { useMutation, useQuery } from "@apollo/client";
-import { useParams } from "react-router-dom";
+//#endregion
 
-const EMPTY_EVENT = { creatorId: '', title: '', description: '', summary: '',
+//#region Internal Imports
+import { CREATE_EVENT, DELETE_EVENT, GET_YOUR_EVENTS, UPDATE_EVENT } from "../gql/event.gql";
+//#endregion
+
+export const EMPTY_EVENT = { creatorId: '', title: '', description: '', summary: '',
                       type: '', from: '', to: '', location: '', price: '' }
 
-export const EventContext = createContext(null);
+export const EventsContext = createContext(null);
 
-export const EventProvider = ({children}) => {
-    const { id } = useParams(); 
-
-    //#region States
-    const [eventToDisplay, setEventToDisplay] = useState(EMPTY_EVENT);
+export const EventsProvider = ({children}) => {    
+    //#region States    
     const [event, setEvent] = useState(EMPTY_EVENT);
     const [events, setEvents] = useState([]);
     const [creatorId, setCreatorId] = useState(sessionStorage.getItem('uid') || "id");
@@ -26,12 +27,7 @@ export const EventProvider = ({children}) => {
     const { refetch: fetchingEvents } = useQuery(GET_YOUR_EVENTS, {
             variables: { creatorId },
             skip: !creatorId,
-    });    
-
-    const { refetch: fetchingEvent } = useQuery(GET_EVENT, {
-        variables: { id },
-        skip: !id,
-    });
+    });        
     //#endregion
 
     //#region Effects
@@ -47,20 +43,7 @@ export const EventProvider = ({children}) => {
         }
 
         fetch();
-    }, []);
-
-    useEffect(() => {
-        const fetch = async () => {
-            try {
-                const res = await fetchingEvent();
-                if(res?.data?.event?.id) setEventToDisplay(res?.data?.event);
-            } catch(error) {
-                console.error(`An error occurred while fecthing an event`, error);
-                throw new Error("An error occurred while fecthing an event - events.jsx");
-            }
-        }
-        fetch();
-    }, [id])
+    }, []);   
     //#endregion
 
     const initEvent = (event) => {  setEvent({...event}); }
@@ -104,16 +87,15 @@ export const EventProvider = ({children}) => {
     const emptyEvent = () => { setEvent(EMPTY_EVENT); }
 
     return (
-        <EventContext.Provider value={{eventToDisplay,
-                                       event, 
-                                       initEvent, 
-                                       events, 
-                                       initEvents, 
-                                       addEventToEvents, 
-                                       updateEventInEvents, 
-                                       removeEventFromEvents, 
-                                       emptyEvent}}>
+        <EventsContext.Provider value={{ event, 
+                                         initEvent, 
+                                         events, 
+                                         initEvents, 
+                                         addEventToEvents, 
+                                         updateEventInEvents, 
+                                         removeEventFromEvents, 
+                                         emptyEvent}}>
             {children}
-        </EventContext.Provider>
+        </EventsContext.Provider>
     )
 }

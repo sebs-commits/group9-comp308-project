@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 //#endregion
 
 //#region Internal Imports
-import { EventContext } from "../../../events-administration-app/shared/contexts/events";
 import { Label, Message } from "../resources";
+import { EventContext } from "../../../events-administration-app/shared/contexts/event";
 //#endregion
 
 const DisplaySelectedEventComponent = () => {

@@ -5,13 +5,13 @@ import { Container, Row, Col } from 'react-bootstrap';
 //#region Internal Imports
 import CreateUpdateEvent from './CreateUpdateEvent';
 import DisplayEvents from './DisplayEvents';
-import { EventProvider } from '../../shared/contexts/events';
+import { EventsProvider } from '../../shared/contexts/events';
 //#endregion
 
 const EventMagagement = () => {
     return (
         <>
-            <EventProvider>
+            <EventsProvider>
                 <Container fluid>
                     <Row className="d-flex justify-content-center">
                         {/**Display the create/update component */}
@@ -25,7 +25,7 @@ const EventMagagement = () => {
                         </Col>
                     </Row>          
                 </Container>
-            </EventProvider>
+            </EventsProvider>
         </>
   )
 }

@@ -16,5 +16,6 @@ export const Label = {
     TYPE: "Type",
     EVENT_DATE: "Event Date(s)",
     LOCATION: "Location",
-    PRICE: "Price"
+    PRICE: "Price",
+    WELCOME: "Welcome"    
 }
