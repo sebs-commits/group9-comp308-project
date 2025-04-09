@@ -7,7 +7,6 @@ import Container from "react-bootstrap/Container";
 import NewsList from "./NewsList";
 
 import { CREATE_NEWS, GET_ALL_NEWS } from "../../shared/gql/news.gql";
-
 const CreateNews = () => {
   const navigate = useNavigate();
 
@@ -16,6 +15,7 @@ const CreateNews = () => {
   const [textBody, setTextBody] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [image, setImage] = useState(null);
 
   const [createNews, { loading }] = useMutation(CREATE_NEWS, {
     refetchQueries: [{ query: GET_ALL_NEWS }],
@@ -32,6 +32,7 @@ const CreateNews = () => {
           creatorId,
           headline,
           textBody,
+          image,
         },
       });
 
@@ -39,9 +40,31 @@ const CreateNews = () => {
 
       setHeadline("");
       setTextBody("");
+      setImage(null);
     } catch (error) {
       console.error("Error creating news:", error);
       setError("Failed to create news. Please try again.");
+    }
+  };
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        console.warn("Please select an image file.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+      };
+      reader.onerror = () => {
+        console.error("Error reading file");
+        setImage(null);
+        setError("Failed to read image file.");
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImage(null);
     }
   };
 
@@ -74,6 +97,26 @@ const CreateNews = () => {
             placeholder="Enter news content"
             required
           />
+        </Form.Group>
+
+        <Form.Group controlId="newsImageInput" className="mt-3">
+          <Form.Label>Upload Image (Optional)</Form.Label>
+          <Form.Control
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+          {image && (
+            <img
+              src={image}
+              alt="Preview"
+              style={{
+                maxWidth: "200px",
+                maxHeight: "200px",
+                marginTop: "10px",
+              }}
+            />
+          )}
         </Form.Group>
 
         <div>
