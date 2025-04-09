@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from '@apollo/client';
 import { Carousel, Button, Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 //#endregion
 
 //#region Internal Imports
@@ -10,6 +11,7 @@ import { GET_NON_EXPIRED_EVENTS } from "../../../events-administration-app/share
 //#endregion
 
 const EventsCarouselComponent = () => {    
+    const navigate = useNavigate();
     const [events, setEvents] = useState([]);
 
     const { refetch: fetchingEvents } = useQuery(GET_NON_EXPIRED_EVENTS)
@@ -24,7 +26,7 @@ const EventsCarouselComponent = () => {
 
     const handleOnLearnMore = (e, id) => {
         e.preventDefault();
-        console.log('Events id: ', id);
+        navigate(`/displayevent/${id}`);
     }
 
     return <>
@@ -39,7 +41,7 @@ const EventsCarouselComponent = () => {
                                 <Card.Title>{e.headline}</Card.Title>
                                 <Card.Subtitle className="mb-2 text-muted">{e.type}</Card.Subtitle>
                                 <Card.Text> {e.summary} </Card.Text>
-                                <Button className='button' variant="link" onClick={(e) => { handleOnLearnMore(e, e.id) }}>{Label.LEARN_MORE}</Button>
+                                <Button className='button' variant="link" onClick={(event) => { handleOnLearnMore(event, e.id) }}>{Label.LEARN_MORE}</Button>
                             </Card.Body>
                         </Card>
                     </Carousel.Item>)

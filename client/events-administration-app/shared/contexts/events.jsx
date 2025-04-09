@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
-import { CREATE_EVENT, DELETE_EVENT, GET_YOUR_EVENTS, UPDATE_EVENT } from "../gql/event.gql";
+import { CREATE_EVENT, DELETE_EVENT, GET_EVENT, GET_YOUR_EVENTS, UPDATE_EVENT } from "../gql/event.gql";
 import { useMutation, useQuery } from "@apollo/client";
+import { useParams } from "react-router-dom";
 
 const EMPTY_EVENT = { creatorId: '', title: '', description: '', summary: '',
                       type: '', from: '', to: '', location: '', price: '' }
@@ -8,7 +9,10 @@ const EMPTY_EVENT = { creatorId: '', title: '', description: '', summary: '',
 export const EventContext = createContext(null);
 
 export const EventProvider = ({children}) => {
+    const { id } = useParams(); 
+
     //#region States
+    const [eventToDisplay, setEventToDisplay] = useState(EMPTY_EVENT);
     const [event, setEvent] = useState(EMPTY_EVENT);
     const [events, setEvents] = useState([]);
     const [creatorId, setCreatorId] = useState(sessionStorage.getItem('uid') || "id");
@@ -22,9 +26,15 @@ export const EventProvider = ({children}) => {
     const { refetch: fetchingEvents } = useQuery(GET_YOUR_EVENTS, {
             variables: { creatorId },
             skip: !creatorId,
+    });    
+
+    const { refetch: fetchingEvent } = useQuery(GET_EVENT, {
+        variables: { id },
+        skip: !id,
     });
     //#endregion
 
+    //#region Effects
     useEffect(() => {
         const fetch = async () => {
             try {
@@ -38,6 +48,20 @@ export const EventProvider = ({children}) => {
 
         fetch();
     }, []);
+
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                const res = await fetchingEvent();
+                if(res?.data?.event?.id) setEventToDisplay(res?.data?.event);
+            } catch(error) {
+                console.error(`An error occurred while fecthing an event`, error);
+                throw new Error("An error occurred while fecthing an event - events.jsx");
+            }
+        }
+        fetch();
+    }, [id])
+    //#endregion
 
     const initEvent = (event) => {  setEvent({...event}); }
 
@@ -80,7 +104,8 @@ export const EventProvider = ({children}) => {
     const emptyEvent = () => { setEvent(EMPTY_EVENT); }
 
     return (
-        <EventContext.Provider value={{event, 
+        <EventContext.Provider value={{eventToDisplay,
+                                       event, 
                                        initEvent, 
                                        events, 
                                        initEvents, 
