@@ -5,17 +5,20 @@ export const CREATE_NEWS = gql`
     $creatorId: String!
     $headline: String!
     $textBody: String!
+    $image: String
   ) {
     createNews(
       creatorId: $creatorId
       headline: $headline
       textBody: $textBody
+      image: $image
     ) {
       _id
       creatorId
       headline
       textBody
       creationDate
+      image
     }
   }
 `;
@@ -27,6 +30,19 @@ export const GET_ALL_NEWS = gql`
       headline
       textBody
       creationDate
+      image
+    }
+  }
+`;
+export const GET_NEWS = gql`
+  query GetNews($_id: ID!) {
+    news(_id: $_id) {
+      _id
+      creatorId
+      headline
+      textBody
+      creationDate
+      image
     }
   }
 `;

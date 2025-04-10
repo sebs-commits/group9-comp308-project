@@ -9,6 +9,7 @@ import React from "react";
 import CreateNewsComponent from "./components/CreateNews";
 import CreateUpdateRequestComponent from "./components/CreateUpdateRequests";
 import CreateUpdateAlertComponent from "./components/CreateUpdateAlerts";
+import NewsPage from "./components/NewsPage";
 
 function App() {
   return (
@@ -39,16 +40,20 @@ function App() {
 
           <div>
             <Routes>
-                  <Route index element={<CreateUpdateRequestComponent />} />
-                  <Route path="requests" element={<CreateUpdateRequestComponent/>}/>
-                  <Route path="alerts" element={<CreateUpdateAlertComponent/>}/>
-                  <Route path="news" element={<CreateNewsComponent/>}/>
-                </Routes>
-            </div>
-          </header>
-        </div>
-      </Router>
-  )
+              <Route index element={<CreateUpdateRequestComponent />} />
+              <Route
+                path="requests"
+                element={<CreateUpdateRequestComponent />}
+              />
+              <Route path="alerts" element={<CreateUpdateAlertComponent />} />
+              <Route path="news" element={<CreateNewsComponent />} />
+              <Route path="/news/:id" element={<NewsPage />} />
+            </Routes>
+          </div>
+        </header>
+      </div>
+    </Router>
+  );
 }
 
 export default App;
