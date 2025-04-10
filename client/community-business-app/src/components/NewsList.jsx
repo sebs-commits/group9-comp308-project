@@ -2,9 +2,15 @@ import React from "react";
 import { useQuery } from "@apollo/client";
 import { GET_ALL_NEWS } from "../../shared/gql/news.gql";
 import { format, parseISO } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const NewsList = () => {
   const { loading, error, data } = useQuery(GET_ALL_NEWS);
+
+  const navigate = useNavigate();
+  const handleNewsClick = (newsId) => {
+    navigate(`/news/${newsId}`);
+  };
 
   const formatCreationDate = (dateString) => {
     try {
@@ -25,7 +31,10 @@ const NewsList = () => {
       <div className="w-100 mx-auto">
         {data.allNews.map((newsItem) => (
           <div key={newsItem._id} className="col-md-6 mb-4 hover-card">
-            <div className="h-100 bg-transparent  d-flex flex-row">
+            <div
+              className="h-100 bg-transparent  d-flex flex-row"
+              onClick={() => handleNewsClick(newsItem._id)}
+            >
               <div className="card-body text-start flex-grow-1 hover-card p-2">
                 <div className="card-subtitle mb-2 text-muted d-flex justify-content-between small">
                   <span className="text-light">
