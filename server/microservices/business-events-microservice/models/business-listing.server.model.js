@@ -15,7 +15,10 @@ const businessListingSchema = new Schema({
 
     images: {type: [String], default: [] }, // Store multiple images as an array of base64 strings
 
-    discounts: { type: String, required: false }
+    discounts: { type: String, required: false },
+    
+    //for review (with ratings) later
+    //reviews: { type: [{ comment: String, rating: Number }], required: false },
 })
 
 const BusinessListingModel = mongoose.model('BusinessListing', businessListingSchema);

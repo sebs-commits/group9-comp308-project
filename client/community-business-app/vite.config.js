@@ -13,6 +13,7 @@ export default defineConfig({
         './CreateUpdateRequests': './src/components/CreateUpdateRequests',
         './CreateUpdateAlerts': './src/components/CreateUpdateAlerts',
         './CreateUpdateBusinessListing': './src/components/CreateUpdateBusinessListing',
+        './ViewBusinessListings': './src/components/ViewBusinessListings',
       },
       shared: [ 'react', 'react-dom', '@apollo/client', 'graphql', 'react-router-dom' ]
     })

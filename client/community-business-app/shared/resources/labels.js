@@ -21,6 +21,7 @@ export const Label = {
     SUCCESS: "Success",
     SUBTITLE: "Subtitle",
     BUSINESS_PAGE_TITLE: "Create/Update Business Listing",
+    VIEW_BUSINESS_LISTING_PAGE_TITLE: "View Business Listings",
     BUSINESS_TICKET_ID:"* Business Listing Ticket ID.",
     BUSINESS_TICKET_ID_DESCRIPTION: "* Business Listing Ticket ID. Please keep this for your records.",
     BUSINESS_NAME: "* Business Name",
