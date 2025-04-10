@@ -7,6 +7,7 @@ export const combinedTypeDefs = gql`
     headline: String!
     textBody: String!
     creationDate: String!
+    image: String
   }
 
   type Requests {
@@ -48,13 +49,19 @@ export const combinedTypeDefs = gql`
   }
 
   type Mutation {
-    createNews(creatorId: String!, headline: String!, textBody: String!): News
+    createNews(
+      creatorId: String!
+      headline: String!
+      textBody: String!
+      image: String
+    ): News
 
     updateNews(
       _id: ID!
       creatorId: String!
       headline: String!
       textBody: String!
+      image: String
     ): News
 
     deleteNews(_id: ID!): News
