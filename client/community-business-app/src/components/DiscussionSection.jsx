@@ -100,7 +100,7 @@ const DiscussionSection = ({ newsId }) => {
               <textarea
                 className="form-control bg-secondary text-light border-dark placeholder-light"
                 rows="3"
-                placeholder="comment..."
+                placeholder="Comment here..."
                 value={newDiscussionText}
                 onChange={(e) => setNewDiscussionText(e.target.value)}
                 required
@@ -162,7 +162,7 @@ const DiscussionSection = ({ newsId }) => {
                 <input
                   type="text"
                   className="form-control form-control-sm bg-secondary text-light border-dark placeholder-light"
-                  placeholder="reply..."
+                  placeholder="Reply here..."
                   value={replyTexts[discussion._id] || ""}
                   onChange={(e) =>
                     handleReplyChange(discussion._id, e.target.value)
