@@ -3,17 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { format, parseISO } from "date-fns";
 import { GET_NEWS } from "../../shared/gql/news.gql.js";
-import DiscussionSection from "./DiscussionSection";
 
 const NewsPage = () => {
-  const { id: newsId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const {
-    loading: newsLoading,
-    error: newsError,
-    data: newsData,
-  } = useQuery(GET_NEWS, { variables: { _id: newsId } });
+  const { loading, error, data } = useQuery(GET_NEWS, {
+    variables: { _id: id },
+  });
 
   const formatCreationDate = (dateValue) => {
     try {
@@ -24,58 +21,54 @@ const NewsPage = () => {
     }
   };
 
-  if (newsLoading)
-    return <div className="container mt-5 text-light">Loading news...</div>;
-  if (newsError)
+  if (loading) return <div className="container mt-5">loading</div>;
+  if (error)
     return (
-      <div className="container mt-5 text-danger">
-        Error loading news: {newsError.message}
+      <div className="container mt-5">
+        Error loading news article: {error.message}
       </div>
     );
 
-  const newsItem = newsData?.news;
+  const newsItem = data?.news;
+
   if (!newsItem)
-    return (
-      <div className="container mt-5 text-secondary">
-        News article not found.
-      </div>
-    );
+    return <div className="container mt-5">Woops article not found :/</div>;
 
   return (
     <div className="container mt-5 mb-5">
       <div className="row justify-content-center text-start">
         <div className="col-md-8">
-          <h1 className="display-5 mb-3 fw-bold text-light">
-            {newsItem.headline}
-          </h1>
-          <div className="mb-4 border-bottom pb-3 border-secondary">
-            <p className="text-secondary small mb-1">
+          {/* Headline*/}
+          <h1 className="display-5 mb-3 fw-bold">{newsItem.headline}</h1>
+
+          <div className="mb-4 border-bottom pb-3">
+            <p className="text-light small mb-1">
               By Author ID: {newsItem.creatorId}
             </p>
-            <p className="text-secondary small">
+            <p className="text-light small">
               Published on: {formatCreationDate(newsItem.creationDate)}
             </p>
           </div>
+
           {/* Main image */}
           {newsItem.image && (
-            <img
-              src={newsItem.image}
-              className="img-fluid mb-4 rounded"
-              alt={newsItem.headline}
-            />
+            <img src={newsItem.image} className="img-fluid mb-4" />
           )}
+
           {/* Body*/}
-          <div className="text-light">
+
+          <div className="">
             <p>{newsItem.textBody}</p>
           </div>
+
+          {/* Back btn */}
           <button
             type="button"
-            className="btn bg-success mt-4 mb-5 text-light"
+            className="btn btn-outline-secondary mt-4"
             onClick={() => navigate(-1)}
           >
-            Back to News List
+            <span>Back to News List</span>
           </button>
-          <DiscussionSection newsId={newsId} />
         </div>
       </div>
     </div>
