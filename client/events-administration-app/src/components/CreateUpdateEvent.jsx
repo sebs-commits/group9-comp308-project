@@ -23,6 +23,14 @@ export const EVENT_TYPE = {
     CLEAN_UP_DRIVES: "clean-up-drives"
 }
 
+// AI Query
+import { gql, useQuery } from "@apollo/client";
+const GET_ASSISTANCE = gql`
+    query RequestAssistance($prompt: String!) {
+        requestAssistance(prompt: $prompt)
+    }
+`;
+
 const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/;
 
 const CreateUpdateEvent = () => {
@@ -83,8 +91,61 @@ const CreateUpdateEvent = () => {
         }
     };       
 
+    // --- REQUEST SERVER'S AI QUERY
+    const { refetch: fetchAssistance } = useQuery(GET_ASSISTANCE, {
+        variables: { prompt: "" },
+        skip: true, // won't run automatically (useful don't remove)
+    });
+
+    // --- THIS IS THE FUNCTION I WANT TO FOCUS ON
+    const handleSuggestDates = async (e) => {
+        e.preventDefault();
+
+        const prompt = `
+            Given the event's 
+                title: "${event?.title}", 
+                description: "${event?.description}", 
+                summary: "${event?.summary}", 
+                type: "${event?.type}", 
+                price: "${event?.price}", 
+                and location: "${event?.location}", 
+            suggest the best from and to dates.
+            Keep in mind that the dates need to be past today's date (which is 04/20/2025), and the event length should not exceed 30 days.
+
+            Only respond in this exact format: "MM/DD/YYYY|MM/DD/YYYY|{insert explanation summary (minimum of 50 characters)}"
+        `;
+
+        displayToastMsg(Label.INFO, "Suggested dates can take a moment to load...", "info");
+        
+        try{
+            const { data } = await fetchAssistance({ prompt });
+
+            if (!data || !data.requestAssistance) {
+                throw new Error("No data returned from AI");
+            }
+
+            const resultText = data.requestAssistance;
+            console.log("AI Result:", resultText);
+
+            const [suggestedFrom, suggestedTo, explanation] = resultText.split("|");
+
+            if (!suggestedFrom || !suggestedTo || !explanation) { displayToastMsg(Label.ERROR, "AI response format incorrect", "danger"); return; }
+
+            initEvent({
+                ...event,
+                from: suggestedFrom,
+                to: suggestedTo
+            });
+
+            displayToastMsg(Label.INFO, ("Explanation: ", explanation.trim()), "info");
+        } catch (err) {
+            console.error("Error fetching assistance:", err);
+            displayToastMsg(Label.ERROR, "Failed to get suggested dates", "danger");
+        }
+    };
+
     return <>
-        <div className="pb-4">
+        <div className="pb-4" style={{ position: 'relative', left: '-60px' }}>
             <Form noValidate onSubmit={handleSubmit}>                
                 <Row className="d-flex justify-content-center align-items-center">
                     <Col xs={12} md={8}>
@@ -133,9 +194,11 @@ const CreateUpdateEvent = () => {
 
                         {/**Event's Start and End Dates */}
                         <Form.Group className="py-3" as={Col} controlId="dates">
-                            <InputGroup>                        
+                            <InputGroup>     
                                 <Form.Control required placeholder={Label.START_DATE} onChange={(e) => {initEvent({ ...event, from: e.target.value})}} value={event?.from}/>
                                 <Form.Control required placeholder={Label.END_DATE} onChange={(e) => {initEvent({ ...event, to: e.target.value})}} value={event?.to}/>
+
+                                <Button variant="primary" onClick={handleSuggestDates} style={{width: "100%"}}>Suggest Dates</Button>
                             </InputGroup>
                         </Form.Group>
 

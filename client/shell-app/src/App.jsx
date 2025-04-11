@@ -24,7 +24,7 @@ import { EventProvider } from '../../events-administration-app/shared/contexts/e
 export const EventManagement = lazy(() => import('eventsAndAdministrationApp/EventManagement'));
 const RegisterComponent = lazy(() => import('authenticationApp/RegisterComponent'));
 const LoginComponent = lazy(() => import('authenticationApp/LoginComponent'));
-const CreateUpdateNews = lazy(() => import('communityBusinessApp/CreateUpdateNews'));
+const CreateNews = lazy(() => import('communityBusinessApp/CreateNews'));//const CreateUpdateNews = lazy(() => import('communityBusinessApp/CreateUpdateNews'));
 const CreateUpdateRequests = lazy(() => import('communityBusinessApp/CreateUpdateRequests'))
 const CreateUpdateAlerts = lazy(() => import('communityBusinessApp/CreateUpdateAlerts'))
 const CreateUpdateBusinessListing = lazy(() => import('communityBusinessApp/CreateUpdateBusinessListing'))
@@ -97,7 +97,7 @@ function App() {
                     {token === 'auth' && <Route path="register" element={<RegisterComponent />} />}
                     {token !== 'auth' && <Route path="dashboard" element= { <Dashboard /> } />}
                     {token === 'auth' && <Route path="login" element={<LoginComponent />} />}
-                    {token !== 'auth' && <Route path="news" element={<CreateUpdateNews />}/>}
+                    {token !== 'auth' && <Route path="news" element={<CreateNews />}/>/*<CreateUpdateNews />}/>}*/}
                     {token !== 'auth' && <Route path="requests" element={<CreateUpdateRequests />}/>}
                     {token !== 'auth' && <Route path="alerts" element={<CreateUpdateAlerts />}/>}
                     {token === 'auth' && <Route path="*" element={<HomeComponent />} />}
