@@ -17,4 +17,8 @@ export const Message = {
     PHONE_NUMBER_INVALID: "The phone number must be in XXX-XXX-XXXX format.",
     BUSINESS_LISTING_UPDATED_SUCCESSFULLY: "Your business listing has been updated successfully.",
     MISSING_FIELDS: "Please enter all fields with an asterisk (*)",
+    NO_BUSINESS_LISTINGS_TO_DISPLAY: "There are no business listings to display.",
+    REVIEW_SUCCESSFUL: "Your review was sent successfully.",
+    REVIEW_NOT_SUCCESSFUL: "Your review was sent successfully.",
+    REVIEW_EMPTY: "Please enter a review before posting.",
 }

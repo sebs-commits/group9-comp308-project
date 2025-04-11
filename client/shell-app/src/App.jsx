@@ -25,7 +25,8 @@ const LoginComponent = lazy(() => import('authenticationApp/LoginComponent'));
 const CreateUpdateNews = lazy(() => import('communityBusinessApp/CreateUpdateNews'));
 const CreateUpdateRequests = lazy(() => import('communityBusinessApp/CreateUpdateRequests'))
 const CreateUpdateAlerts = lazy(() => import('communityBusinessApp/CreateUpdateAlerts'))
-const CreateUpdateBusinessListing = lazy(() => import('communityBusinessApp/CreateUpdateBusinessListing'))
+const CreateUpdateBusinessListing = lazy(() => import('communityBusinessApp/CreateUpdateBusinessListing'));
+const ViewBusinessListing = lazy(() => import('communityBusinessApp/ViewBusinessListings'));
 //#endregion
 
 function App() {
@@ -106,7 +107,8 @@ function App() {
                     {token === 'auth' && <Nav.Link as={Link} to="/register">{Label.REGISTER}</Nav.Link>}
                     {token !== 'auth' && <Nav.Link as={Link} to="/dashboard">{Label.DASHBOARD}</Nav.Link>}
                     {token !== 'auth' ? <Nav.Link as={Link} onClick={async () => await handleLogout()}>{Label.LOGOUT}</Nav.Link> : <Nav.Link as={Link} to="/login">{Label.LOGIN}</Nav.Link> }     
-                    {type === 'owner' && <Nav.Link as={Link} to="/listing">{Label.LISTING}</Nav.Link>}              
+                    {type === 'owner' && <Nav.Link as={Link} to="/listing">{Label.CREATE_LISTING}</Nav.Link>}   
+                    <Nav.Link as={Link} to="/viewlistings">{Label.VIEW_LISTINGS}</Nav.Link>        
                   </Nav>
                 </Navbar.Collapse>
               </Container>
@@ -119,6 +121,7 @@ function App() {
                     <Route index element={<HomeComponent />} />
                     <Route path="home" element={<HomeComponent />} />                  
                     <Route path="displayevent/:id" element={<EventProvider><DisplaySelectedEventComponent /></EventProvider> } /> 
+                    <Route path="/viewlistings" element={<ViewBusinessListing />} />
 
                     {/**Protected Routes */}
                     {token !== 'auth' && <Route path="event" element={<EventManagement /> }/>}
@@ -131,7 +134,6 @@ function App() {
                     {token === 'auth' && <Route path="*" element={<HomeComponent />} />}
                     {token !== 'auth' && <Route path="/listing" element={<CreateUpdateBusinessListing />} />}
 
-                    
                   </Routes>
                 </Suspense>
             </div>

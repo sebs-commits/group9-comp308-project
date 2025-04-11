@@ -27,7 +27,7 @@ app.use(
   })
 );
 
-//increase payload size to allow images to be inserted to the database as base64
+//increase payload size to allow images to be inserted to the database as base64 strings
 app.use(express.json({limit: "10mb"})); 
 
 app.use(express.urlencoded({ extended: true }));
