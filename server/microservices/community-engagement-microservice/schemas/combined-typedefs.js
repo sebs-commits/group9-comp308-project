@@ -23,6 +23,7 @@ export const combinedTypeDefs = gql`
     creatorId: String!
     title: String!
     subtitle: String!
+    createdAt: String!
   }
 
   type Discussion {
@@ -83,13 +84,14 @@ export const combinedTypeDefs = gql`
 
     deleteRequest(_id: ID!): Requests
 
-    createAlert(creatorId: String!, title: String!, subtitle: String!): Alert
+    createAlert(creatorId: String!, title: String!, subtitle: String!, createdAt: String!): Alert
 
     updateAlert(
       _id: ID!
       creatorId: String!
       title: String!
       subtitle: String!
+      createdAt: String!
     ): Alert
 
     deleteAlert(_id: ID!): Alert

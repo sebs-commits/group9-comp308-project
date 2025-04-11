@@ -55,7 +55,8 @@ const CreateUpdateAlertComponent = () => {
         }
 
         try {
-            await createAlert({ variables: { creatorId, title, subtitle } })    
+            const createdAt = new Date();
+            await createAlert({ variables: { creatorId, title, subtitle, createdAt } })    
             displayToastMsg(Label.SUCCESS, Message.ALERT_SAVED_SUCCESSFULLY, "success");
 
             setTitle('');
