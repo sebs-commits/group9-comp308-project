@@ -7,7 +7,7 @@ import EventsCarouselComponent from '../shared/components/EventsCarousel';
 import { Label } from '../shared/resources';
 //#endregion
 
-const HomeComponent = () => {
+const HomeComponent = () => {   
     return <>
         <Container className="justify-content-center">
 

@@ -16,9 +16,9 @@ export const alertResolvers = {
     },
 
     Mutation: {
-        createAlert: async (_, { creatorId, title, subtitle }) => {
+        createAlert: async (_, { creatorId, title, subtitle, createdAt }) => {
             try {
-                const newAlert = new AlertModel({ creatorId, title, subtitle });
+                const newAlert = new AlertModel({ creatorId, title, subtitle, createdAt });
                 return await newAlert.save();
             } catch(error) {
                 console.error(`An error occurred while creating a new alert`, error);
