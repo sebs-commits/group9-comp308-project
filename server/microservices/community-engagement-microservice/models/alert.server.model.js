@@ -3,11 +3,13 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const alertSchema = new Schema({
-    creatorId: { type: String, required: true }, //{ type: Schema.Types.ObjectId, ref: "User" }
+    creatorId: { type: String, required: true },
 
     title: { type: String, required: true },
 
-    subtitle: { type: String, required: true }
+    subtitle: { type: String, required: true },
+
+    createdAt: { type: Date, default: Date.now }
     
 })
 

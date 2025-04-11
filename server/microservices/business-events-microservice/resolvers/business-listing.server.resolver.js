@@ -5,7 +5,7 @@ export const businessListingResolvers = {
         listings: async () => {
             try {
                 const listings = await BusinessListingModel.find();
-                return listings;
+                return listings || [];
             } catch(error) {
                 console.error(`An error occurred while fetching business listings`, error);
                 throw new Error("Error in business listing query - business-listing.server.resolver.js");
@@ -23,13 +23,13 @@ export const businessListingResolvers = {
     },
     
     Mutation: {
-        createBusinessListing: async (_, { listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts }) => {    
+        createBusinessListing: async (_, { listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews }) => {    
             const newbusinessListing = new BusinessListingModel({
-                listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts
+                listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews
             });
             return await newbusinessListing.save();
         },
-        updateBusinessListing: async (_, { listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts }) => {
+        updateBusinessListing: async (_, { listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews }) => {
             const existingBusinessListing = await BusinessListingModel.findOne({ listingTicketId });
             if (!existingBusinessListing) {
                 throw new Error("Error, this businness listing doesn't exist in the DB.");
@@ -37,7 +37,7 @@ export const businessListingResolvers = {
 
             const existingListingTicketId = existingBusinessListing._id;
             return await BusinessListingModel.findByIdAndUpdate(existingListingTicketId, {
-                businessName, address, phoneNumber, businessDescription, images, discounts}, { new: true });
+                businessName, address, phoneNumber, businessDescription, images, discounts, reviews}, { new: true });
         },
         deleteBusinessListing: async (_, { listingTicketId }) => {
             const existingBusinessListing = await BusinessListingModel.findOne({ listingTicketId });

@@ -11,7 +11,7 @@ export const combinedTypeDefs = gql`
   }
 
   type Requests {
-    id: ID! 
+    id: ID!
     creatorId: String!
     title: String!
     type: String!
@@ -19,13 +19,13 @@ export const combinedTypeDefs = gql`
   }
 
   type Alert {
-    id: ID! 
+    id: ID!
     creatorId: String!
     title: String!
     subtitle: String!
+    createdAt: String!
   }
 
-  
   type Reply {
     _id: ID!
     creatorId: String!
@@ -38,9 +38,9 @@ export const combinedTypeDefs = gql`
     title: String!
     description: String!
     creatorId: String!
-    newsId: ID 
+    newsId: ID
     createdAt: String!
-    replies: [Reply!] 
+    replies: [Reply!]
   }
 
   type Query {
@@ -51,9 +51,9 @@ export const combinedTypeDefs = gql`
     requests: [Requests]
     request(_id: ID!): Requests
     alerts: [Alert]
-    alert(_id: ID!): Alert 
-    discussions: [Discussion] 
-    discussion(_id: ID!): Discussion 
+    alert(_id: ID!): Alert
+    discussions: [Discussion]
+    discussion(_id: ID!): Discussion
     discussionsByNewsId(newsId: ID!): [Discussion]
   }
 
@@ -66,13 +66,12 @@ export const combinedTypeDefs = gql`
     ): News
     updateNews(
       _id: ID!
-      creatorId: String! 
+      creatorId: String!
       headline: String!
       textBody: String!
       image: String
     ): News
     deleteNews(_id: ID!): News
-
 
     createRequest(
       creatorId: String!
@@ -81,19 +80,20 @@ export const combinedTypeDefs = gql`
       request: String!
     ): Requests
     updateRequest(
-      _id: ID! 
-      creatorId: String! 
+      _id: ID!
+      creatorId: String!
       title: String!
       type: String!
       request: String!
     ): Requests
     deleteRequest(_id: ID!): Requests 
-    createAlert(creatorId: String!, title: String!, subtitle: String!): Alert
+    createAlert(creatorId: String!, title: String!, subtitle: String!, createdAt: String!): Alert
     updateAlert(
-      _id: ID! 
-      creatorId: String! 
+      _id: ID!
+      creatorId: String!
       title: String!
       subtitle: String!
+      createdAt: String!
     ): Alert
     deleteAlert(_id: ID!): Alert
     createDiscussion(
@@ -102,13 +102,8 @@ export const combinedTypeDefs = gql`
       creatorId: String!
       newsId: ID
     ): Discussion
-    updateDiscussion(
-      _id: ID!
-      title: String!
-      description: String!
-    ): 
-    Discussion
-    deleteDiscussion(_id: ID!): Discussion 
+    updateDiscussion(_id: ID!, title: String!, description: String!): Discussion
+    deleteDiscussion(_id: ID!): Discussion
     addReplyToDiscussion(
       discussionId: ID!
       creatorId: String!

@@ -3,12 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 //#region External Imports
 import { Route, Routes, Link, useNavigate } from 'react-router-dom';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import Container from 'react-bootstrap/Container';
-import { Suspense, lazy, useEffect, useState } from 'react';
-import React from 'react';
+import { Navbar, Nav, Container, Modal, Button } from "react-bootstrap"
+import { Suspense, lazy, useEffect, useState, React } from 'react';
 import { useMutation } from "@apollo/client"
+import io from "socket.io-client";
 //#endregion
 
 //#region Internal Imports
@@ -27,7 +25,8 @@ const LoginComponent = lazy(() => import('authenticationApp/LoginComponent'));
 const CreateUpdateNews = lazy(() => import('communityBusinessApp/CreateUpdateNews'));
 const CreateUpdateRequests = lazy(() => import('communityBusinessApp/CreateUpdateRequests'))
 const CreateUpdateAlerts = lazy(() => import('communityBusinessApp/CreateUpdateAlerts'))
-const CreateUpdateBusinessListing = lazy(() => import('communityBusinessApp/CreateUpdateBusinessListing'))
+const CreateUpdateBusinessListing = lazy(() => import('communityBusinessApp/CreateUpdateBusinessListing'));
+const ViewBusinessListing = lazy(() => import('communityBusinessApp/ViewBusinessListings'));
 //#endregion
 
 function App() {
@@ -36,6 +35,8 @@ function App() {
   //#region States
   const [token, setToken] = useState(sessionStorage.getItem("token") || 'auth');
   const [type, setType] = useState(sessionStorage.getItem("type") || '');
+  const [alert, setAlert] = useState(null);
+  const [show, setShow] = useState(false);
   //#endregion
   
   const [logout] = useMutation(LOGOUT);
@@ -64,8 +65,36 @@ function App() {
     });
   }, [])
 
-  return (
-    
+  //Alert polling
+  useEffect(() => {
+    const socket = io("http://localhost:4003", {
+        withCredentials: true,
+        transports: ["websocket"], 
+    });
+
+    socket.on("connect", () => {
+        console.log("Connected to WebSocket server with ID:", socket.id);
+    });
+
+    socket.on("alert", (data) => {
+      setAlert(data[0]);
+      setShow(true);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from WebSocket server");
+    });
+
+    // Cleanup on unmount
+      return () => {
+        socket.disconnect();
+        console.log("Cleaned up WebSocket connection");
+      };
+  }, []);
+
+  const handleClose = () => setShow(false);  
+
+  return (    
         <div>
           <header>
             <Navbar bg="secondary" variant="dark" expand="lg">
@@ -78,7 +107,8 @@ function App() {
                     {token === 'auth' && <Nav.Link as={Link} to="/register">{Label.REGISTER}</Nav.Link>}
                     {token !== 'auth' && <Nav.Link as={Link} to="/dashboard">{Label.DASHBOARD}</Nav.Link>}
                     {token !== 'auth' ? <Nav.Link as={Link} onClick={async () => await handleLogout()}>{Label.LOGOUT}</Nav.Link> : <Nav.Link as={Link} to="/login">{Label.LOGIN}</Nav.Link> }     
-                    {type === 'owner' && <Nav.Link as={Link} to="/listing">{Label.LISTING}</Nav.Link>}              
+                    {type === 'owner' && <Nav.Link as={Link} to="/listing">{Label.CREATE_LISTING}</Nav.Link>}   
+                    <Nav.Link as={Link} to="/viewlistings">{Label.VIEW_LISTINGS}</Nav.Link>        
                   </Nav>
                 </Navbar.Collapse>
               </Container>
@@ -91,6 +121,7 @@ function App() {
                     <Route index element={<HomeComponent />} />
                     <Route path="home" element={<HomeComponent />} />                  
                     <Route path="displayevent/:id" element={<EventProvider><DisplaySelectedEventComponent /></EventProvider> } /> 
+                    <Route path="/viewlistings" element={<ViewBusinessListing />} />
 
                     {/**Protected Routes */}
                     {token !== 'auth' && <Route path="event" element={<EventManagement /> }/>}
@@ -103,11 +134,20 @@ function App() {
                     {token === 'auth' && <Route path="*" element={<HomeComponent />} />}
                     {token !== 'auth' && <Route path="/listing" element={<CreateUpdateBusinessListing />} />}
 
-                    
                   </Routes>
                 </Suspense>
             </div>
           </header>
+
+          <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>{alert?.title}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{alert?.subtitle}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>{Label.CLOSE}</Button>
+                </Modal.Footer>
+            </Modal> 
         </div>      
   )
 }
