@@ -100,7 +100,8 @@ const CreateUpdateBusinessComponent = () => {
                             phoneNumber: businessPhone,
                             businessDescription: businessDescription,
                             images: imageList, //pass the images
-                            discounts: businessDeals
+                            discounts: businessDeals,
+                            reviews: [] //no reviews on this page.
                         }
                     });
                     displayToastMsg(Label.SUCCESS, Message.BUSINESS_LISTING_UPDATED_SUCCESSFULLY, "success");
@@ -120,7 +121,8 @@ const CreateUpdateBusinessComponent = () => {
                             phoneNumber: businessPhone,
                             businessDescription: businessDescription,
                             images: imageList, //pass the images
-                            discounts: businessDeals
+                            discounts: businessDeals,
+                            reviews: [] //no reviews on this page.
                         }
                     });
                     displayToastMsg(Label.SUCCESS, Message.BUSINESS_LISTING_SAVED_SUCCESSFULLY, "success");
@@ -206,7 +208,7 @@ const CreateUpdateBusinessComponent = () => {
                         <Form.Label>{Label.BUSINESS_NAME}</Form.Label>
                         <Form.Control required
                                       type="text"
-                                      placeholder={Label.BUSINESS_NAME}
+                                      placeholder={Label.BUSINESS_NAME_DESCRIPTION}
                                       value={businessName}
                                       onChange={(e) => setBusinessName(e.target.value)}/>
                     </Form.Group>
@@ -216,7 +218,7 @@ const CreateUpdateBusinessComponent = () => {
                         <Form.Label>{Label.ADDRESS}</Form.Label>
                         <Form.Control required
                                       type="text"
-                                      placeholder={Label.ADDRESS}
+                                      placeholder={Label.ADDRESS_DESCRIPTION}
                                       value={businessAddress}
                                       onChange={(e) => setAddress(e.target.value)}/>
                     </Form.Group>
@@ -226,7 +228,7 @@ const CreateUpdateBusinessComponent = () => {
                         <Form.Label>{Label.BUSINESS_PHONE}</Form.Label>
                         <Form.Control required
                                       type="text"
-                                      placeholder={Label.BUSINESS_PHONE}
+                                      placeholder={Label.BUSINESS_PHONE_DESCRIPTION}
                                       value={businessPhone}
                                       onChange={(e) => setBusinessPhone(e.target.value)}/>
                     </Form.Group>
@@ -238,7 +240,7 @@ const CreateUpdateBusinessComponent = () => {
                                       as="textarea" 
                                       rows={3} 
                                       value={businessDescription}
-                                      placeholder={Label.BUSINESS_DESCRIPTION}
+                                      placeholder={Label.BUSINESS_DESCRIPTION_DESCRIPTION}
                                       onChange={(e) => setBusinessDescription(e.target.value)}/>
                     </Form.Group>     
 

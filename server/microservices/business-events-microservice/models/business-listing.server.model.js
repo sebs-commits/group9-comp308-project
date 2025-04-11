@@ -17,8 +17,7 @@ const businessListingSchema = new Schema({
 
     discounts: { type: String, required: false },
     
-    //for review (with ratings) later
-    //reviews: { type: [{ comment: String, rating: Number }], required: false },
+    reviews: { type: [String], required: false },
 })
 
 const BusinessListingModel = mongoose.model('BusinessListing', businessListingSchema);

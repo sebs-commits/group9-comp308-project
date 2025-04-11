@@ -1,231 +1,212 @@
 //#region External Imports
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import { FaUndo, FaPaperPlane } from "react-icons/fa";
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-
+import { Table, Button } from 'react-bootstrap';
+import { Form, Row, Col } from 'react-bootstrap';
+import { FaPaperPlane } from 'react-icons/fa';
 //#endregion
 
 //#region Internal Imports
-import { GET_BUSINESS_LISTINGS, UPDATE_BUSINESS_LISTING } from '../../shared/gql/businesslisting.gql.js'; 
+import { GET_BUSINESS_LISTINGS, UPDATE_BUSINESS_LISTING, DELETE_BUSINESS_LISTING } from '../../shared/gql/businesslisting.gql.js'; 
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
 import { Label, Message } from '../../shared/resources';
 //#endregion
 
 const ViewBusinessComponent = () => {
 
-        const navigate = useNavigate();
+    //get user type from session storage
+    const [type, setType] = useState(sessionStorage.getItem('type') || '');
+    //get user token from session storage to see if user is logged in
+    const [token, setToken] = useState(sessionStorage.getItem("token") || 'auth');
 
-        //#region States
-        //const [businessListingId, setBusinessListingId] = useState('');
-        //const [businessName, setBusinessName] = useState('');
-        //const [businessAddress, setAddress] = useState('');
-        //const [businessPhone, setBusinessPhone] = useState('');
-        //const [businessDescription, setBusinessDescription] = useState('');
-        //const [businessDeals, setBusinessDeals] = useState('');
 
-        const [message, setMessage] = useState("");
-        const [header, setHeader] = useState("");
-        const [bg, setBg] = useState("");        
-        const [showA, setShowA] = useState(false);
-        //#endregion
-        
-        //#region CustomToast Related
-        const toggleShowA = () => setShowA(!showA);
-        const displayToastMsg = (header, message, bg) => {
-            toggleShowA();
-            setHeader(header);
-            setMessage(message);
-            setBg(bg);
+
+    const navigate = useNavigate();
+
+    //#region States
+    const [message, setMessage] = useState("");
+    const [header, setHeader] = useState("");
+    const [bg, setBg] = useState("");        
+    const [showA, setShowA] = useState(false);
+    //#endregion
+
+    const [review, setReview] = useState(""); // state for the reviews
+
+
+    const [businessListings, setBusinessListings] = useState([]); // state for the business listings
+    const [deleteListing] = useMutation(DELETE_BUSINESS_LISTING);
+    const [updateBusinessListing] = useMutation(UPDATE_BUSINESS_LISTING);
+    const {loading, error, data, refetch} = useQuery(GET_BUSINESS_LISTINGS);
+
+    //#region CustomToast Related
+    const toggleShowA = () => setShowA(!showA);
+    const displayToastMsg = (header, message, bg) => {
+        toggleShowA();
+        setHeader(header);
+        setMessage(message);
+        setBg(bg);
+    }
+    //#endregion
+
+    useEffect(() => {
+        const fetch = async () => {
+            const res = await refetch();
+            const data = res?.data || [];
+            const businessListings = data.listings || []; 
+            setBusinessListings(businessListings);
         }
-        //#endregion
-        //const [createBusinessListing] = useMutation(CREATE_BUSINESS_LISTING);
-        //const [updateBusinessListing] = useMutation(UPDATE_BUSINESS_LISTING);
-        //const { data, refetch } = useQuery(GET_BUSINESS_LISTING, {
-            //variables: { listingTicketId: businessListingId },
-            //skip: !businessListingId 
-        //});
-        //#region GQL
+        fetch();
+    }, [data]);
 
 
-        //makes sure to send deals to the news or dashboard?
-        // or have them visible to users on the view business listing page
+    const handleDelete = async function (listingTicketId) {
+        await deleteListing({ variables: { listingTicketId } });
+        const res = await refetch();
+        const data = res?.data || [];
+        const businessListings = data.listings || []; 
+        setBusinessListings(businessListings);
+    };
 
-        //creeate a business listing later...
 
-        //#endregion
+    const handleSubmit = async (e, businessListingId, businessName, businessAddress, businessPhone, businessDescription, imageList, businessDeals, reviews) => {
+        e.preventDefault();
+   
+        //check if the review is blank. If so, error message
+        if(review == "") {
+            displayToastMsg(Label.ERROR, Message.REVIEW_EMPTY, "danger");
+            return;
+        }
 
-        /*const handleSubmit = async (event) => {
-            event.preventDefault();
-            // Validate phone number
-            if (!phoneNumberRegex.test(businessPhone)) {
-                displayToastMsg(Label.ERROR, Message.PHONE_NUMBER_INVALID, "danger");
-                return;
-            }
-            // Validate required fields
-            if (businessListingId == "" || businessName == "" || businessAddress == "" || businessPhone == "" || businessDescription == "") {
-                displayToastMsg(Label.ERROR, Message.MISSING_FIELDS, "danger");
-                return;
-            }
-
-            //makes sure imageList is not null
-            const imageList = [getImage1, getImage2, getImage3].filter((image) => image !== null);
-
-            //validate if businessListingId already exists in the DB. If so, update it. If not, create a new one.
-            //suggestion from copilot 2025-04-02: 'why does refetch({businessListingId}) return a nothing?'})'
-            if(refetch({ listingTicketId: businessListingId }) && data && data.listing) {
-            //end of suggestion
-                // Business Listing ID already exists so then update the business listing
-                try {
-                    updateBusinessListing({
-                        variables: {
-                            listingTicketId: businessListingId,
-                            businessName: businessName,
-                            address: businessAddress,
-                            phoneNumber: businessPhone,
-                            businessDescription: businessDescription,
-                            images: imageList, //pass the images
-                            discounts: businessDeals
-                        }
-                    });
-                    displayToastMsg(Label.SUCCESS, Message.BUSINESS_LISTING_UPDATED_SUCCESSFULLY, "success");
-                } catch(error) {
-                    displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
-                    console.error(`An error occurred while creating or updating a businessListing: `, error);
-                    throw error;
-                }            
-            } else {
-                //create a new business listing
-                try {
-                    createBusinessListing({
-                        variables: {
-                            listingTicketId: businessListingId,
-                            businessName: businessName,
-                            address: businessAddress,
-                            phoneNumber: businessPhone,
-                            businessDescription: businessDescription,
-                            images: imageList, //pass the images
-                            discounts: businessDeals
-                        }
-                    });
-                    displayToastMsg(Label.SUCCESS, Message.BUSINESS_LISTING_SAVED_SUCCESSFULLY, "success");
-                } catch(error) {
-                    displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
-                    console.error(`An error occurred while creating or updating a businessListing: `, error);
-                    throw error;
+        try {
+            updateBusinessListing({
+                variables: {
+                    listingTicketId: businessListingId,
+                    businessName: businessName,
+                    address: businessAddress,
+                    phoneNumber: businessPhone,
+                    businessDescription: businessDescription,
+                    images: imageList, //pass the images
+                    discounts: businessDeals,
+                    reviews: [...reviews, review] //pass the reviews
                 }
-            }
+            });
+            displayToastMsg(Label.SUCCESS, Message.REVIEW_SUCCESSFUL, "success");
+            setReview('');
+        } catch(error) {
+            displayToastMsg(Label.ERROR, Message.REVIEW_NOT_SUCCESSFUL, "danger");
+            console.error(`An error occurred while sending a review: `, error);
+            throw error;
+        }            
+    };       
 
-                // Reset fields
-                setBusinessListingId('');
-                setBusinessName('');
-                setAddress('');
-                setBusinessPhone('');
-                setBusinessDescription('');
-                setBusinessDeals('');
-                setGetImage1(null);
-                setGetImage2(null);
-                setGetImage3(null);
-                navigate("/dashboard"); //go back to dashboard after submitting the form
-        };*/
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        console.error("Error fetching business listings:", error);
+        return <p>Error loading business listings.</p>;
+    }
 
     return <>
-        <div className="px-5 pb-4">
-            <h4 className="pt-4 pb-2">{Label.VIEW_BUSINESS_LISTING_PAGE_TITLE}</h4>
-            <Form noValidate onSubmit="">{/*add handle submit later*/}
-                <Row>
-
-                    {/**Business Listing Ticket ID */}
-                    <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="businessListingId">
-                        <Form.Label>{Label.BUSINESS_TICKET_ID}</Form.Label>
-                        <Form.Text>{}</Form.Text>
-                    </Form.Group>
-
-                    {/**Business Name */}
-                    <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="businessName">
-                        <Form.Label>{Label.BUSINESS_NAME}</Form.Label>
-                        <Form.Text>{}</Form.Text>
-                    </Form.Group>
-
-                     {/**Adress */}
-                     <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="businessAddress">
-                        <Form.Label>{Label.ADDRESS}</Form.Label>
-                        <Form.Text>{}</Form.Text>
-                    </Form.Group>
-
-                     {/**Phone Number */}
-                     <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="businessPhone">
-                        <Form.Label>{Label.BUSINESS_PHONE}</Form.Label>
-                        <Form.Text>{}</Form.Text>
-                    </Form.Group>
-
-                    {/**Business Description */}
-                    <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="businessDescription">
-                        <Form.Label>{Label.BUSINESS_DESCRIPTION}</Form.Label>
-                        <Form.Text>{}</Form.Text>
-                    </Form.Group>     
-
-                     <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="imageList">
-                        <Form.Label>{Label.IMAGE_LIST}</Form.Label>
-
-                        {/*Copilot boilerplate suggestion on 2025-04-02" 'how could I add a 1 row 3 column table at line 149?' and 
-                        'then how could I add images in each cell?'. Mofifications include each table cell contents, removing the thead elements,
-                        and cell as adding cells and content as needed*/}
-                        <Table bordered className="mt-2">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <img 
-                                            src="" 
-                                            alt="Image 1" 
-                                            style={{ width: "100%", height: "auto" }} 
-                                        />
-                                    </td>
-                                    <td>
-                                        <img 
-                                            src="" 
-                                            alt="Image 2" 
-                                            style={{ width: "100%", height: "auto" }} 
-                                        />
-                                    </td>
-                                    <td>
-                                        <img 
-                                            src=""
-                                            alt="Image 3" 
-                                            style={{ width: "100%", height: "auto" }} 
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>  
-                        {/*End of suggestion on 2025-04-02*/}
-                    </Form.Group>
-
-                    {/**Business Deals List */}
-                    <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="businessDeals">
-                        <Form.Label>{Label.BUSINESS_DEALS}</Form.Label>
-                        <Form.Text>{}</Form.Text>
-                    </Form.Group>    
-                </Row>
-               
-                <Button variant="secondary" className="button mx-2 my-2" onClick={() => { navigate("/dashboard"); }}>
-                    <FaUndo />
-                    <span style={{paddingLeft: "5px"}} >{Label.BACK}</span>                    
-                </Button>
-
-                <Button type="submit" variant="success" className="button mx-2 my-2">
-                    <FaPaperPlane />
-                    <span style={{paddingLeft: "5px"}}>{Label.SUBMIT} </span>
-                </Button>
-            </Form>
-
-            <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>
-        </div>  
+            <div className="d-flex flex-wrap justify-content-center">
+              {businessListings?.map((listing, index) => (
+                <Table className="table-hover table-bordered w-75 mt-3" key={index}>
+                <tbody key={index}>
+                <tr>
+                  <td><b>Business Name:</b> {listing.businessName}</td>
+                  <td><b>Address:</b> {listing.address}</td>
+                  <td><b>Phone Number:</b> {listing.phoneNumber}</td>
+                </tr>
+                <tr>
+                    <td colSpan="2" ><b>Description:</b> {listing.businessDescription}</td>
+                    <td><b>Discounts:</b> {listing.discounts}</td>
+                </tr>
+                <tr>
+                    <td colSpan="3" className="text-center">
+                        <img 
+                            src={listing.images[0]} 
+                            alt="Image 1" 
+                            style={{ width: "30%", height: "auto", margin: "0 5px"}} 
+                        />
+                        <img 
+                            src={listing.images[1]} 
+                            alt="Image 2" 
+                            style={{ width: "30%", height: "30%", margin: "0 5px"}} 
+                        />
+                        <img 
+                            src={listing.images[2]} 
+                            alt="Image 3" 
+                            style={{ width: "30%", height: "30%", margin: "0 5px" }} 
+                        />
+                    </td>
+                </tr>
+                {/*List of reviews here*/}
+                <tr>
+                    <td colSpan="3">
+                        <b>Reviews:</b>
+                    </td>
+                </tr>
+                
+                {listing.reviews.map((review, index) => (
+                    <tr key={index}>
+                        <td colSpan="3">
+                            {review}
+                        </td>
+                    </tr>
+                ))}
+                <tr>
+                    <td colSpan="3">
+                        {}
+                    </td>
+                </tr>
+                {/*Enter reviews here*/}
+                {/*User must be logged in to provide a review*/}
+                {token !== 'auth' && 
+                <tr>
+                    <td colSpan="3">
+                    
+                        <Form noValidate onSubmit={(e) => handleSubmit(e, listing.listingTicketId, listing.businessName, listing.address, listing.phoneNumber, listing.businessDescription, listing.images, listing.discounts, listing.reviews)}>
+                            <Row>
+                                {/*User has to log in to provide a review*/}
+                                
+                                <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="businessReviews">
+                                    <Form.Label><b>Enter Review:</b></Form.Label>
+                                    <Form.Control required
+                                        type="text"
+                                        placeholder={Label.ENTER_REVIEW_DESCRIPTION}
+                                        value={review}
+                                        onChange={(e) => setReview(e.target.value)}
+                                        
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault(); // Prevent the default "Enter" key behavior
+                                            }
+                                        }}/>
+                                        {/*Suggestions from Copilot for onKeyDown() on 2025-04-10 after prompt 'Why is preventDefault() not working?'*/}
+                                </Form.Group>
+                                <Button type="submit" variant="success" className='m-1' style={{ width: 'auto', height: 'auto' }}>
+                                    {Label.SUBMIT} 
+                                </Button>
+                                
+                            </Row>
+                        </Form>
+                    </td>
+                </tr>
+                }
+                {type === 'owner' && (
+                    <tr>
+                        <td colSpan="5" className='text-center'>
+                            <Button variant='danger' className='m-1' onClick={() => handleDelete(listing.listingTicketId)}>{Label.DELETE_BTN}</Button>
+                        </td>
+                    </tr>
+                )}
+                </tbody>
+                </Table>
+              ))}
+          </div>
+        <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>
     </>
 }
 

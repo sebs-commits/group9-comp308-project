@@ -11,6 +11,7 @@ export const GET_BUSINESS_LISTING = gql`
             businessDescription
             images
             discounts
+            reviews
         } 
     }
 `;
@@ -27,13 +28,14 @@ export const GET_BUSINESS_LISTINGS = gql`
             businessDescription
             images
             discounts
+            reviews
         }
     }
 `;
 
 export const CREATE_BUSINESS_LISTING = gql`
-    mutation CreateBusinessListing($listingTicketId: String!, $businessName: String!, $address: String!, $phoneNumber: String!, $businessDescription: String!, $images: [String], $discounts: String!) {
-        createBusinessListing(listingTicketId: $listingTicketId, businessName: $businessName, address: $address, phoneNumber: $phoneNumber, businessDescription: $businessDescription, images: $images, discounts: $discounts) {
+    mutation CreateBusinessListing($listingTicketId: String!, $businessName: String!, $address: String!, $phoneNumber: String!, $businessDescription: String!, $images: [String], $discounts: String, $reviews: [String]) {
+        createBusinessListing(listingTicketId: $listingTicketId, businessName: $businessName, address: $address, phoneNumber: $phoneNumber, businessDescription: $businessDescription, images: $images, discounts: $discounts, reviews: $reviews) {
             listingTicketId
             businessName
             address
@@ -41,14 +43,15 @@ export const CREATE_BUSINESS_LISTING = gql`
             businessDescription
             images
             discounts
+            reviews
         }
     }
 `;
 
 
 export const UPDATE_BUSINESS_LISTING = gql`
-    mutation UpdateBusinessListing($listingTicketId: String!, $businessName: String!, $address: String!, $phoneNumber: String!, $businessDescription: String!, $images: [String], $discounts: String!) {
-        updateBusinessListing(listingTicketId: $listingTicketId, businessName: $businessName, address: $address, phoneNumber: $phoneNumber, businessDescription: $businessDescription, images: $images, discounts: $discounts) {
+    mutation UpdateBusinessListing($listingTicketId: String!, $businessName: String!, $address: String!, $phoneNumber: String!, $businessDescription: String!, $images: [String], $discounts: String, $reviews: [String]) {
+        updateBusinessListing(listingTicketId: $listingTicketId, businessName: $businessName, address: $address, phoneNumber: $phoneNumber, businessDescription: $businessDescription, images: $images, discounts: $discounts, reviews: $reviews) {
             id    
             listingTicketId
             businessName
@@ -57,6 +60,7 @@ export const UPDATE_BUSINESS_LISTING = gql`
             businessDescription
             images
             discounts
+            reviews
         }
     }
 `;
@@ -72,6 +76,7 @@ export const DELETE_BUSINESS_LISTING = gql`
             businessDescription
             images
             discounts
+            reviews
         }
     }
 `;
