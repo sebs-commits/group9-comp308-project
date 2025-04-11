@@ -121,7 +121,7 @@ const ViewBusinessComponent = () => {
                 </tr>
                 <tr>
                     <td colSpan="2" ><b>Description:</b> {listing.businessDescription}</td>
-                    <td><b>Discounts:</b> {listing.discounts}</td>
+                    <td><b>Discounts/Offers/Deals: </b>{listing.discounts}</td>
                 </tr>
                 <tr>
                     <td colSpan="3" className="text-center">
