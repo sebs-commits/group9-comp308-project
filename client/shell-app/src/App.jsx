@@ -99,7 +99,9 @@ function App() {
           <header>
             <Navbar bg="secondary" variant="dark" expand="lg">
               <Container>
-                <Navbar.Brand as={Link} to="/home">{Label.HOME}</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/home">
+                  <img src="src/assets/Logos.svg" alt="Logo" width="auto" height="50" />
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                   <Nav className="mr-auto">
