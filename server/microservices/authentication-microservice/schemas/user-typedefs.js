@@ -6,13 +6,16 @@ export const userTypeDefs = gql`
         username: String!
         email: String!
         type: String!
-        password: String
+        password: String!
+        interests: String
+        location: String
+        participation: String
     }
 
     type Query {
         _microservice: String
 
-        user(id: ID!): User
+        user(id: String!): User
     }
 
     type Mutation {
@@ -20,5 +23,6 @@ export const userTypeDefs = gql`
         updateUser(id: ID!, username: String!, email: String!, type: String!): User
         loginUser(username: String!, password: String!): [String!]!\
         logout: String
+        updateVolunteer(id: ID!, interests: String!, location: String!, participation: String!): User
     }
 `;

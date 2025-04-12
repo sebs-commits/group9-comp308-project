@@ -17,6 +17,7 @@ app.use(
       "http://localhost:3001",
       "http://localhost:3002",
       "http://localhost:3003",
+      "http://localhost:3004",
     ],
     credentials: true,
   })
@@ -49,6 +50,7 @@ const startGateway = async () => {
     await checkService("http://localhost:4001/graphql");
     await checkService("http://localhost:4002/graphql");
     await checkService("http://localhost:4003/graphql");
+    await checkService("http://localhost:4004/graphql");
 
     // Configure the Apollo Gateway
     const gateway = new ApolloGateway({
@@ -57,6 +59,7 @@ const startGateway = async () => {
           { name: "auth", url: "http://localhost:4001/graphql" },
           { name: "business", url: "http://localhost:4002/graphql" },
           { name: "community", url: "http://localhost:4003/graphql" },
+          { name: "ai", url: "http://localhost:4004/graphql" },
         ],
       }),
     });

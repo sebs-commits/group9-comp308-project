@@ -5,6 +5,7 @@ export const Label = {
     REGISTER: "Register",
     LOGOUT: "Logout",
     LOGIN: "Login",
+    VOLUNTEER: "Volunteer",
     LOADING: "Loading...",
     DASHBOARD: "Dashboard",
     NEWS: "News",

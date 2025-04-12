@@ -50,6 +50,15 @@ export const userResolvers = {
         },
         logout: async (_, __, { res }) => {
             return 'Logged out successfully!';
+        },
+
+        updateVolunteer: async (_, { id, interests, location, participation }) => {
+            try {
+                await UserModel.findByIdAndUpdate(id, { interests, location, participation }, { new: true });
+            } catch(error) {
+                console.error(`An error occurred while updating a user: `, error);
+                throw new Error("Error in updateVolunteer - user.server.resolver.js");
+            }
         }
     }
 }
