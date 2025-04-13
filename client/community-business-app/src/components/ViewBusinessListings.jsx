@@ -1,7 +1,7 @@
 //#region External Imports
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { Table, Button } from 'react-bootstrap';
 import { Form, Row, Col } from 'react-bootstrap';
 import { FaPaperPlane } from 'react-icons/fa';
@@ -12,6 +12,14 @@ import { GET_BUSINESS_LISTINGS, UPDATE_BUSINESS_LISTING, DELETE_BUSINESS_LISTING
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
 import { Label, Message } from '../../shared/resources';
 //#endregion
+
+// AI Query
+const GET_ASSISTANCE = gql`
+    query RequestAssistance($prompt: String!) {
+        requestAssistance(prompt: $prompt)
+    }
+`;
+
 
 const ViewBusinessComponent = () => {
 
@@ -98,7 +106,55 @@ const ViewBusinessComponent = () => {
             console.error(`An error occurred while sending a review: `, error);
             throw error;
         }            
-    };       
+    }; 
+    
+    // --- REQUEST SERVER'S AI QUERY
+    const { refetch: fetchAssistance } = useQuery(GET_ASSISTANCE, {
+        variables: { prompt: "" },
+        skip: true, // won't run automatically (useful don't remove)
+    });
+
+    const [summaryText, setSummaryText] = useState("");
+
+    // --- THIS IS THE FUNCTION I WANT TO FOCUS ON
+    const handleReviewSummary = async (e, listing) => {
+        e.preventDefault();
+
+        const prompt = `
+            Given the listing
+                businessName: "${listing?.businessName}", 
+                businessDescription: "${listing?.businessDescription}", 
+            and it's reviews:
+            ${listing?.reviews?.map((review) => `   - ${review}`).join('\n')}
+
+            provide a summary of the reviews, and point out the major points of feedback.
+            Keep in mind rude or simple feedback should not be focused on, and the summary should be strictly professional.
+            The summary should be less than 100 words.
+        `;
+
+        displayToastMsg(Label.INFO, "Summarized Feedback can take a moment to load...", "info");
+
+        try{
+            const { data } = await fetchAssistance({ prompt });
+
+            if (!data || !data.requestAssistance) {
+                throw new Error("No data returned from AI");
+            }
+
+            const summaryText = data.requestAssistance;
+            console.log("AI Result:", summaryText);
+
+            if (!summaryText) { displayToastMsg(Label.ERROR, "AI response gave incorrect output", "danger"); return; }
+
+            setSummaryText(summaryText);
+
+            displayToastMsg(Label.SUCCESS, "AI response received", "success");
+        } catch (err) {
+            console.error("Error fetching assistance:", err);
+            displayToastMsg(Label.ERROR, "Failed to get suggested dates", "danger");
+        }
+    };
+
 
     if (loading) {
         return <p>Loading...</p>;
@@ -195,6 +251,17 @@ const ViewBusinessComponent = () => {
                     </td>
                 </tr>
                 }
+                {type === 'owner' && (
+                    <tr>
+                        <td colSpan="3">
+                        
+                            <div className="d-flex align-items-start flex-wrap">
+                                <textarea className="form-control mb-2" style={{ flex: 1, minHeight: '100px', resize: 'vertical' }} value={summaryText} readOnly />
+                                <Button variant="primary" className="ms-2 mb-2" style={{ whiteSpace: 'nowrap', height: 'fit-content' }} onClick={(e) => handleReviewSummary(e, listing)}>Summarize Feedback</Button>
+                            </div>
+                        </td>
+                    </tr>
+                )}
                 {type === 'owner' && (
                     <tr>
                         <td colSpan="5" className='text-center'>

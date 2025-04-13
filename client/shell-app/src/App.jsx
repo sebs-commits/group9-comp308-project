@@ -40,6 +40,8 @@ const ViewBusinessListing = lazy(() =>
   import("communityBusinessApp/ViewBusinessListings")
 );
 const NewsPage = lazy(() => import("communityBusinessApp/NewsPage"));
+
+const UpdateVolunteerComponent = lazy(() => import('authenticationApp/UpdateVolunteerComponent'));
 //#endregion
 
 function App() {
@@ -143,6 +145,13 @@ function App() {
                     {Label.LOGIN}
                   </Nav.Link>
                 )}
+
+                {type === 'resident' && (
+                  <Nav.Link as={Link} to="/volunteer">
+                    {Label.VOLUNTEER}
+                  </Nav.Link>
+                )}
+
                 {type === "owner" && (
                   <Nav.Link as={Link} to="/listing">
                     {Label.CREATE_LISTING}
@@ -202,6 +211,13 @@ function App() {
                 <Route
                   path="/listing"
                   element={<CreateUpdateBusinessListing />}
+                />
+              )}
+
+              {token !== 'auth' && (
+                <Route 
+                  path="/volunteer" 
+                  element={<UpdateVolunteerComponent />} 
                 />
               )}
             </Routes>

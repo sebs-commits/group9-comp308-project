@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import { format, parseISO } from "date-fns";
+import { Button } from 'react-bootstrap';
 import {
   GET_DISCUSSIONS_BY_NEWS_ID,
   CREATE_DISCUSSION,
   ADD_REPLY_TO_DISCUSSION,
 } from "../../shared/gql/discussions.gql.js";
+import { Label, Message } from '../../shared/resources';
 
 const formatCreationDate = (dateValue) => {
   try {
@@ -15,6 +17,13 @@ const formatCreationDate = (dateValue) => {
     return "Invalid date";
   }
 };
+
+// AI Query
+const GET_ASSISTANCE = gql`
+    query RequestAssistance($prompt: String!) {
+        requestAssistance(prompt: $prompt)
+    }
+`;
 
 const DiscussionSection = ({ newsId }) => {
   const currentUserId = sessionStorage.getItem("uid") || "tempUser";
@@ -86,6 +95,71 @@ const DiscussionSection = ({ newsId }) => {
 
   const discussions = discussionsData?.discussionsByNewsId || [];
 
+  //#region States
+  const [message, setMessage] = useState("");
+  const [header, setHeader] = useState("");
+  const [bg, setBg] = useState("");        
+  const [showA, setShowA] = useState(false);
+  //#endregion
+
+  //#region CustomToast Related
+  const toggleShowA = () => setShowA(!showA);
+  const displayToastMsg = (header, message, bg) => {
+      toggleShowA();
+      setHeader(header);
+      setMessage(message);
+      setBg(bg);
+  }
+  //#endregion
+
+  // --- REQUEST SERVER'S AI QUERY
+  const { refetch: fetchAssistance } = useQuery(GET_ASSISTANCE, {
+      variables: { prompt: "" },
+      skip: true, // won't run automatically (useful don't remove)
+  });
+
+  const [summaryText, setSummaryText] = useState("");
+
+  // --- THIS IS THE FUNCTION I WANT TO FOCUS ON
+  const handleDiscussionSummary = async (e, discussion) => {
+      e.preventDefault();
+
+      const prompt = `
+          Given the discussion post
+              title: "${discussion?.title}", 
+              description: "${discussion?.description}", 
+          and it's replies:
+          ${discussion?.replies?.map((reply) => `   - ${reply.text}`).join('\n')}
+
+          provide a summary of the entire discussion, and point out the major points made.
+          Keep in mind rude or simple feedback should not be focused on, and the summary should be strictly professional.
+          The summary should be less than 100 words.
+      `;
+
+      displayToastMsg(Label.INFO, "Summarized Feedback can take a moment to load...", "info");
+
+      try{
+          const { data } = await fetchAssistance({ prompt });
+
+          if (!data || !data.requestAssistance) {
+              throw new Error("No data returned from AI");
+          }
+
+          const summaryText = data.requestAssistance;
+          console.log("AI Result:", summaryText);
+
+          if (!summaryText) { displayToastMsg(Label.ERROR, "AI response gave incorrect output", "danger"); return; }
+
+          setSummaryText(summaryText);
+
+          displayToastMsg(Label.SUCCESS, "AI response received", "success");
+      } catch (err) {
+          console.error("Error fetching assistance:", err);
+          displayToastMsg(Label.ERROR, "Failed to get suggested dates", "danger");
+      }
+  };
+
+
   return (
     <div>
       <hr className="my-4 border-secondary" />
@@ -138,6 +212,10 @@ const DiscussionSection = ({ newsId }) => {
             <p className="small text-secondary mb-2">
               By {discussion.creatorId} · {formatCreationDate(discussion.createdAt)}
             </p>
+            <div className="d-flex align-items-start flex-wrap">
+                <Button variant="primary" className="ms-2 mb-2" style={{ whiteSpace: 'nowrap', height: 'fit-content' }} onClick={(e) => handleDiscussionSummary(e, discussion)}>Summarize Discussion</Button>
+                <textarea className="form-control mb-2 bg-secondary text-light border-dark placeholder-light" style={{ flex: 1, minHeight: '10px' }} value={summaryText} readOnly />
+            </div>
 
             {/* Replies  */}
             {discussion.replies && discussion.replies.length > 0 && (

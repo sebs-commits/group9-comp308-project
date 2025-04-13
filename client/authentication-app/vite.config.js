@@ -10,7 +10,8 @@ export default defineConfig({
       filename: 'remoteEntry.js',
       exposes: {
         './RegisterComponent': './src/components/RegisterComponent',
-        './LoginComponent': './src/components/LoginComponent'
+        './LoginComponent': './src/components/LoginComponent',
+        './UpdateVolunteerComponent': './src/components/UpdateVolunteerComponent'
       },
       shared: [ 'react', 'react-dom', '@apollo/client', 'graphql', 'react-router-dom' ]
     })
