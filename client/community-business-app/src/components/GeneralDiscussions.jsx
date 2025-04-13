@@ -26,9 +26,9 @@ import {
 
 // AI Query
 const GET_ASSISTANCE = gql`
-    query RequestAssistance($prompt: String!) {
-        requestAssistance(prompt: $prompt)
-    }
+  query RequestAssistance($prompt: String!) {
+    requestAssistance(prompt: $prompt)
+  }
 `;
 
 const formatCreationDate = (dateValue) => {
@@ -85,11 +85,11 @@ const GeneralDiscussions = () => {
   // --- Toast Related ---
   const toggleShowA = () => setShowA(!showA);
   const displayToastMsg = (header, message, bg) => {
-      toggleShowA();
-      setHeader(header);
-      setMessage(message);
-      setBg(bg);
-  }
+    toggleShowA();
+    setHeader(header);
+    setMessage(message);
+    setBg(bg);
+  };
 
   const handleDiscussionSubmit = async (e) => {
     e.preventDefault();
@@ -152,34 +152,42 @@ const GeneralDiscussions = () => {
             title: "${discussion?.title}",
             description: "${discussion?.description}",
         and its replies:
-        ${discussion?.replies?.map((reply) => `   - ${reply.text}`).join('\n')}
+        ${discussion?.replies?.map((reply) => `   - ${reply.text}`).join("\n")}
 
         provide a summary of the entire discussion, and point out the major points made.
         Keep in mind rude or simple feedback should not be focused on, and the summary should be strictly professional.
         The summary should be less than 100 words.
     `;
 
-    displayToastMsg(Label.INFO, "Summarized Feedback can take a moment to load...", "info");
+    displayToastMsg(
+      Label.INFO,
+      "Summarized Feedback can take a moment to load...",
+      "info"
+    );
 
-    try{
-        const { data } = await fetchAssistance({ prompt });
+    try {
+      const { data } = await fetchAssistance({ prompt });
 
-        if (!data || !data.requestAssistance) {
-            throw new Error("No data returned from AI");
-        }
+      if (!data || !data.requestAssistance) {
+        throw new Error("No data returned from AI");
+      }
 
-        const summaryText = data.requestAssistance;
+      const summaryText = data.requestAssistance;
 
-        if (!summaryText) {
-          displayToastMsg(Label.ERROR, "AI response gave incorrect output", "danger");
-          return;
-        }
+      if (!summaryText) {
+        displayToastMsg(
+          Label.ERROR,
+          "AI response gave incorrect output",
+          "danger"
+        );
+        return;
+      }
 
-        setSummaryTexts((prev) => ({ ...prev, [discussion._id]: summaryText }));
-        displayToastMsg(Label.SUCCESS, "AI response received", "success");
+      setSummaryTexts((prev) => ({ ...prev, [discussion._id]: summaryText }));
+      displayToastMsg(Label.SUCCESS, "AI response received", "success");
     } catch (err) {
-        console.error("Error fetching assistance:", err);
-        displayToastMsg(Label.ERROR, "Failed to get summary", "danger");
+      console.error("Error fetching assistance:", err);
+      displayToastMsg(Label.ERROR, "Failed to get summary", "danger");
     }
   };
 
@@ -227,7 +235,7 @@ const GeneralDiscussions = () => {
                 {discussion.replies.map((reply) => (
                   <ListGroup.Item
                     key={reply._id}
-                    className="bg-secondary border-dark rounded text-light py-2 px-3"
+                    className="rounded text-light py-2 px-3 bg-transparent"
                   >
                     <p className="mb-1 small ws-pre-wrap">{reply.text}</p>
                     <p className="small text-light mb-0">
@@ -239,10 +247,30 @@ const GeneralDiscussions = () => {
               </ListGroup>
             </div>
           )}
-          {/* AI Summarizer Section */}
-          <div className="d-flex align-items-start flex-wrap mt-3">
-              <Button variant="primary" className="ms-2 mb-2" style={{ whiteSpace: 'nowrap', height: 'fit-content' }} onClick={(e) => handleDiscussionSummary(e, discussion)}>Summarize Discussion</Button>
-              <Form.Control as="textarea" className="form-control mb-2 bg-secondary text-light border-dark placeholder-light" style={{ flex: 1, minHeight: '50px', marginLeft: '8px' }} value={summaryTexts[discussion._id] || ''} readOnly placeholder="Click 'Summarize Discussion' to generate an AI summary..."/>
+          {/* AI Summarizer Section*/}
+          <div className="mt-4">
+            <Form.Label className="text-light small mb-1">
+              AI Summary
+            </Form.Label>
+            <div className="d-flex align-items-start flex-wrap">
+              <Form.Control
+                as="textarea"
+                className="form-control mb-2 bg-secondary text-light border-dark placeholder-light"
+                style={{ flex: 1, minHeight: "75px" }}
+                value={summaryTexts[discussion._id] || ""}
+                readOnly
+                placeholder="Click 'Summarize Discussion' to generate an AI summary..."
+              />
+              <Button
+                variant="primary"
+                size="sm"
+                className="ms-2 mb-2"
+                style={{ whiteSpace: "nowrap", height: "fit-content" }}
+                onClick={(e) => handleDiscussionSummary(e, discussion)}
+              >
+                Summarize Discussion
+              </Button>
+            </div>
           </div>
         </Card.Body>
         {/* Reply form */}
