@@ -17,6 +17,7 @@ export default defineConfig({
         "./ViewBusinessListings": "./src/components/ViewBusinessListings",
         "./NewsList": "./src/components/NewsList",
         "./NewsPage": "./src/components/NewsPage",
+        "./GeneralDiscussions": "./src/components/GeneralDiscussions",
       },
       shared: [
         "react",

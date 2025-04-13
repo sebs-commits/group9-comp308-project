@@ -10,3 +10,7 @@
 .button {
   width: 125px !important;
 }
+
+::placeholder {
+  font-weight: 600;
+}

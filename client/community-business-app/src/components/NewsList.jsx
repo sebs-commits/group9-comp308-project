@@ -26,13 +26,13 @@ const NewsList = () => {
   if (!data?.allNews?.length) return <div>No news available</div>;
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4 pb-2 text-start">Community News</h2>
-      <div className="w-100 mx-auto">
+    
+    <div>
+      <div>
         {data.allNews.map((newsItem) => (
-          <div key={newsItem._id} className="col-md-6 mb-4 hover-card">
+          <div key={newsItem._id} className="mb-4 hover-card">
             <div
-              className="h-100 bg-transparent  d-flex flex-row"
+              className="h-100 bg-transparent d-flex flex-row"
               onClick={() => handleNewsClick(newsItem._id)}
             >
               <div className="card-body text-start flex-grow-1 hover-card p-2">

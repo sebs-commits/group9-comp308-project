@@ -26,38 +26,41 @@ export const ResidentDashboardComponent = () => {
           <h3 className="text-center mb-4">{Label.setTitle(username)}</h3>
 
           {/* Action buttons */}
-          <div className="d-flex justify-content-center mb-4">
-            <ButtonGroup>
-              <Button
-                variant="success"
-                onClick={() => navigate("/news")}
-                className="d-flex align-items-center"
-              >
-                <FaPlusCircle />
-                <span>{Label.NEWS}</span>
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => navigate("/alerts")}
-                className="d-flex align-items-center"
-              >
-                <FaPlusCircle />
-                <span>{Label.ALERT}</span>
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => navigate("/requests")}
-                className="d-flex align-items-center"
-              >
-                <FaPlusCircle />
-                <span>{Label.REQUEST}</span>
-              </Button>
-            </ButtonGroup>
-          </div>
+          <Row className="justify-content-center mb-4">
+            <Col xs="auto"> {/* Automatically center the btns*/}
+              <ButtonGroup>
+                <Button
+                  variant="success"
+                  onClick={() => navigate("/news")}
+                  className="d-flex align-items-center"
+                >
+                  <FaPlusCircle />
+                  <span>{Label.NEWS}</span>
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => navigate("/alerts")}
+                  className="d-flex align-items-center"
+                >
+                  <FaPlusCircle />
+                  <span>{Label.ALERT}</span>
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate("/requests")}
+                  className="d-flex align-items-center"
+                >
+                  <FaPlusCircle />
+                  <span>{Label.REQUEST}</span>
+                </Button>
+              </ButtonGroup>
+            </Col>
+          </Row>
 
+          {/* Newslist */}
           <Row>
-            {/* Column for news list */}
-            <Col md={6}>
+            <h2 className="mb-4 pb-2 text-center">Community News</h2>
+            <Col>
               <div className="overflow-auto" style={{ maxHeight: "450px" }}>
                 <Suspense
                   fallback={
@@ -70,23 +73,6 @@ export const ResidentDashboardComponent = () => {
                   <NewsList />
                 </Suspense>
               </div>
-            </Col>
-
-            {/* Column for insights, if we decide to keep this */}
-            <Col md={6}>
-              <div className="d-flex align-items-center mb-2">
-                <h4 className="mb-0 me-2">Insights</h4>
-                <Button
-                  size="sm"
-                  variant="link"
-                  className="p-0"
-                  style={{ color: "#158754", lineHeight: 1 }}
-                >
-                  <FaPlusCircle />
-                </Button>
-              </div>
-              {/* Placeholder for insights content */}
-              <div className="text-muted">Insights component will go here</div>
             </Col>
           </Row>
         </Col>

@@ -46,7 +46,7 @@ const DisplayEvents = () => {
         <div className="pb-4 px-3">
             <Row className="d-flex justify-content-center align-items-center">
                 <Col xs={12} md={6}>
-                    <h4 className="pt-4 pb-2">{Label.YOUR_EVENTS}</h4>
+                    <h4 className="pt-4 pb-2" style={{color: "black"}}>{Label.YOUR_EVENTS}</h4>
                 </Col>               
             </Row>
 
