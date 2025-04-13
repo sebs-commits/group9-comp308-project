@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import { useNavigate } from 'react-router-dom';
-import { FaUndo, FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane } from "react-icons/fa";
 import { RxReset } from "react-icons/rx";
 //#endregion
 
@@ -227,13 +227,8 @@ const CreateUpdateEvent = () => {
                                 <RxReset />
                             </Button>
                         }
-                      
-                        <Button variant="secondary" className="button mx-2 my-2" onClick={() => { navigate("/dashboard"); }}>
-                            <FaUndo />
-                            <span style={{paddingLeft: "5px"}} >{Label.BACK}</span>                    
-                        </Button>
-                    
-                        <Button type="submit" variant={!isEditing ? "success" : "warning"} className="button">
+                                          
+                        <Button type="submit" variant={!isEditing ? "success" : "warning"} className="button mx-2">
                             <FaPaperPlane />
                             <span style={{paddingLeft: "5px"}}>{!isEditing ? Label.CREATE: Label.UPDATE} </span>
                         </Button>

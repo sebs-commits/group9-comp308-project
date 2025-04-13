@@ -125,6 +125,11 @@ function App() {
                     {Label.DASHBOARD}
                   </Nav.Link>
                 )}
+                
+                <Nav.Link as={Link} to="/viewlistings">
+                  {Label.VIEW_LISTINGS}
+                </Nav.Link>
+
                 {token !== "auth" ? (
                   <Nav.Link
                     as={Link}
@@ -154,9 +159,7 @@ function App() {
                     Discussions
                   </Nav.Link>
                 )}
-                <Nav.Link as={Link} to="/viewlistings">
-                  {Label.VIEW_LISTINGS}
-                </Nav.Link>
+                
               </Nav>
             </Navbar.Collapse>
           </Container>

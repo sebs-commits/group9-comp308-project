@@ -25,5 +25,6 @@ export const Label = {
     TITLE: "Event Title",
     RESET: "Reset",
     DELETE: "Delete",
-    CANCEL: "Cancel"
+    CANCEL: "Cancel",
+    COPYRIGHT: "2025 Group 9",
 }
