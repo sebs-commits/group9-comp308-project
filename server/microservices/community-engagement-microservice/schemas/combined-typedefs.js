@@ -17,7 +17,6 @@ export const combinedTypeDefs = gql`
     type: String!
     request: String!
     location: String!
-    status: String!
   }
 
   type Alert {
@@ -52,6 +51,7 @@ export const combinedTypeDefs = gql`
 
     requests: [Requests]
     request(_id: ID!): Requests
+
     alerts: [Alert]
     alert(_id: ID!): Alert
     discussions: [Discussion]
@@ -81,8 +81,8 @@ export const combinedTypeDefs = gql`
       type: String!
       request: String!
       location: String!
-      status: String
     ): Requests
+
     updateRequest(
       _id: ID!
       creatorId: String!
@@ -90,9 +90,10 @@ export const combinedTypeDefs = gql`
       type: String!
       request: String!
       location: String!
-      status: String
     ): Requests
+
     deleteRequest(_id: ID!): Requests
+
     createAlert(
       creatorId: String!
       title: String!
