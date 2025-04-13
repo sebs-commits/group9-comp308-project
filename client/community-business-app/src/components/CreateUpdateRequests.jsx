@@ -9,7 +9,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_REQUEST } from "../../shared/gql/request.gql";
 import { Label, Message } from "../../shared/resources";
 import CustomToast from "../../../shell-app/shared/components/CustomToast";
-
+import ResidentRequestList from "./ResidentRequestList";
 // Matches the backend type list
 const REQUEST_TYPE = {
   HELP: "help",
@@ -198,6 +198,8 @@ const CreateUpdateRequestComponent = () => {
             <span style={{ paddingLeft: "5px" }}> {Label.SUBMIT} </span>
           </Button>
         </Form>
+
+        <ResidentRequestList />
 
         <CustomToast
           header={header}

@@ -36,3 +36,15 @@ export const GET_REQUESTS = gql`
     }
   }
 `;
+
+export const GET_USER_REQUESTS = gql`
+  query GetUserRequests($creatorId: String!) {
+    userRequests(creatorId: $creatorId) {
+      id
+      title
+      type
+      request
+      location
+    }
+  }
+`;

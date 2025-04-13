@@ -51,7 +51,7 @@ export const combinedTypeDefs = gql`
 
     requests: [Requests]
     request(_id: ID!): Requests
-
+    userRequests(creatorId: String!): [Requests]
     alerts: [Alert]
     alert(_id: ID!): Alert
     discussions: [Discussion]

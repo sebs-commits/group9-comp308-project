@@ -14,13 +14,22 @@ export const requestsResolvers = {
       }
     },
     request: async (_, { _id }) => await RequestModel.findOne({ _id }),
+
+    userRequests: async (_, { creatorId }) => {
+      try {
+        const userRequests = await RequestModel.find({ creatorId });
+        return userRequests || [];
+      } catch (error) {
+        console.error(`An error occurred while fetching user requests`, error);
+        throw new Error(
+          "Error in userRequests query - requests.server.resolver.js"
+        );
+      }
+    },
   },
 
   Mutation: {
-    createRequest: async (
-      _,
-      { creatorId, title, type, request, location, status }
-    ) => {
+    createRequest: async (_, { creatorId, title, type, request, location }) => {
       try {
         const newRequest = new RequestModel({
           creatorId,
@@ -28,7 +37,6 @@ export const requestsResolvers = {
           type,
           request,
           location,
-          status: status || "new",
         });
         return await newRequest.save();
       } catch (error) {
@@ -39,16 +47,16 @@ export const requestsResolvers = {
 
     updateRequest: async (
       _,
-      { _id, creatorId, title, type, request, location, status }
+      { _id, creatorId, title, type, request, location }
     ) => {
       try {
-        const existingRequests = await RequestModel.findOne({ _id });
-        if (!existingRequests)
+        const existringRequests = await RequestModel.findOne({ _id });
+        if (!existringRequests)
           throw new Error("You are trying to update a non-existing request.");
 
         return await RequestModel.findByIdAndUpdate(
           _id,
-          { creatorId, title, type, request, location, status },
+          { creatorId, title, type, request, location },
           { new: true }
         );
       } catch (error) {
