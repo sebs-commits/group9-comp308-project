@@ -8,6 +8,8 @@ export default defineConfig({
     federation({
       name: "communityBusinessApp",
       filename: "remoteEntry.js",
+      name: "communityBusinessApp",
+      filename: "remoteEntry.js",
       exposes: {
         "./CreateNews": "./src/components/CreateNews",
         "./CreateUpdateRequests": "./src/components/CreateUpdateRequests",

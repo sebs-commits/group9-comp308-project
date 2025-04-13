@@ -40,6 +40,7 @@ const ViewBusinessListing = lazy(() =>
   import("communityBusinessApp/ViewBusinessListings")
 );
 const NewsPage = lazy(() => import("communityBusinessApp/NewsPage"));
+const GeneralDiscussions = lazy(() => import("communityBusinessApp/GeneralDiscussions"));
 //#endregion
 
 function App() {
@@ -173,41 +174,22 @@ function App() {
               <Route path="/viewlistings" element={<ViewBusinessListing />} />
               <Route path="/news/:id" element={<NewsPage />} />
 
-              {/**Protected Routes */}
-              {token !== "auth" && (
-                <Route path="event" element={<EventManagement />} />
-              )}
-              {token === "auth" && (
-                <Route path="register" element={<RegisterComponent />} />
-              )}
-              {token !== "auth" && (
-                <Route path="dashboard" element={<Dashboard />} />
-              )}
-              {token === "auth" && (
-                <Route path="login" element={<LoginComponent />} />
-              )}
-              {token !== "auth" && (
-                <Route path="news" element={<CreateNews />} />
-              )}
-              {token !== "auth" && (
-                <Route path="requests" element={<CreateUpdateRequests />} />
-              )}
-              {token !== "auth" && (
-                <Route path="alerts" element={<CreateUpdateAlerts />} />
-              )}
-              {token === "auth" && (
-                <Route path="*" element={<HomeComponent />} />
-              )}
-              {token !== "auth" && (
-                <Route
-                  path="/listing"
-                  element={<CreateUpdateBusinessListing />}
-                />
-              )}
-            </Routes>
-          </Suspense>
-        </div>
-      </header>
+                    {/**Protected Routes */}
+                    {token !== 'auth' && <Route path="event" element={<EventManagement /> }/>}
+                    {token === 'auth' && <Route path="register" element={<RegisterComponent />} />}
+                    {token !== 'auth' && <Route path="dashboard" element= { <Dashboard /> } />}
+                    {token === 'auth' && <Route path="login" element={<LoginComponent />} />}
+                    {token !== 'auth' && <Route path="news" element={<CreateUpdateNews />}/>}
+                    {token !== 'auth' && <Route path="requests" element={<CreateUpdateRequests />}/>}
+                    {token !== 'auth' && <Route path="alerts" element={<CreateUpdateAlerts />}/>}
+                    {token === 'auth' && <Route path="*" element={<HomeComponent />} />}
+                    {token !== 'auth' && <Route path="/listing" element={<CreateUpdateBusinessListing />} />}
+                    {token !== "auth" && <Route path="discussions" element={<GeneralDiscussions />} />}
+
+                  </Routes>
+                </Suspense>
+            </div>
+          </header>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
