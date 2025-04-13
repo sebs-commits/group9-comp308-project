@@ -22,4 +22,5 @@ export const Message = {
     REVIEW_NOT_SUCCESSFUL: "Your review was sent successfully.",
     REVIEW_EMPTY: "Please enter a review before posting.",
     NO_BUSSINESS_LISTING_MATCH: "No business listing match your search.",
+    NO_LISTINGS: "There are no listings to display. Come back later."
 }
