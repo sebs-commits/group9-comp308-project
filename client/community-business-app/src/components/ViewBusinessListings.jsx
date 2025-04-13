@@ -275,6 +275,10 @@ const ViewBusinessComponent = () => {
               ))}
           </div>
         <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>
+        {/*Footer*/}
+        <div style={{ backgroundColor: "#6c757d", height: "50px" }}>
+            <p style={{fontWeight: "bold", paddingTop:"15px", fontSize:"12px", color: "#fecd00"}}>&copy; {Label.COPYRIGHT}</p>
+        </div>
     </>
 }
 

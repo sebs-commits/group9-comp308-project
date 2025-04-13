@@ -195,7 +195,6 @@ const CreateUpdateBusinessComponent = () => {
         //loads an existing business listing if the businessListingId is already in the DB to make it easier to update it.
         useEffect(() => {
             const fetch = async () => {
-
                 try {
                     const result = await refetch({ listingTicketId: businessListingId });
                     //if listing exists, set the state variables to the values from the listing (only if the user owns this listing)
@@ -350,6 +349,10 @@ const CreateUpdateBusinessComponent = () => {
 
             <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>
         </div>  
+         {/*Footer*/}
+         <div style={{ backgroundColor: "#6c757d", height: "50px" }}>
+            <p style={{fontWeight: "bold", paddingTop:"15px", fontSize:"12px", color: "#fecd00"}}>&copy; {Label.COPYRIGHT}</p>
+        </div>
     </>
 }
 
