@@ -18,6 +18,7 @@ export default defineConfig({
         "./NewsList": "./src/components/NewsList",
         "./NewsPage": "./src/components/NewsPage",
         "./GeneralDiscussions": "./src/components/GeneralDiscussions",
+        "./ViewAllRequest": "./src/components/ViewAllRequest",
       },
       shared: [
         "react",
