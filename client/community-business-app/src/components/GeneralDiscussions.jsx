@@ -13,14 +13,23 @@ import {
   ListGroup,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { gql } from "@apollo/client";
 
 import CreateNewDiscussionForm from "./CreateNewDiscussionForm";
+import { Label, Message } from "../../shared/resources";
 
 import {
   GET_ALL_DISCUSSIONS,
   CREATE_DISCUSSION,
   ADD_REPLY_TO_DISCUSSION,
 } from "../../shared/gql/discussions.gql.js";
+
+// AI Query
+const GET_ASSISTANCE = gql`
+    query RequestAssistance($prompt: String!) {
+        requestAssistance(prompt: $prompt)
+    }
+`;
 
 const formatCreationDate = (dateValue) => {
   try {
@@ -38,31 +47,49 @@ const LoadingState = () => (
 );
 const ErrorState = () => (
   <Alert variant="danger" className="text-center mt-4">
-    Error loading 
+    Error loading
   </Alert>
 );
-
 
 const GeneralDiscussions = () => {
   const currentUserId = sessionStorage.getItem("uid") || null;
   const [newDiscussionTitle, setNewDiscussionTitle] = useState("");
   const [newDiscussionText, setNewDiscussionText] = useState("");
   const [replyTexts, setReplyTexts] = useState({});
+  const [summaryTexts, setSummaryTexts] = useState({});
+
+  // State for Toast notifications
+  const [message, setMessage] = useState("");
+  const [header, setHeader] = useState("");
+  const [bg, setBg] = useState("");
+  const [showA, setShowA] = useState(false);
 
   const { loading, error, data, refetch } = useQuery(GET_ALL_DISCUSSIONS);
 
   const [
     createDiscussion,
     { loading: creatingDiscussion, error: createError },
-  ] = useMutation(
-    CREATE_DISCUSSION,
-    { onCompleted: () => refetch() }
-  );
+  ] = useMutation(CREATE_DISCUSSION, { onCompleted: () => refetch() });
 
   const [addReply, { loading: addingReply }] = useMutation(
     ADD_REPLY_TO_DISCUSSION,
-    { onCompleted: () => refetch() } 
+    { onCompleted: () => refetch() }
   );
+
+  // --- REQUEST SERVER'S AI QUERY
+  const { refetch: fetchAssistance } = useQuery(GET_ASSISTANCE, {
+    variables: { prompt: "" },
+    skip: true, // won't run automatically
+  });
+
+  // --- Toast Related ---
+  const toggleShowA = () => setShowA(!showA);
+  const displayToastMsg = (header, message, bg) => {
+      toggleShowA();
+      setHeader(header);
+      setMessage(message);
+      setBg(bg);
+  }
 
   const handleDiscussionSubmit = async (e) => {
     e.preventDefault();
@@ -115,6 +142,46 @@ const GeneralDiscussions = () => {
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       )
     : [];
+
+  // --- AI Summarizer Handler ---
+  const handleDiscussionSummary = async (e, discussion) => {
+    e.preventDefault();
+
+    const prompt = `
+        Given the discussion post
+            title: "${discussion?.title}",
+            description: "${discussion?.description}",
+        and its replies:
+        ${discussion?.replies?.map((reply) => `   - ${reply.text}`).join('\n')}
+
+        provide a summary of the entire discussion, and point out the major points made.
+        Keep in mind rude or simple feedback should not be focused on, and the summary should be strictly professional.
+        The summary should be less than 100 words.
+    `;
+
+    displayToastMsg(Label.INFO, "Summarized Feedback can take a moment to load...", "info");
+
+    try{
+        const { data } = await fetchAssistance({ prompt });
+
+        if (!data || !data.requestAssistance) {
+            throw new Error("No data returned from AI");
+        }
+
+        const summaryText = data.requestAssistance;
+
+        if (!summaryText) {
+          displayToastMsg(Label.ERROR, "AI response gave incorrect output", "danger");
+          return;
+        }
+
+        setSummaryTexts((prev) => ({ ...prev, [discussion._id]: summaryText }));
+        displayToastMsg(Label.SUCCESS, "AI response received", "success");
+    } catch (err) {
+        console.error("Error fetching assistance:", err);
+        displayToastMsg(Label.ERROR, "Failed to get summary", "danger");
+    }
+  };
 
   const renderDiscussionList = () => {
     if (loading) return <LoadingState />;
@@ -172,6 +239,11 @@ const GeneralDiscussions = () => {
               </ListGroup>
             </div>
           )}
+          {/* AI Summarizer Section */}
+          <div className="d-flex align-items-start flex-wrap mt-3">
+              <Button variant="primary" className="ms-2 mb-2" style={{ whiteSpace: 'nowrap', height: 'fit-content' }} onClick={(e) => handleDiscussionSummary(e, discussion)}>Summarize Discussion</Button>
+              <Form.Control as="textarea" className="form-control mb-2 bg-secondary text-light border-dark placeholder-light" style={{ flex: 1, minHeight: '50px', marginLeft: '8px' }} value={summaryTexts[discussion._id] || ''} readOnly placeholder="Click 'Summarize Discussion' to generate an AI summary..."/>
+          </div>
         </Card.Body>
         {/* Reply form */}
         {currentUserId && (
@@ -200,7 +272,6 @@ const GeneralDiscussions = () => {
                 Reply
               </Button>
             </Form>
-
           </Card.Footer>
         )}
       </Card>
