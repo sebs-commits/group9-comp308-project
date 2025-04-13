@@ -18,6 +18,8 @@ const businessListingSchema = new Schema({
     discounts: { type: String, required: false },
     
     reviews: { type: [String], required: false },
+
+    creatorUsername: { type: String, required: true },
 })
 
 const BusinessListingModel = mongoose.model('BusinessListing', businessListingSchema);

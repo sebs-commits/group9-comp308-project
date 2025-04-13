@@ -117,11 +117,6 @@ function App() {
                 <Nav.Link as={Link} to="/home">
                   {Label.HOME}
                 </Nav.Link>
-                {token === "auth" && (
-                  <Nav.Link as={Link} to="/register">
-                    {Label.REGISTER}
-                  </Nav.Link>
-                )}
                 {token !== "auth" && (
                   <Nav.Link as={Link} to="/dashboard">
                     {Label.DASHBOARD}
@@ -132,6 +127,18 @@ function App() {
                   {Label.VIEW_LISTINGS}
                 </Nav.Link>
 
+                {type === "owner" && (
+                  <Nav.Link as={Link} to="/listing">
+                    {Label.CREATE_LISTING}
+                  </Nav.Link>
+                )}
+
+                {token === "auth" && (
+                  <Nav.Link as={Link} to="/register">
+                    {Label.REGISTER}
+                  </Nav.Link>
+                )}
+                
                 {token !== "auth" ? (
                   <Nav.Link
                     as={Link}
@@ -151,11 +158,6 @@ function App() {
                   </Nav.Link>
                 )}
 
-                {type === "owner" && (
-                  <Nav.Link as={Link} to="/listing">
-                    {Label.CREATE_LISTING}
-                  </Nav.Link>
-                )}
                 {token !== 'auth' && type === 'resident' && (
                   <Nav.Link as={Link} to="/discussions">
                     Discussions

@@ -27,7 +27,7 @@ export const Label = {
     BUSINESS_NAME: "Business Name",
     BUSINESS_NAME_DESCRIPTION: "* Business Name. Please include the business name.",
     ADDRESS: "Address",
-    ADDRESS_DESCRIPTION: "* Address. Please include the city and state.",
+    ADDRESS_DESCRIPTION: "* Enter Address. Please include the city and province.",
     BUSINESS_DESCRIPTION: "Business Description",
     BUSINESS_DESCRIPTION_DESCRIPTION: "* Business Description. Please include the business description.",
     BUSINESS_PHONE: "Phone Number",

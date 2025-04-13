@@ -23,13 +23,13 @@ export const businessListingResolvers = {
     },
     
     Mutation: {
-        createBusinessListing: async (_, { listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews }) => {    
+        createBusinessListing: async (_, { listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews, creatorUsername }) => {    
             const newbusinessListing = new BusinessListingModel({
-                listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews
+                listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews, creatorUsername
             });
             return await newbusinessListing.save();
         },
-        updateBusinessListing: async (_, { listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews }) => {
+        updateBusinessListing: async (_, { listingTicketId, businessName, address, phoneNumber, businessDescription, images, discounts, reviews, creatorUsername }) => {
             const existingBusinessListing = await BusinessListingModel.findOne({ listingTicketId });
             if (!existingBusinessListing) {
                 throw new Error("Error, this businness listing doesn't exist in the DB.");
@@ -37,7 +37,7 @@ export const businessListingResolvers = {
 
             const existingListingTicketId = existingBusinessListing._id;
             return await BusinessListingModel.findByIdAndUpdate(existingListingTicketId, {
-                businessName, address, phoneNumber, businessDescription, images, discounts, reviews}, { new: true });
+                businessName, address, phoneNumber, businessDescription, images, discounts, reviews, creatorUsername}, { new: true });
         },
         deleteBusinessListing: async (_, { listingTicketId }) => {
             const existingBusinessListing = await BusinessListingModel.findOne({ listingTicketId });

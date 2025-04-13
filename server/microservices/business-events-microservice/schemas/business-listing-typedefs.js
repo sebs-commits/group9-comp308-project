@@ -1,9 +1,5 @@
 import { gql } from 'apollo-server-express';
 
-
-//NOTE: input NumberAndStringTupleInput was suggested by copilot on 2025-04-10 after prompt 'how to make reviews and Number and string tuple'
-
-
 export const businessListingTypeDefs = gql`
     type BusinessListing {
         id: ID!
@@ -15,6 +11,7 @@ export const businessListingTypeDefs = gql`
         images: [String]
         discounts: String
         reviews: [String]    
+        creatorUsername: String!
     }
 
     extend type Query {
@@ -32,6 +29,7 @@ export const businessListingTypeDefs = gql`
             images: [String],
             discounts: String,
             reviews: [String]   
+            creatorUsername: String!
         ): BusinessListing
 
         updateBusinessListing(
@@ -43,6 +41,7 @@ export const businessListingTypeDefs = gql`
             images: [String],
             discounts: String,
             reviews: [String]      
+            creatorUsername: String!
         ): BusinessListing
 
         deleteBusinessListing(listingTicketId: String!): BusinessListing
