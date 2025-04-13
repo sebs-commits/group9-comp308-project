@@ -68,3 +68,21 @@ export const ADD_REPLY_TO_DISCUSSION = gql`
     }
   }
 `;
+export const GET_ALL_DISCUSSIONS = gql`
+  query GetAllDiscussions {
+    discussions {
+      _id
+      title
+      description
+      creatorId
+      createdAt
+      newsId
+      replies {
+        _id
+        creatorId
+        text
+        createdAt
+      }
+    }
+  }
+`;

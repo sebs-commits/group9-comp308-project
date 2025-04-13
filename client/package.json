@@ -3,11 +3,19 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start:community": "cd community-business-app && npm run dev",
-    "start:events": "cd events-business-app && npm run dev",
-    "start:auth": "cd authentication-app && npm run dev",
+    "build:community": "cd community-business-app && npm run build",
+    "build:events": "cd events-administration-app && npm run build",
+    "build:auth": "cd authentication-app && npm run build",
+    "build:remotes": "npm run build:community && npm run build:events && npm run build:auth",
+    "preview:community": "cd community-business-app && npm run preview",
+    "preview:events": "cd events-administration-app && npm run preview",
+    "preview:auth": "cd authentication-app && npm run preview",
     "start:shell": "cd shell-app && npm run dev",
-    "start:all": "npm run start:community & npm run start:events & npm run start:auth & npm run start:shell"
+    "start:all": "(cd community-business-app && npm run build) && (cd events-administration-app && npm run build) && (cd authentication-app && npm run build) && (cd community-business-app && npm run preview) & (cd events-administration-app && npm run preview) & (cd authentication-app && npm run preview) & (cd shell-app && npm run dev)",
+    "start:community-dev": "cd community-business-app && npm run dev",
+    "start:events-dev": "cd events-administration-app && npm run dev",
+    "start:auth-dev": "cd authentication-app && npm run dev",
+    "start:shell-dev": "cd shell-app && npm run dev"
   },
   "keywords": [],
   "author": "",

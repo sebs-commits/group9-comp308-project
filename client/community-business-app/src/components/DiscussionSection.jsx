@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { format, parseISO } from "date-fns";
-import { Button } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import {
   GET_DISCUSSIONS_BY_NEWS_ID,
   CREATE_DISCUSSION,
@@ -212,9 +212,30 @@ const DiscussionSection = ({ newsId }) => {
             <p className="small text-secondary mb-2">
               By {discussion.creatorId} · {formatCreationDate(discussion.createdAt)}
             </p>
-            <div className="d-flex align-items-start flex-wrap">
-                <Button variant="primary" className="ms-2 mb-2" style={{ whiteSpace: 'nowrap', height: 'fit-content' }} onClick={(e) => handleDiscussionSummary(e, discussion)}>Summarize Discussion</Button>
-                <textarea className="form-control mb-2 bg-secondary text-light border-dark placeholder-light" style={{ flex: 1, minHeight: '10px' }} value={summaryText} readOnly />
+            {/* AI Summarizer Section*/}
+            <div className="mt-4">
+              <Form.Label className="text-light small mb-1">
+                AI Summary
+              </Form.Label>
+              <div className="d-flex align-items-start flex-wrap">
+                <Form.Control
+                  as="textarea"
+                  className="form-control mb-2 bg-secondary text-light border-dark placeholder-light"
+                  style={{ flex: 1, minHeight: "75px" }}
+                  value={summaryText} 
+                  readOnly
+                  placeholder="Click 'Summarize Discussion' to generate an AI summary..."
+                />
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="ms-2 mb-2"
+                  style={{ whiteSpace: "nowrap", height: "fit-content" }}
+                  onClick={(e) => handleDiscussionSummary(e, discussion)}
+                >
+                  Summarize Discussion
+                </Button>
+              </div>
             </div>
 
             {/* Replies  */}
