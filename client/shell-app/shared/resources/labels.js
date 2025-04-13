@@ -29,4 +29,5 @@ export const Label = {
     COPYRIGHT: "2025 Group 9",
     CREATE_LISTING: "Create/Update Business Listings",
     VIEW_LISTINGS: "View Business Listings",
+    CLOSE: "Close"
 }

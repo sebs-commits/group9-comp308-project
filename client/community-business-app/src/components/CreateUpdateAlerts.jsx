@@ -1,10 +1,7 @@
 //#region External Imports
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import { Button, Col, Form, Row, Container, Card } from 'react-bootstrap';
 import { FaUndo, FaPaperPlane } from "react-icons/fa";
 import { useMutation } from '@apollo/client';
 //#endregion
@@ -43,7 +40,6 @@ const CreateUpdateAlertComponent = () => {
     const [createAlert] = useMutation(CREATE_ALERT);
     //#endregion
 
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.currentTarget; 
@@ -70,44 +66,58 @@ const CreateUpdateAlertComponent = () => {
     };       
 
 return <>
-    <div className="px-5 pb-4">
-        <h4 className="pt-4 pb-2">{Label.setAlertTitle(true ? Label.CREATE : Label.UPDATE)}</h4>
-        <Form noValidate onSubmit={handleSubmit}>
-            <Row>
-                {/**Title */}
-                <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="title">
-                    <Form.Label>{Label.TITLE}</Form.Label>
-                    <Form.Control required
-                                  type="text"
-                                  placeholder={Label.TITLE}
-                                  value={title}
-                                  onChange={(e) => setTitle(e.target.value)}/>
-                </Form.Group>
+    <Container className="justify-content-start" style={{display: "flex", flexDirection: "column", minHeight: "91vh", padding: "0px"}}>
+        <Row className="justify-content-center">
+            <Col xs={12} sm={12} md={6} lg={4} xl={4} className="justify-content-center py-5">
+                <div className="pb-4">
+                    <Card bg="light" style={{ borderRadius: "0px", boxShadow: "0px 1px 4px #fecd00" }}>
+                        <Card.Body>
+                            <h4 className="pt-4 pb-2">{Label.setAlertTitle(true ? Label.CREATE : Label.UPDATE)}</h4>
+                            <Form noValidate onSubmit={handleSubmit}>
+                                <Row>
+                                    {/**Title */}
+                                    <Form.Group className="py-2" as={Col} controlId="title">                        
+                                        <Form.Control required
+                                                    type="text"
+                                                    placeholder={Label.TITLE}
+                                                    value={title}
+                                                    onChange={(e) => setTitle(e.target.value)}/>
+                                    </Form.Group>
+                                </Row>
 
-                 {/**Subtitle */}
-                 <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="subtitle">
-                    <Form.Label>{Label.SUBTITLE}</Form.Label>
-                    <Form.Control required
-                                  type="text"
-                                  placeholder={Label.SUBTITLE}
-                                  value={subtitle}
-                                  onChange={(e) => setSubtitle(e.target.value)}/>
-                </Form.Group>                
-            </Row>
-           
-            <Button variant="secondary" className="button mx-2 my-2" onClick={() => { navigate("/dashboard"); }}>
-                <FaUndo />
-                <span style={{paddingLeft: "5px"}} >{Label.BACK}</span>                    
-            </Button>
+                                <Row>
+                                    {/**Subtitle */}
+                                    <Form.Group className="py-2" as={Col}  controlId="subtitle">
+                                        <Form.Control required
+                                                    type="text"
+                                                    placeholder={Label.SUBTITLE}
+                                                    value={subtitle}
+                                                    onChange={(e) => setSubtitle(e.target.value)}/>
+                                    </Form.Group>                
+                                </Row>
+                            
+                                <Button variant="secondary" className="button mx-2 my-2" onClick={() => { navigate("/dashboard"); }}>
+                                    <FaUndo />
+                                    <span style={{paddingLeft: "5px"}} >{Label.BACK}</span>                    
+                                </Button>
 
-            <Button type="submit" variant="success" className="button mx-2 my-2">
-                <FaPaperPlane />
-                <span style={{paddingLeft: "5px"}}>{Label.SUBMIT} </span>
-            </Button>
-        </Form>
+                                <Button type="submit" variant="success" className="button mx-2 my-2">
+                                    <FaPaperPlane />
+                                    <span style={{paddingLeft: "5px"}}>{Label.SUBMIT} </span>
+                                </Button>
+                            </Form>
+                        </Card.Body>
+                    </Card>
+                    
+                    <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>
+                </div>  
+            </Col>
+        </Row>
+    </Container>
 
-        <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>
-    </div>  
+    <div style={{ backgroundColor: "#6c757d", height: "50px" }}>
+        <p style={{fontWeight: "bold", paddingTop:"15px", fontSize:"12px", color: "#fecd00"}}>&copy; {Label.COPYRIGHT}</p>
+    </div>
 </>
 }
 
