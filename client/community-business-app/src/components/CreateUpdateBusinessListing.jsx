@@ -212,7 +212,7 @@ const CreateUpdateBusinessComponent = () => {
                         setGetImage3(result.data.listing.images[2] || null);
                     }
                 } catch (error) {
-                    //resetForm();
+                    //reset the form except for the businessListingId if no match is found
                     setBusinessName('');
                     setAddress('');
                     setBusinessPhone('');
