@@ -5,9 +5,9 @@ import { FaPaperPlane } from "react-icons/fa";
 //#endregion
 
 //#region Internal Imports
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Label, Message } from '../../shared/resources';
-import { CREATE_USER } from '../../shared/gql/authentication.gql';
+import { CREATE_USER, GET_USER_BY_USERNAME } from '../../shared/gql/authentication.gql';
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
 import bannerImage from "../assets/RegisterBanner.jpg"//Do not remove
 //#endregion
@@ -44,15 +44,11 @@ const RegisterComponent = () => {
 
     //#region GQL
     const [ createUser ] = useMutation(CREATE_USER);
+    const { refetch: fecthingUserByUsername } = useQuery(GET_USER_BY_USERNAME, {
+        variables: { username }
+    });
     //#endregion
 
-
-    /**
-     * 
-        TODO: Missing validation.
-                1. Unique username
-                2. Email (Regex)
-     */
     const handleSubmit = async (event) => {
           event.preventDefault();
           const form = event.currentTarget;
@@ -62,12 +58,17 @@ const RegisterComponent = () => {
             event.stopPropagation();
             return;
           }
+
+          const checkUser = await fecthingUserByUsername();          
+          if(checkUser?.data?.getUserByUsername) {
+            displayToastMsg(Label.ERROR, Message.USERNAME_ALREADY_EXISTS, "danger");            
+            return;
+          }
     
           try {
             await createUser({ variables: { username, email, type, password } });
             displayToastMsg(Label.SUCCESS, Message.USER_SAVED_SUCCESSFULLY, "success");
-            
-            setUsername('');
+                        
             setEmail('');
             setType(USER_TYPE.RESIDENT);
             setPassword('');

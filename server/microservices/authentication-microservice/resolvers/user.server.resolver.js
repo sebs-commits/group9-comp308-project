@@ -18,6 +18,16 @@ export const userResolvers = {
                 console.error(`An error occurred while getting a user: `, error);
                 throw new Error("Error in user - user.server.resolver.js");
             }            
+        },
+
+        getUserByUsername: async (_, { username }) => {
+            try {
+                const userFound = await UserModel.findOne({ username });        
+                return userFound ? userFound.username : null;
+            } catch (error) {
+                console.log(`An error occurred while getting a user by username: `, error);
+                throw new Error("Error in getUserByUsername - user.server.resolver.js");
+            }
         }
     },
     
