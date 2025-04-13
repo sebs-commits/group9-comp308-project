@@ -24,7 +24,13 @@ const requestsSchema = new Schema({
         required: true
     },
     
-    request: { type: String, required: true }
+    request: { type: String, required: true },
+    status: { 
+        type: String,
+        enum: ['new', 'assigned', 'complete'], 
+        default: 'new',
+        required: true
+    }
 })
 
 const RequestModel = mongoose.model('Requests', requestsSchema);

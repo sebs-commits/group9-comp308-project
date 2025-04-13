@@ -17,6 +17,7 @@ export const combinedTypeDefs = gql`
     type: String!
     request: String!
     location: String!
+    status: String!
   }
 
   type Alert {
@@ -80,6 +81,7 @@ export const combinedTypeDefs = gql`
       type: String!
       request: String!
       location: String!
+      status: String
     ): Requests
     updateRequest(
       _id: ID!
@@ -88,6 +90,7 @@ export const combinedTypeDefs = gql`
       type: String!
       request: String!
       location: String!
+      status: String
     ): Requests
     deleteRequest(_id: ID!): Requests
     createAlert(

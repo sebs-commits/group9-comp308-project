@@ -17,7 +17,10 @@ export const requestsResolvers = {
   },
 
   Mutation: {
-    createRequest: async (_, { creatorId, title, type, request, location }) => {
+    createRequest: async (
+      _,
+      { creatorId, title, type, request, location, status }
+    ) => {
       try {
         const newRequest = new RequestModel({
           creatorId,
@@ -25,6 +28,7 @@ export const requestsResolvers = {
           type,
           request,
           location,
+          status: status || "new",
         });
         return await newRequest.save();
       } catch (error) {
@@ -35,20 +39,18 @@ export const requestsResolvers = {
 
     updateRequest: async (
       _,
-      { _id, creatorId, title, type, request, location }
+      { _id, creatorId, title, type, request, location, status }
     ) => {
       try {
         const existingRequests = await RequestModel.findOne({ _id });
         if (!existingRequests)
           throw new Error("You are trying to update a non-existing request.");
 
-        return await RequestModel.findByIdAndUpdate(_id, {
-          creatorId,
-          title,
-          type,
-          request,
-          location,
-        });
+        return await RequestModel.findByIdAndUpdate(
+          _id,
+          { creatorId, title, type, request, location, status },
+          { new: true }
+        );
       } catch (error) {
         console.error(`An error occurred while updating a request: `, error);
         throw new Error("Error in updateRequest - requests.server.resolver.js");
