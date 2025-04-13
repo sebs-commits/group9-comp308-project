@@ -8,8 +8,6 @@ export default defineConfig({
     federation({
       name: "communityBusinessApp",
       filename: "remoteEntry.js",
-      name: "communityBusinessApp",
-      filename: "remoteEntry.js",
       exposes: {
         "./CreateNews": "./src/components/CreateNews",
         "./CreateUpdateRequests": "./src/components/CreateUpdateRequests",
@@ -19,6 +17,7 @@ export default defineConfig({
         "./ViewBusinessListings": "./src/components/ViewBusinessListings",
         "./NewsList": "./src/components/NewsList",
         "./NewsPage": "./src/components/NewsPage",
+        "./GeneralDiscussions": "./src/components/GeneralDiscussions",
       },
       shared: [
         "react",
