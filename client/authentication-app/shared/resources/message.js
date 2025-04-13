@@ -7,5 +7,6 @@ export const Message = {
     USER_SAVED_SUCCESSFULLY: "User has been saved successfully.",
     USER_VOLUNTEER_UPDATED_SUCCESSFULLY: "The user's volunteer information has been updated successfully.",
     TRY_AGAIN: "An error occurred. Try again.",
-    INVLID_USERNAME_OR_PASSWORD: "Invalid username or password"
+    INVLID_USERNAME_OR_PASSWORD: "Invalid username or password",
+    USERNAME_ALREADY_EXISTS: "Username already exists"
 }

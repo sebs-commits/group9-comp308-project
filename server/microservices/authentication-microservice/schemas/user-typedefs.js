@@ -16,6 +16,7 @@ export const userTypeDefs = gql`
         _microservice: String
 
         user(id: ID!): User
+        getUserByUsername(username: String!): String
     }
 
     type Mutation {

@@ -16,7 +16,6 @@ import { useEffect } from 'react';
 import { CREATE_BUSINESS_LISTING, GET_BUSINESS_LISTING, UPDATE_BUSINESS_LISTING } from '../../shared/gql/businesslisting.gql.js'; 
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
 import { Label, Message } from '../../shared/resources';
-import { requestFormReset } from 'react-dom';
 //#endregion
 
 //github co-pilot suggestion on 2025-04-02: 'how could I add a regex to validate the phone number?'
@@ -196,19 +195,21 @@ const CreateUpdateBusinessComponent = () => {
         useEffect(() => {
             const fetch = async () => {
                 try {
-                    const result = await refetch({ listingTicketId: businessListingId });
-                    //if listing exists, set the state variables to the values from the listing (only if the user owns this listing)
-                    if (result?.data?.listing && sessionStorage.getItem("username") === result.data.listing.creatorUsername) {
-                        //set the data to the fields on the form
-                        setBusinessListingId(result.data.listing.listingTicketId);
-                        setBusinessName(result.data.listing.businessName);
-                        setAddress(result.data.listing.address);
-                        setBusinessPhone(result.data.listing.phoneNumber);
-                        setBusinessDescription(result.data.listing.businessDescription);
-                        setBusinessDeals(result.data.listing.discounts);
-                        setGetImage1(result.data.listing.images[0] || null);
-                        setGetImage2(result.data.listing.images[1] || null);
-                        setGetImage3(result.data.listing.images[2] || null);
+                    if(businessListingId) {                                            
+                        const result = await refetch({ listingTicketId: businessListingId });
+                        //if listing exists, set the state variables to the values from the listing (only if the user owns this listing)
+                        if (result?.data?.listing && sessionStorage.getItem("username") === result.data.listing.creatorUsername) {
+                            //set the data to the fields on the form
+                            setBusinessListingId(result.data.listing.listingTicketId);
+                            setBusinessName(result.data.listing.businessName);
+                            setAddress(result.data.listing.address);
+                            setBusinessPhone(result.data.listing.phoneNumber);
+                            setBusinessDescription(result.data.listing.businessDescription);
+                            setBusinessDeals(result.data.listing.discounts);
+                            setGetImage1(result.data.listing.images[0] || null);
+                            setGetImage2(result.data.listing.images[1] || null);
+                            setGetImage3(result.data.listing.images[2] || null);
+                        }
                     }
                 } catch (error) {
                     //reset the form except for the businessListingId if no match is found
@@ -221,14 +222,14 @@ const CreateUpdateBusinessComponent = () => {
                     setGetImage2(null);
                     setGetImage3(null);
                     console.error("Error fetching business listing data: ", error);
-                    displayToastMsg(Label.ERROR, Message.NO_BUSSINESS_LISTING_MATCH, "danger");
+                    displayToastMsg(Label.INFO, Message.NO_BUSSINESS_LISTING_MATCH, "info");
                 }
             }
                 fetch();
             }, [businessListingId]); //fetch when the businessListingId changes
 
     return <>
-        <div className="px-5 pb-4">
+        <div className="px-5 pb-4" style={{height: "91vh"}}>
             <h4 className="pt-4 pb-2">{Label.BUSINESS_PAGE_TITLE}</h4>
             <Form noValidate onSubmit={handleSubmit}>
                 <Row>
@@ -349,6 +350,7 @@ const CreateUpdateBusinessComponent = () => {
 
             <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>
         </div>  
+
          {/*Footer*/}
          <div style={{ backgroundColor: "#6c757d", height: "50px" }}>
             <p style={{fontWeight: "bold", paddingTop:"15px", fontSize:"12px", color: "#fecd00"}}>&copy; {Label.COPYRIGHT}</p>

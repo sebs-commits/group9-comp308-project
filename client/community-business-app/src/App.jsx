@@ -10,6 +10,8 @@ import CreateNewsComponent from "./components/CreateNews";
 import CreateUpdateRequestComponent from "./components/CreateUpdateRequests";
 import CreateUpdateAlertComponent from "./components/CreateUpdateAlerts";
 import NewsPage from "./components/NewsPage";
+import CreateUpdateBusinessComponent from "./components/CreateUpdateBusinessListing";
+import ViewBusinessListings from "./components/ViewBusinessListings";
 
 function App() {
   return (
@@ -48,6 +50,8 @@ function App() {
               <Route path="alerts" element={<CreateUpdateAlertComponent />} />
               <Route path="news" element={<CreateNewsComponent />} />
               <Route path="/news/:id" element={<NewsPage />} />
+              <Route path="/viewlistings" element={<ViewBusinessListings />} />
+              <Route path="/createupdatelistings" element={<CreateUpdateBusinessComponent />} />
             </Routes>
           </div>
         </header>
