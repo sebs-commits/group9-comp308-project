@@ -15,8 +15,16 @@ const requestsSchema = new Schema({
         },
         required: true
     },
+    location: {
+        type: String,
+        enum: {
+            values: [ "Toronto", "Mississauga", "Markham", "Kingston", "Oakville", "Ajax"],
+            message: '{VALUE} is not supported'
+        },
+        required: true
+    },
     
-    request: { type: String, required: true }
+    request: { type: String, required: true },
 })
 
 const RequestModel = mongoose.model('Requests', requestsSchema);

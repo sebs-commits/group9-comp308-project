@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Label } from "../../shared/resources";
 const NewsList = lazy(() => import("communityBusinessApp/NewsList"));
+const ViewAllRequest = lazy(() =>import("communityBusinessApp/ViewAllRequest"));
 
 export const ResidentDashboardComponent = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export const ResidentDashboardComponent = () => {
 
           {/* Action buttons */}
           <Row className="justify-content-center mb-4">
-            <Col xs="auto"> {/* Automatically center the btns*/}
+            <Col xs="auto">
               <ButtonGroup>
                 <Button
                   variant="success"
@@ -72,9 +73,11 @@ export const ResidentDashboardComponent = () => {
                 >
                   <NewsList />
                 </Suspense>
+                
               </div>
             </Col>
           </Row>
+          <ViewAllRequest />
         </Col>
       </Row>
     </Container>

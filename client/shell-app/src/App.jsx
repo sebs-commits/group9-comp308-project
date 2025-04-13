@@ -32,6 +32,7 @@ const CreateUpdateAlerts = lazy(() =>import("communityBusinessApp/CreateUpdateAl
 const CreateUpdateBusinessListing = lazy(() =>import("communityBusinessApp/CreateUpdateBusinessListing"));
 const ViewBusinessListing = lazy(() =>import("communityBusinessApp/ViewBusinessListings"));
 const NewsPage = lazy(() => import("communityBusinessApp/NewsPage"));
+const ViewAllRequest = lazy(() => import("communityBusinessApp/ViewAllRequest"));
 
 const UpdateVolunteerComponent = lazy(() => import('authenticationApp/UpdateVolunteerComponent'));
 const GeneralDiscussions = lazy(() => import("communityBusinessApp/GeneralDiscussions"));
@@ -197,6 +198,7 @@ function App() {
                     {token === 'auth' && <Route path="*" element={<HomeComponent />} />}
                     {token !== 'auth' && <Route path="/listing" element={<CreateUpdateBusinessListing />} />}
                     {token !== "auth" && <Route path="discussions" element={<GeneralDiscussions />} />}
+                    {token !== 'auth' && <Route path="viewrequests" element={<ViewAllRequest />} />}
 
       
               {token !== 'auth' && (
