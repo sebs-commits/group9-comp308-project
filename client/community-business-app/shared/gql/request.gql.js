@@ -32,7 +32,6 @@ export const GET_REQUESTS = gql`
       type
       request
       location
-      status
     }
   }
 `;
