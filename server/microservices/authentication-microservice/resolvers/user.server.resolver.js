@@ -10,7 +10,10 @@ export const userResolvers = {
 
         user: async (_, { id }) => {
             try {
-                await UserModel.findById(id)
+                const userFound = await UserModel.findById(id);
+                console.log("UserFound: ", userFound);
+
+                return userFound;
             } catch(error) {
                 console.error(`An error occurred while getting a user: `, error);
                 throw new Error("Error in user - user.server.resolver.js");
@@ -31,7 +34,10 @@ export const userResolvers = {
         },
         updateUser: async (_, { id, username, email, type }) => {
             try {
-                await UserModel.findByIdAndUpdate(id, { username, email, type }, { new: true });
+                const UserFoundAndUpdated = await UserModel.findByIdAndUpdate(id, { username, email, type }, { new: true });
+                console.log("UserFoundAndUpdated: ", userFound);
+
+                return UserFoundAndUpdated;
             } catch(error) {
                 console.error(`An error occurred while updating a user: `, error);
                 throw new Error("Error in updateUser - user.server.resolver.js");
@@ -50,6 +56,15 @@ export const userResolvers = {
         },
         logout: async (_, __, { res }) => {
             return 'Logged out successfully!';
+        },
+
+        updateVolunteer: async (_, { id, interests, location, participation }) => {
+            try {
+                await UserModel.findByIdAndUpdate(id, { interests, location, participation }, { new: true });
+            } catch(error) {
+                console.error(`An error occurred while updating a user: `, error);
+                throw new Error("Error in updateVolunteer - user.server.resolver.js");
+            }
         }
     }
 }

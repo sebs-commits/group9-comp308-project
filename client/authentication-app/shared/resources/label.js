@@ -8,9 +8,13 @@ export const Label = {
     OWNER: "Business Owner",
     ORGANIZER: "Organizer",
     PASSWORD: "Password",
+    INTERESTS: "Interests",
+    LOCATION: "Location",
+    PARTICIPATION: "Participation",
     SUBMIT: "Submit",
     CREATE: "Create",
     UPDATE: "Update",
+    UPDATEVOLUNTEER: "Update Volunteer",
     ERROR: "Error",
     SUCCESS: "Success"
 }
