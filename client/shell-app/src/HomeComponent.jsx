@@ -2,6 +2,7 @@
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { GrLinkNext } from "react-icons/gr";
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 //#endregion
 
 //#region Internal Imports
@@ -13,6 +14,9 @@ import { Label } from '../shared/resources';
 
 const HomeComponent = () => {
     const navigate = useNavigate();
+
+    const [token, setToken] = useState(sessionStorage.getItem("token") || "auth");
+
     return <>
         <Container>
             <Row style={{ backgroundImage: `url(${bannerImage})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '400px', position: 'relative', color: '#fecd00' }} >
@@ -21,17 +25,18 @@ const HomeComponent = () => {
                     <h3 style={{fontWeight: "bold"}}>{Label.MAIN_SUBTITLE}</h3>
                 </div>
             </Row>
-
-            {/**Events Carousel */}
-            <Row style={{ backgroundColor: "white", height: "225px", color: "black" }}> 
-                <h2 style={{ margin:"auto", padding: "auto", color: "black", marginBottom: "0px", fontFamily: "Roboto" }}>{Label.CONNECT_TODAY}</h2>
-                <Button variant="outline-dark" style={{width: "auto", height: "40px", marginRight: "auto", marginLeft: "auto", marginTop: "20px", borderRadius: "0px" }} onClick={() => { navigate("/register") }}>
-                    <GrLinkNext />
-                    <span style={{paddingLeft: "5px", fontWeight: "bold", fontSize: "16px"}}>{Label.REGISTER_NOW}</span>
-                </Button>
-            </Row>
-
-           
+            
+            {
+                token === "auth" &&
+                <Row style={{ backgroundColor: "white", height: "225px", color: "black" }}> 
+                    <h2 style={{ margin:"auto", padding: "auto", color: "black", marginBottom: "0px", fontFamily: "Roboto" }}>{Label.CONNECT_TODAY}</h2>
+                    <Button variant="outline-dark" style={{width: "auto", height: "40px", marginRight: "auto", marginLeft: "auto", marginTop: "20px", borderRadius: "0px" }} onClick={() => { navigate("/register") }}>
+                        <GrLinkNext />
+                        <span style={{paddingLeft: "5px", fontWeight: "bold", fontSize: "16px"}}>{Label.REGISTER_NOW}</span>
+                    </Button>
+                </Row>
+            }
+                       
             <Row style={{ backgroundColor: "#2b2b2b", height: "auto", minHeight: "400px",}}>
                 <Col md="6" style={{ marginBottom: "20px" }}>                                                                                        
                     <h3 style={{ paddingTop: "20px" }}>{Label.ABOUT_US}</h3>
