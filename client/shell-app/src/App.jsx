@@ -149,7 +149,7 @@ function App() {
                     {Label.CREATE_LISTING}
                   </Nav.Link>
                 )}
-                {token !== "auth" && (
+                {token !== 'auth' && type === 'resident' && (
                   <Nav.Link as={Link} to="/discussions">
                     Discussions
                   </Nav.Link>
