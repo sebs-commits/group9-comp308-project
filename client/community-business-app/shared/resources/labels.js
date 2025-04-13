@@ -37,5 +37,6 @@ export const Label = {
     BUSINESS_DEALS_DESCRIPTION: "Enter any deals or offers that your business is offering.",
     DELETE_BTN: "Delete",
     ENTER_REVIEW_DESCRIPTION: "Please enter your anonymous and *permanent* review here.",
-    COPYRIGHT: "2025 Group 9"
+    COPYRIGHT: "2025 Group 9",
+    INFO: "Info"
 }
