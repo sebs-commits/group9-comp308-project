@@ -7,8 +7,9 @@
     "start:auth": "nodemon ./microservices/authentication-microservice/authentication-microservice",
     "start:business": "nodemon ./microservices/business-events-microservice/business-microservice",
     "start:community": "nodemon ./microservices/community-engagement-microservice/community-microservice",
+    "start:ai": "nodemon ./microservices/ai-personalization-microservice/ai-personalization-microservice",
     "start:server": "nodemon ./server",
-    "start:all": "npm-run-all --parallel start:auth start:business start:community start:server",
+    "start:all": "npm-run-all --parallel start:auth start:business start:community start:ai start:server",
     "start": "nodemon server",
     "dev": "nodemon server",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -30,7 +31,10 @@
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+
+    "body-parser": "^1.20.1",
+    "@google/generative-ai": "^0.3.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9",

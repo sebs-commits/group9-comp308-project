@@ -31,6 +31,8 @@ const CreateUpdateAlerts = lazy(() =>import("communityBusinessApp/CreateUpdateAl
 const CreateUpdateBusinessListing = lazy(() =>import("communityBusinessApp/CreateUpdateBusinessListing"));
 const ViewBusinessListing = lazy(() =>import("communityBusinessApp/ViewBusinessListings"));
 const NewsPage = lazy(() => import("communityBusinessApp/NewsPage"));
+
+const UpdateVolunteerComponent = lazy(() => import('authenticationApp/UpdateVolunteerComponent'));
 const GeneralDiscussions = lazy(() => import("communityBusinessApp/GeneralDiscussions"));
 //#endregion
 
@@ -135,6 +137,13 @@ function App() {
                     {Label.LOGIN}
                   </Nav.Link>
                 )}
+
+                {type === 'resident' && (
+                  <Nav.Link as={Link} to="/volunteer">
+                    {Label.VOLUNTEER}
+                  </Nav.Link>
+                )}
+
                 {type === "owner" && (
                   <Nav.Link as={Link} to="/listing">
                     {Label.CREATE_LISTING}
@@ -182,7 +191,14 @@ function App() {
                     {token !== 'auth' && <Route path="/listing" element={<CreateUpdateBusinessListing />} />}
                     {token !== "auth" && <Route path="discussions" element={<GeneralDiscussions />} />}
 
-                  </Routes>
+      
+              {token !== 'auth' && (
+                <Route 
+                  path="/volunteer" 
+                  element={<UpdateVolunteerComponent />} 
+                />
+              )}
+            </Routes>
                 </Suspense>
             </div>
           </header>

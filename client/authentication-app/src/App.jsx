@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 import React from 'react';
 import RegisterComponent from './components/RegisterComponent';
 import LoginComponent from './components/LoginComponent';
+import UpdateVolunteerComponent from './components/UpdateVolunteerComponent';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
               <Route index element={<RegisterComponent />} />
               <Route path="register" element={<RegisterComponent />} />
               <Route path="login" element={<LoginComponent />} />
+              <Route path="volunteer" element={<UpdateVolunteerComponent />} />
             </Routes>
         </div>
       </header>

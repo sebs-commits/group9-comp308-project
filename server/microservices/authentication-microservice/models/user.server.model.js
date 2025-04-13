@@ -16,7 +16,13 @@ const userSchema = new Schema({
         required: true
     },
 
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+
+    interests: { type: String, required: false, default: "" },
+
+    location: { type: String, required: false, default: "" },
+
+    participation: { type: String, required: false, default: "" }
 });
 
 const UserModel = mongoose.model('User', userSchema);
