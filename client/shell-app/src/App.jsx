@@ -16,6 +16,7 @@ import { Label } from "../shared/resources";
 import Dashboard from "./Dashboard";
 import DisplaySelectedEventComponent from "../shared/components/DisplaySelectedEvent";
 import { EventProvider } from "../../events-administration-app/shared/contexts/event";
+import Logo from './assets/Logos.svg';
 //#endregion
 
 //#region Exposed Components
@@ -106,9 +107,10 @@ function App() {
       <header>
         <Navbar bg="secondary" variant="dark" expand="lg">
           <Container>
-            <Navbar.Brand as={Link} to="/home">
-              {Label.HOME}
+            <Navbar.Brand as={Link} to="/home"> 
+              <img alt="Logo" src={Logo} width="50" height="50" className="d-inline-block align-top" />
             </Navbar.Brand>
+            
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="mr-auto">

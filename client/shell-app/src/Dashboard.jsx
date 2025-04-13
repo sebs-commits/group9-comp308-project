@@ -9,7 +9,7 @@ const Dashboard = () => {
 
     return <> 
         <Container className="justify-content-start" style={{display: "flex", flexDirection: "column", minHeight: "91vh", padding: "0px"}}>
-            <Row xs={12} sm={12} md={8} lg={8} xl={8} className="justify-content-start py-5">
+            <Row xs={12} sm={12} md={8} lg={8} xl={8} className="justify-content-center">
                 
                 { type === 'organizer' && <CommunityOrganizerDashboardComponent/> }
 
