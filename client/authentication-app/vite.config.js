@@ -21,6 +21,15 @@ export default defineConfig({
     modulePreload: false,
     target: 'esnext',
     minify: false,
-    cssCodeSplit: false
+    cssCodeSplit: false,
+    assetsDir: 'assets',
+ 
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name][extname]',
+        chunkFileNames: 'assets/[name].js',
+        entryFileNames: 'assets/[name].js',
+      }
+    }
   }
 })
