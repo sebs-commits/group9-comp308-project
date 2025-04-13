@@ -8,7 +8,7 @@ import { FaPaperPlane } from 'react-icons/fa';
 //#endregion
 
 //#region Internal Imports
-import { GET_BUSINESS_LISTINGS, UPDATE_BUSINESS_LISTING, DELETE_BUSINESS_LISTING } from '../../shared/gql/businesslisting.gql.js'; 
+import { GET_BUSINESS_LISTINGS, GET_BUSINESS_LISTING, UPDATE_BUSINESS_LISTING, DELETE_BUSINESS_LISTING } from '../../shared/gql/businesslisting.gql.js'; 
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
 import { Label, Message } from '../../shared/resources';
 //#endregion
@@ -20,15 +20,12 @@ const GET_ASSISTANCE = gql`
     }
 `;
 
-
 const ViewBusinessComponent = () => {
 
     //get user type from session storage
     const [type, setType] = useState(sessionStorage.getItem('type') || '');
     //get user token from session storage to see if user is logged in
     const [token, setToken] = useState(sessionStorage.getItem("token") || 'auth');
-
-
 
     const navigate = useNavigate();
 
@@ -39,7 +36,7 @@ const ViewBusinessComponent = () => {
     const [showA, setShowA] = useState(false);
     //#endregion
 
-    const [review, setReview] = useState(""); // state for the reviews
+    const [review, setReview] = useState(''); // state for the reviews
 
 
     const [businessListings, setBusinessListings] = useState([]); // state for the business listings
@@ -77,7 +74,7 @@ const ViewBusinessComponent = () => {
     };
 
 
-    const handleSubmit = async (e, businessListingId, businessName, businessAddress, businessPhone, businessDescription, imageList, businessDeals, reviews) => {
+    const handleSubmit = async (e, businessListingId, businessName, businessAddress, businessPhone, businessDescription, imageList, businessDeals, reviews, creatorUsername) => {
         e.preventDefault();
    
         //check if the review is blank. If so, error message
@@ -94,9 +91,11 @@ const ViewBusinessComponent = () => {
                     address: businessAddress,
                     phoneNumber: businessPhone,
                     businessDescription: businessDescription,
-                    images: imageList, //pass the images
+                    //pass the images
+                    images: imageList,
                     discounts: businessDeals,
-                    reviews: [...reviews, review] //pass the reviews
+                    reviews: [...reviews, review], //pass the reviews
+                    creatorUsername: creatorUsername // pass the creatorUsername from the listing
                 }
             });
             displayToastMsg(Label.SUCCESS, Message.REVIEW_SUCCESSFUL, "success");
@@ -223,7 +222,9 @@ const ViewBusinessComponent = () => {
                 <tr>
                     <td colSpan="3">
                     
-                        <Form noValidate onSubmit={(e) => handleSubmit(e, listing.listingTicketId, listing.businessName, listing.address, listing.phoneNumber, listing.businessDescription, listing.images, listing.discounts, listing.reviews)}>
+                        <Form noValidate onSubmit={(e) => 
+                        handleSubmit(e, listing.listingTicketId, listing.businessName, listing.address, listing.phoneNumber, 
+                            listing.businessDescription, listing.images, listing.discounts, listing.reviews, listing.creatorUsername)}>
                             <Row>
                                 {/*User has to log in to provide a review*/}
                                 
@@ -251,7 +252,7 @@ const ViewBusinessComponent = () => {
                     </td>
                 </tr>
                 }
-                {type === 'owner' && (
+                {sessionStorage.getItem("username") === listing.creatorUsername && (
                     <tr>
                         <td colSpan="3">
                         
@@ -262,7 +263,7 @@ const ViewBusinessComponent = () => {
                         </td>
                     </tr>
                 )}
-                {type === 'owner' && (
+                {sessionStorage.getItem("username") === listing.creatorUsername && (
                     <tr>
                         <td colSpan="5" className='text-center'>
                             <Button variant='danger' className='m-1' onClick={() => handleDelete(listing.listingTicketId)}>{Label.DELETE_BTN}</Button>

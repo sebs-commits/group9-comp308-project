@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { FaUndo, FaPaperPlane } from "react-icons/fa";
 import { useMutation, useQuery } from '@apollo/client';
+import { useEffect } from 'react';
 
 //#endregion
 
@@ -15,6 +16,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_BUSINESS_LISTING, GET_BUSINESS_LISTING, UPDATE_BUSINESS_LISTING } from '../../shared/gql/businesslisting.gql.js'; 
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
 import { Label, Message } from '../../shared/resources';
+import { requestFormReset } from 'react-dom';
 //#endregion
 
 //github co-pilot suggestion on 2025-04-02: 'how could I add a regex to validate the phone number?'
@@ -99,9 +101,11 @@ const CreateUpdateBusinessComponent = () => {
                             address: businessAddress,
                             phoneNumber: businessPhone,
                             businessDescription: businessDescription,
+                            //pass the images
                             images: imageList, //pass the images
                             discounts: businessDeals,
-                            reviews: [] //no reviews on this page.
+                            reviews: data.listing?.reviews || [], // Use existing reviews if available, otherwise default to an empty array
+                            creatorUsername: sessionStorage.getItem("username") || ''
                         }
                     });
                     displayToastMsg(Label.SUCCESS, Message.BUSINESS_LISTING_UPDATED_SUCCESSFULLY, "success");
@@ -122,7 +126,8 @@ const CreateUpdateBusinessComponent = () => {
                             businessDescription: businessDescription,
                             images: imageList, //pass the images
                             discounts: businessDeals,
-                            reviews: [] //no reviews on this page.
+                            reviews: [], //no reviews on this page.
+                            creatorUsername: sessionStorage.getItem("username") || ''
                         }
                     });
                     displayToastMsg(Label.SUCCESS, Message.BUSINESS_LISTING_SAVED_SUCCESSFULLY, "success");
@@ -186,6 +191,42 @@ const CreateUpdateBusinessComponent = () => {
             }
             //end of suggestion
         };
+
+        //loads an existing business listing if the businessListingId is already in the DB to make it easier to update it.
+        useEffect(() => {
+            const fetch = async () => {
+
+                try {
+                    const result = await refetch({ listingTicketId: businessListingId });
+                    //if listing exists, set the state variables to the values from the listing (only if the user owns this listing)
+                    if (result?.data?.listing && sessionStorage.getItem("username") === result.data.listing.creatorUsername) {
+                        //set the data to the fields on the form
+                        setBusinessListingId(result.data.listing.listingTicketId);
+                        setBusinessName(result.data.listing.businessName);
+                        setAddress(result.data.listing.address);
+                        setBusinessPhone(result.data.listing.phoneNumber);
+                        setBusinessDescription(result.data.listing.businessDescription);
+                        setBusinessDeals(result.data.listing.discounts);
+                        setGetImage1(result.data.listing.images[0] || null);
+                        setGetImage2(result.data.listing.images[1] || null);
+                        setGetImage3(result.data.listing.images[2] || null);
+                    }
+                } catch (error) {
+                    //resetForm();
+                    setBusinessName('');
+                    setAddress('');
+                    setBusinessPhone('');
+                    setBusinessDescription('');
+                    setBusinessDeals('');
+                    setGetImage1(null);
+                    setGetImage2(null);
+                    setGetImage3(null);
+                    console.error("Error fetching business listing data: ", error);
+                    displayToastMsg(Label.ERROR, Message.NO_BUSSINESS_LISTING_MATCH, "danger");
+                }
+            }
+                fetch();
+            }, [businessListingId]); //fetch when the businessListingId changes
 
     return <>
         <div className="px-5 pb-4">
