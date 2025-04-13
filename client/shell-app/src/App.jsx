@@ -23,22 +23,13 @@ export const EventManagement = lazy(() =>
   import("eventsAndAdministrationApp/EventManagement")
 );
 const RegisterComponent = lazy(() =>
-  import("authenticationApp/RegisterComponent")
-);
+  import("authenticationApp/RegisterComponent"));
 const LoginComponent = lazy(() => import("authenticationApp/LoginComponent"));
 const CreateNews = lazy(() => import("communityBusinessApp/CreateNews"));
-const CreateUpdateRequests = lazy(() =>
-  import("communityBusinessApp/CreateUpdateRequests")
-);
-const CreateUpdateAlerts = lazy(() =>
-  import("communityBusinessApp/CreateUpdateAlerts")
-);
-const CreateUpdateBusinessListing = lazy(() =>
-  import("communityBusinessApp/CreateUpdateBusinessListing")
-);
-const ViewBusinessListing = lazy(() =>
-  import("communityBusinessApp/ViewBusinessListings")
-);
+const CreateUpdateRequests = lazy(() =>import("communityBusinessApp/CreateUpdateRequests"));
+const CreateUpdateAlerts = lazy(() =>import("communityBusinessApp/CreateUpdateAlerts"));
+const CreateUpdateBusinessListing = lazy(() =>import("communityBusinessApp/CreateUpdateBusinessListing"));
+const ViewBusinessListing = lazy(() =>import("communityBusinessApp/ViewBusinessListings"));
 const NewsPage = lazy(() => import("communityBusinessApp/NewsPage"));
 const GeneralDiscussions = lazy(() => import("communityBusinessApp/GeneralDiscussions"));
 //#endregion
@@ -149,6 +140,11 @@ function App() {
                     {Label.CREATE_LISTING}
                   </Nav.Link>
                 )}
+                {token !== "auth" && (
+                  <Nav.Link as={Link} to="/discussions">
+                    Discussions
+                  </Nav.Link>
+                )}
                 <Nav.Link as={Link} to="/viewlistings">
                   {Label.VIEW_LISTINGS}
                 </Nav.Link>
@@ -179,7 +175,7 @@ function App() {
                     {token === 'auth' && <Route path="register" element={<RegisterComponent />} />}
                     {token !== 'auth' && <Route path="dashboard" element= { <Dashboard /> } />}
                     {token === 'auth' && <Route path="login" element={<LoginComponent />} />}
-                    {token !== 'auth' && <Route path="news" element={<CreateUpdateNews />}/>}
+                    {token !== 'auth' && <Route path="news" element={<CreateNews />}/>}
                     {token !== 'auth' && <Route path="requests" element={<CreateUpdateRequests />}/>}
                     {token !== 'auth' && <Route path="alerts" element={<CreateUpdateAlerts />}/>}
                     {token === 'auth' && <Route path="*" element={<HomeComponent />} />}
