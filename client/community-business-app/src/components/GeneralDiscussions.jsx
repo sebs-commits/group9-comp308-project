@@ -12,6 +12,7 @@ import {
   Col,
   ListGroup,
 } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 import CreateNewDiscussionForm from "./CreateNewDiscussionForm";
 
@@ -125,11 +126,27 @@ const GeneralDiscussions = () => {
         className="bg-dark border-secondary mb-4 shadow-sm text-start"
       >
         <Card.Header className="border-secondary">
-          <h5 className="mb-1 text-light">{discussion.title}</h5>
-          <small className="text-secondary">
-            Started by ID: {discussion.creatorId}
-            {formatCreationDate(discussion.createdAt)}
-          </small>
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 className="mb-1 text-light">{discussion.title}</h5>
+              <small className="text-secondary p-2">
+                Started by ID: {discussion.creatorId}
+                {formatCreationDate(discussion.createdAt)}
+              </small>
+            </div>
+            <small className="text-end">
+              {/* Only render this if the discussion has a related news post*/}
+              {discussion.newsId && (
+                <>
+                  <Link to={`/news/${discussion.newsId}`} className="p-2 ">
+                    <Button variant="outline-info" size="sm">
+                      View news post
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </small>
+          </div>
         </Card.Header>
         <Card.Body>
           <Card.Text className="text-light mb-3">

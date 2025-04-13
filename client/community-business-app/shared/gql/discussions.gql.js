@@ -76,6 +76,7 @@ export const GET_ALL_DISCUSSIONS = gql`
       description
       creatorId
       createdAt
+      newsId
       replies {
         _id
         creatorId
