@@ -47,3 +47,35 @@ export const GET_USER_REQUESTS = gql`
     }
   }
 `;
+export const UPDATE_REQUEST = gql`
+  mutation UpdateRequest(
+    $_id: ID!
+    $creatorId: String!
+    $title: String!
+    $type: String!
+    $request: String!
+    $location: String!
+  ) {
+    updateRequest(
+      _id: $_id
+      creatorId: $creatorId
+      title: $title
+      type: $type
+      request: $request
+      location: $location
+    ) {
+      id
+      title
+      type
+      request
+      location
+    }
+  }
+`;
+export const DELETE_REQUEST = gql`
+  mutation DeleteRequest($_id: ID!) {
+    deleteRequest(_id: $_id) {
+      id
+    }
+  }
+`;

@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
-import { GET_USER_REQUESTS } from "../../shared/gql/request.gql";
+import { useQuery, useMutation } from "@apollo/client";
+import {
+  GET_USER_REQUESTS,
+  DELETE_REQUEST,
+} from "../../shared/gql/request.gql";
 import Table from "react-bootstrap/Table";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
 
-const RequestList = () => {
+const ResidentRequestList = ({ onEdit, displayToastMsg }) => {
   const loggedInUserId = sessionStorage.getItem("uid");
 
-  const { loading, error, data } = useQuery(GET_USER_REQUESTS, {
+  const { loading, error, data, refetch } = useQuery(GET_USER_REQUESTS, {
     variables: { creatorId: loggedInUserId },
   });
+
+  const [deleteRequest] = useMutation(DELETE_REQUEST);
 
   const [requests, setRequests] = useState([]);
 
@@ -19,6 +25,19 @@ const RequestList = () => {
       setRequests(data.userRequests);
     }
   }, [data]);
+
+  const handleDelete = async (requestId) => {
+    try {
+      await deleteRequest({
+        variables: { _id: requestId },
+      });
+      refetch();
+      displayToastMsg("Success", "Request deleted successfully", "success");
+    } catch (error) {
+      displayToastMsg("Error", "Could not delete the request", "danger");
+      console.error("Error deleting", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -49,6 +68,7 @@ const RequestList = () => {
             <th>Type</th>
             <th>Request</th>
             <th>Location</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +79,23 @@ const RequestList = () => {
               <td>{request.type}</td>
               <td>{request.request}</td>
               <td>{request.location}</td>
+              <td>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => onEdit(request)}
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => handleDelete(request.id)}
+                >
+                  Delete
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -67,4 +104,4 @@ const RequestList = () => {
   );
 };
 
-export default RequestList;
+export default ResidentRequestList;
