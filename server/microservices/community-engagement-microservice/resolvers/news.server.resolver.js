@@ -4,34 +4,39 @@ export const newsResolvers = {
   Query: {
     allNews: async () => {
       try {
-        const news = await NewsModel.find({});
-        return news.map((item) => {
-          const plainItem = item.toObject();
-          if (plainItem.creationDate) {
-            plainItem.creationDate = plainItem.creationDate.toISOString();
-          }
-          return plainItem;
-        });
+        const news = await NewsModel.find();
+        return news;
       } catch (error) {
-        console.error(`An error occurred while fetching news`, error);
-        throw new Error("Error in news query - news.server.resolver.js");
+        console.error("Error fetching all news:", error);
+        throw new Error("Could not fetch news");
       }
     },
 
     news: async (_, { _id }) => {
       try {
-        const item = await NewsModel.findOne({ _id });
-        if (item) {
-          const plainItem = item.toObject();
-          if (plainItem.creationDate) {
-            plainItem.creationDate = plainItem.creationDate.toISOString();
-          }
-          return plainItem;
-        }
-        return null;
+        const newsItem = await NewsModel.findById(_id);
+        return newsItem;
       } catch (error) {
-        console.error("Error occurred fetching this news item", error);
-        throw new Error("Error in news query - news.server.resolver.js");
+        console.error("Error fetching news by ID:", error);
+        throw new Error("Could not fetch news");
+      }
+    },
+
+    userNews: async (_, { creatorId }) => {
+      try {
+        const userNews = await NewsModel.find({ creatorId });
+
+        const formattedNews = userNews.map((newsItem) => ({
+          ...newsItem.toObject(),
+          creationDate: newsItem.creationDate
+            ? newsItem.creationDate.toISOString()
+            : null,
+        }));
+
+        return formattedNews;
+      } catch (error) {
+        console.error("Error fetching user news:", error);
+        throw new Error("Could not fetch user news");
       }
     },
   },
@@ -44,41 +49,36 @@ export const newsResolvers = {
           headline,
           textBody,
           image,
-          // creationDate will be automatically set by the model's default value
         });
-        return await newNews.save();
+        await newNews.save();
+        return newNews;
       } catch (error) {
-        console.error(`An error occurred while creating a news: `, error);
-        throw new Error("Error in createNews - news.server.resolver.js");
+        console.error("Error creating news:", error);
+        throw new Error("Could not create news");
       }
     },
 
     updateNews: async (_, { _id, creatorId, headline, textBody, image }) => {
       try {
-        const existingNews = await NewsModel.findOne({ _id });
-        if (!existingNews)
-          throw new Error("You are trying to update a non-existent news.");
-
-        const updateData = { creatorId, headline, textBody };
-        if (image !== undefined) {
-          updateData.image = image;
-        }
-
-        return await NewsModel.findByIdAndUpdate(_id, updateData, {
-          new: true,
-        });
+        const updatedNews = await NewsModel.findByIdAndUpdate(
+          _id,
+          { creatorId, headline, textBody, image },
+          { new: true }
+        );
+        return updatedNews;
       } catch (error) {
-        console.error(`An error occurred while updating a news `, error);
-        throw new Error("Error in updateNews - news.server.resolver.js");
+        console.error("Error updating news:", error);
+        throw new Error("Could not update news");
       }
     },
 
     deleteNews: async (_, { _id }) => {
       try {
-        return await NewsModel.findByIdAndDelete(_id);
+        const deletedNews = await NewsModel.findByIdAndDelete(_id);
+        return deletedNews;
       } catch (error) {
-        console.error(`An error occurred while deleting a news: `, error);
-        throw new Error("Error in deleteNews - news.server.resolver.js");
+        console.error("Error deleting news:", error);
+        throw new Error("Could not delete news");
       }
     },
   },
