@@ -23,8 +23,8 @@ export const EVENT_TYPE = {
     CLEAN_UP_DRIVES: "clean-up-drives"
 }
 
-import { gql, useQuery } from "@apollo/client";
-import { GET_USERS, GET_USER } from '../../../authentication-app/shared/gql/authentication.gql';
+import { gql, useQuery, useMutation } from "@apollo/client";
+import { GET_USERS, GET_USER, UPDATE_VOLUNTEER } from '../../../authentication-app/shared/gql/authentication.gql';
 const GET_ASSISTANCE = gql`
     query RequestAssistance($prompt: String!) {
         requestAssistance(prompt: $prompt)
@@ -40,6 +40,7 @@ const CreateUpdateEvent = () => {
     useEffect(() => { setIsEditing(!!event.id); }, [event]);
 
     //#region States
+    const [uid, setUid]= useState("");
     const [isEditing, setIsEditing] = useState(false);    
 
     const [message, setMessage] = useState("");
@@ -152,10 +153,17 @@ const CreateUpdateEvent = () => {
         if (filteredVolunteers.length > 0) {
             console.log("Updated volunteers:", filteredVolunteers);
         
-            // example: send suggestion to each
-            filteredVolunteers.forEach((volunteer) => {
-                sendSuggestionToVolunteer(volunteer.id); // or just volunteer if it's an ID
+            const promises = filteredVolunteers.map((voluteer) => {
+                setUid(voluteer.id);
+                return sendSuggestionToVolunteer(voluteer.id);  // Call the function for each volunteerId
             });
+    
+            // Wait for all promises to resolve (or reject)
+            const res = async () => {
+                await Promise.all(promises);
+            }
+
+            res();
         }
 
         console.log("filteredVolunteers: ", filteredVolunteers);
@@ -208,6 +216,7 @@ const CreateUpdateEvent = () => {
 
             const resultText = data.requestAssistance;
             console.log("AI Result:", resultText);
+            //const resultText = "67f98454f863585bd717f3e0";
 
             const volunteers = resultText.split("|").map(v => v.trim());
 
@@ -224,30 +233,34 @@ const CreateUpdateEvent = () => {
         }
     };
 
-
+    
     const { refetch: fetchUser } = useQuery(GET_USER, {
-        skip: true, // won't run automatically (useful don't remove)
+        variables: { id: uid },
+        skip: !uid
     });
 
+    const [ updateVolunteer ] = useMutation(UPDATE_VOLUNTEER)
+       
     const sendSuggestionToVolunteer = async (volunteerId) => {
 
         if (!volunteerId || volunteerId === "" || volunteerId.trim() === "") { displayToastMsg(Label.ERROR, "No volunteer ID provided", "danger"); return; }
         console.log("Volunteer ID: ", volunteerId);
 
         try {
-            const { data } = await fetchUser({ variables: { id: volunteerId } }); // volunteerId is a correct ID as a string
+            const {data} = await fetchUser({id: volunteerId});           
+            console.log("Fetched user data:", data?.user);  // Log the response
 
-            if (!data || !data.eventMatches) { throw new Error("No data returned from AI"); }
+            if (!data || !data.user) { throw new Error("No userData returned from service"); }
 
-            const id = data.id;
-            const interests = data.interests;
-            const location = data.location;
-            const newEventMatches = data.eventMatches === "" ? (data.eventMatches, event.id) : (data.eventMatches, "|", event.id);
-            const requestMatches = data.requestMatches;
-            const ignoredMatches = data.ignoredMatches;
+            const id = data.user.id;
+            const interests = data.user.interests;
+            const location = data.user.location;
+            const newEventMatches = data.user.eventMatches === "" ? (data.user.eventMatches, event.id) : (data.user.eventMatches, "|", event.id);
+            const requestMatches = data.user.requestMatches;
+            const ignoredMatches = data.user.ignoredMatches;
 
             console.log("UpdateVolunteer: ", id, ", ", interests, ", ", location, ", ", newEventMatches, ", ", requestMatches, ", ", ignoredMatches);
-            await updateVolunteer({ variables: { id, interests, location, newEventMatches, requestMatches, ignoredMatches } });
+            await updateVolunteer({ variables: { id, interests, location, eventMatches: newEventMatches, requestMatches, ignoredMatches } });
 
             displayToastMsg(Label.SUCCESS, Message.USER_VOLUNTEER_UPDATED_SUCCESSFULLY, "success");
         } catch (error) {
@@ -371,7 +384,7 @@ const CreateUpdateEvent = () => {
                                         marginBottom: '10px'
                                     }}
                                 >
-                                    <strong style={{ color: 'black' }}>Sent Suggestion To {user.email}</strong>
+                                    <strong style={{ color: 'black' }}>Sent Suggestion To {user.username} at {user.email}</strong>
                                 </div>
                             ))}
                         </Col>
