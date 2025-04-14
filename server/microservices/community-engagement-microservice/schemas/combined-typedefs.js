@@ -6,7 +6,7 @@ export const combinedTypeDefs = gql`
     creatorId: String!
     headline: String!
     textBody: String!
-    creationDate: String!
+    creationDate: String
     image: String
   }
 
@@ -48,7 +48,7 @@ export const combinedTypeDefs = gql`
     _microservice: String
     allNews: [News]
     news(_id: ID!): News
-
+    userNews(creatorId: String!): [News]
     requests: [Requests]
     request(_id: ID!): Requests
     userRequests(creatorId: String!): [Requests]
