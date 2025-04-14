@@ -24,6 +24,7 @@ export const EVENT_TYPE = {
 }
 
 import { gql, useQuery } from "@apollo/client";
+import { GET_USERS, GET_USER } from '../../../authentication-app/shared/gql/authentication.gql';
 const GET_ASSISTANCE = gql`
     query RequestAssistance($prompt: String!) {
         requestAssistance(prompt: $prompt)
@@ -69,7 +70,7 @@ const CreateUpdateEvent = () => {
         
         if(!data.title || !data.summary || !data.description || !data.type || !data.from || !data.to || !data.location || !data.price) {
             displayToastMsg(Label.ERROR, Message.INVALID_FORM, "danger");
-            event.stopPropagation();
+            e.stopPropagation();
             return;
         }
 
@@ -141,6 +142,120 @@ const CreateUpdateEvent = () => {
             displayToastMsg(Label.ERROR, "Failed to get suggested dates", "danger");
         }
     };
+
+    // --- REQUEST SERVER'S USERS QUERY
+    const { refetch: fetchUsers } = useQuery(GET_USERS, {
+        skip: true, // won't run automatically (useful don't remove)
+    });
+    const [filteredVolunteers, setFilteredVolunteers] = useState([]);
+    useEffect(() => {
+        if (filteredVolunteers.length > 0) {
+            console.log("Updated volunteers:", filteredVolunteers);
+        
+            // example: send suggestion to each
+            filteredVolunteers.forEach((volunteer) => {
+                sendSuggestionToVolunteer(volunteer.id); // or just volunteer if it's an ID
+            });
+        }
+
+        console.log("filteredVolunteers: ", filteredVolunteers);
+    }, [filteredVolunteers]);
+
+    // --- THIS IS THE FUNCTION I WANT TO FOCUS ON
+    const handleVolunteers = async (e) => {
+        e.preventDefault();
+
+        displayToastMsg(Label.INFO, "Suggested volunteers can take a moment to load...", "info");
+
+        try{
+            const usersResult = await fetchUsers();
+            const users = usersResult?.data?.users || [];
+            console.log("UsersFound: ", users);
+
+            if (!users || !users[0]) { throw new Error("No users returned from auth-microservice"); }
+
+            const prompt = `
+                Given the event's 
+                    title: "${event?.title}", 
+                    description: "${event?.description}", 
+                    summary: "${event?.summary}", 
+                    type: "${event?.type}", 
+                    price: "${event?.price}", 
+                    and location: "${event?.location}", 
+                suggest volunteers based on the theme and location of the event compared to their interests and location.
+                ${users
+                    ?.filter(
+                      (user) =>
+                        user.interests !== "None" && // if volunteer has an interest
+                        user.location !== "Nowhere" && // if volunteer has an location
+                        !user.ignoredMatches?.includes(event.id) && // if volunteer didn't ignore the event
+                        !user.eventMatches?.includes(event.id) // if volunteer isn't yet matched with the event
+                    )
+                    .map(
+                      (user) =>
+                        `   - {id: ${user.id}, email: ${user.email}, interests: ${user.interests}, location: ${user.location}}`
+                    )
+                    .join('\n')
+                }
+
+                Volunteers who have ignored this event's id or don't have an interest or location that accurately match this event should be ignored.
+                Only respond in this exact format: "volunteerId|volunteerId|..." *by ... I mean keep repeating the "volunteerId|" pattern, AND the full string shouldn't end in "|".
+            `;
+
+            const { data } = await fetchAssistance({ prompt });
+
+            if (!data || !data.requestAssistance) { throw new Error("No data returned from AI"); }
+
+            const resultText = data.requestAssistance;
+            console.log("AI Result:", resultText);
+
+            const volunteers = resultText.split("|").map(v => v.trim());
+
+            if (!volunteers) { displayToastMsg(Label.ERROR, "AI response format incorrect", "danger"); return; }
+
+            await setFilteredVolunteers(users.filter(
+                (user) => volunteers.includes(String(user.id))
+            ));
+
+            console.log("Volunteers: ", volunteers);
+        } catch (err) {
+            console.error("Error fetching assistance:", err);
+            displayToastMsg(Label.ERROR, "Failed to get new suggested volunteers", "danger");
+        }
+    };
+
+
+    const { refetch: fetchUser } = useQuery(GET_USER, {
+        skip: true, // won't run automatically (useful don't remove)
+    });
+
+    const sendSuggestionToVolunteer = async (volunteerId) => {
+
+        if (!volunteerId || volunteerId === "" || volunteerId.trim() === "") { displayToastMsg(Label.ERROR, "No volunteer ID provided", "danger"); return; }
+        console.log("Volunteer ID: ", volunteerId);
+
+        try {
+            const { data } = await fetchUser({ variables: { id: volunteerId } }); // volunteerId is a correct ID as a string
+
+            if (!data || !data.eventMatches) { throw new Error("No data returned from AI"); }
+
+            const id = data.id;
+            const interests = data.interests;
+            const location = data.location;
+            const newEventMatches = data.eventMatches === "" ? (data.eventMatches, event.id) : (data.eventMatches, "|", event.id);
+            const requestMatches = data.requestMatches;
+            const ignoredMatches = data.ignoredMatches;
+
+            console.log("UpdateVolunteer: ", id, ", ", interests, ", ", location, ", ", newEventMatches, ", ", requestMatches, ", ", ignoredMatches);
+            await updateVolunteer({ variables: { id, interests, location, newEventMatches, requestMatches, ignoredMatches } });
+
+            displayToastMsg(Label.SUCCESS, Message.USER_VOLUNTEER_UPDATED_SUCCESSFULLY, "success");
+        } catch (error) {
+            console.error(("Error sending suggestion to volunteer: ", volunteerId), error);
+            displayToastMsg(Label.ERROR, ("Failed to send suggestion to volunteer: ", volunteerId), "danger");
+        }
+
+    }
 
     return <>
         <div className="pb-4">
@@ -233,7 +348,35 @@ const CreateUpdateEvent = () => {
                             <span style={{paddingLeft: "5px"}}>{!isEditing ? Label.CREATE: Label.UPDATE} </span>
                         </Button>
                     </Col>                    
-                </Row>     
+                </Row> 
+                {isEditing && 
+                <>
+                    <Row className="d-flex justify-content-center align-items-center mt-4">
+                        <Col xs={12} md={8}>
+                            <Button variant="primary" className="button mx-2" onClick={handleVolunteers}>
+                                <span style={{paddingLeft: "5px"}}>Suggest Volunteers</span>
+                            </Button>
+                        </Col>                    
+                    </Row>
+                    <Row className="d-flex justify-content-center align-items-center">   
+                        <Col md={8} xs={12} className='form-col-bg'>
+                            {/* Display all current volunteers/users */}
+                            {filteredVolunteers.map((user) => (
+                                <div 
+                                    key={user.id} 
+                                    style={{ 
+                                        backgroundColor: '#f0f0f0', 
+                                        padding: '10px', 
+                                        borderRadius: '5px', 
+                                        marginBottom: '10px'
+                                    }}
+                                >
+                                    <strong style={{ color: 'black' }}>Sent Suggestion To {user.email}</strong>
+                                </div>
+                            ))}
+                        </Col>
+                    </Row>
+                </>}
                                 
             </Form>
 

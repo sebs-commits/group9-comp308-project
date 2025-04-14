@@ -37,7 +37,9 @@ const UpdateVolunteerComponent = () => {
     const [ id, setID ] = useState('');
     const [ interests, setInterests ] = useState('None');
     const [ location, setLocation ] = useState('Nowhere');
-    const [ participation, setParticipation ] = useState('Nothing');
+    const [ eventMatches, setEventMatches ] = useState('');
+    const [ requestMatches, setRequestMatches ] = useState('');
+    const [ ignoredMatches, setIgnoredMatches ] = useState('');
 
     //console.log("Before GET_USER");
 
@@ -65,12 +67,16 @@ const UpdateVolunteerComponent = () => {
             const id = res?.data?.user?.id || null; 
             const interests = res?.data?.user?.interests || 'None'; 
             const location = res?.data?.user?.location || 'Nowhere'; 
-            const participation = res?.data?.user?.participation || 'Nothing'; 
+            const eventMatches = res?.data?.user?.eventMatches || ''; 
+            const requestMatches = res?.data?.user?.requestMatches || ''; 
+            const ignoredMatches = res?.data?.user?.ignoredMatches || ''; 
 
             setID(id);
             setInterests(interests);
             setLocation(location);
-            setParticipation(participation);
+            setEventMatches(eventMatches);
+            setRequestMatches(requestMatches);
+            setIgnoredMatches(ignoredMatches);
         }
         fetch();
     }, [data]);
@@ -102,8 +108,8 @@ const UpdateVolunteerComponent = () => {
 
         try {
 
-            console.log("UpdateVolunteer: ", id, ", ", interests, ", ", location, ", ", participation);
-            await updateVolunteer({ variables: { id, interests, location, participation } });
+            console.log("UpdateVolunteer: ", id, ", ", interests, ", ", location, ", ", eventMatches, ", ", requestMatches, ", ", ignoredMatches);
+            await updateVolunteer({ variables: { id, interests, location, eventMatches, requestMatches, ignoredMatches } });
 
             displayToastMsg(Label.SUCCESS, Message.USER_VOLUNTEER_UPDATED_SUCCESSFULLY, "success");
         } catch(error) {
@@ -114,38 +120,48 @@ const UpdateVolunteerComponent = () => {
     }; 
 
     return <>
-        <div className="px-5 pb-4">
-            <h4 className="pt-4 pb-2">{Label.formUserTitle(Label.UPDATEVOLUNTEER)}</h4>
-            <Form noValidate onSubmit={handleSubmit}>
-                <Row>
-                    {/**Interests */}
-                    <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="interests">
-                        <Form.Label>{Label.INTERESTS}</Form.Label>
-                        <Form.Control required
-                                      type="text"
-                                      placeholder={Label.INTERESTS}
-                                      value={interests}
-                                      onChange={(e) => setInterests(e.target.value)}/>
-                    </Form.Group>
+    
+        <div>
+            <Row>
+                <Col>
 
-                    {/**Location */}
-                    <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="location">
-                        <Form.Label>{Label.LOCATION}</Form.Label>
-                        <Form.Control required
-                                      type="text"
-                                      placeholder={Label.LOCATION}
-                                      value={location}
-                                      onChange={(e) => setLocation(e.target.value)}/>
-                    </Form.Group>                           
-                </Row>
-               
-                <Button type="submit" variant="success" className="button my-2">
-                    <FaPaperPlane />
-                    <span style={{paddingLeft: "5px"}}>{Label.SUBMIT} </span>
-                </Button>
-            </Form>
-
-            <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}/>
+                </Col>
+                <Col>
+                    <div className="px-5 pb-4">
+                        <h4 className="pt-4 pb-2">Update Volunteer Information</h4>
+                        <Form noValidate onSubmit={handleSubmit}>
+                            <Row>
+                                {/**Interests */}
+                                <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="interests">
+                                    <Form.Label>{Label.INTERESTS}</Form.Label>
+                                    <Form.Control required
+                                                type="text"
+                                                placeholder={Label.INTERESTS}
+                                                value={interests}
+                                                onChange={(e) => setInterests(e.target.value)}/>
+                                </Form.Group>
+    
+                                {/**Location */}
+                                <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="location">
+                                    <Form.Label>{Label.LOCATION}</Form.Label>
+                                    <Form.Control required
+                                                type="text"
+                                                placeholder={Label.LOCATION}
+                                                value={location}
+                                                onChange={(e) => setLocation(e.target.value)}/>
+                                </Form.Group>                           
+                            </Row>
+                        
+                            <Button type="submit" variant="success" className="button my-2">
+                                <FaPaperPlane />
+                                <span style={{paddingLeft: "5px"}}>{Label.UPDATE} </span>
+                            </Button>
+                        </Form>
+    
+                        <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}/>
+                    </div>   
+                </Col>
+            </Row>
         </div>        
     </>
 }
