@@ -9,13 +9,13 @@ import ResidentNewsList from "./ResidentNewsList";
 import {
   CREATE_NEWS,
   UPDATE_NEWS,
-  GET_ALL_NEWS,
+  GET_USER_NEWS,
 } from "../../shared/gql/news.gql";
 
 const CreateNews = () => {
   const navigate = useNavigate();
 
-  const [creatorId] = useState(sessionStorage.getItem("uid") || "id"); // this will set it to id for now
+  const [creatorId] = useState(sessionStorage.getItem("uid") || "id");
   const [headline, setHeadline] = useState("");
   const [textBody, setTextBody] = useState("");
   const [image, setImage] = useState(null);
@@ -23,12 +23,12 @@ const CreateNews = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const [createNews, { loading }] = useMutation(CREATE_NEWS, {
-    refetchQueries: [{ query: GET_ALL_NEWS }],
+  const [createNews, { loading: creating }] = useMutation(CREATE_NEWS, {
+    refetchQueries: [{ query: GET_USER_NEWS, variables: { creatorId } }],
   });
 
-  const [updateNews] = useMutation(UPDATE_NEWS, {
-    refetchQueries: [{ query: GET_ALL_NEWS }],
+  const [updateNews, { loading: updating }] = useMutation(UPDATE_NEWS, {
+    refetchQueries: [{ query: GET_USER_NEWS, variables: { creatorId } }],
   });
 
   const handleEdit = (newsItem) => {
@@ -45,6 +45,7 @@ const CreateNews = () => {
 
     try {
       if (editingNewsId) {
+        // Update news logic
         await updateNews({
           variables: {
             _id: editingNewsId,
@@ -156,8 +157,12 @@ const CreateNews = () => {
           <Button variant="secondary" onClick={() => navigate("/dashboard")}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit" disabled={loading}>
-            {loading
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={creating || updating}
+          >
+            {creating || updating
               ? "Submitting..."
               : editingNewsId
               ? "Update News"
