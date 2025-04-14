@@ -7,12 +7,9 @@ import { Card } from "react-bootstrap";
 //#endregion
 
 //#region Internal Imports
-// import NewsCarouselComponent from "../../shared/components/NewsCarousel"
 import { Label } from "../../shared/resources"
 import bannerImage from '../assets/OrganizerBanner.jpg';
-
 ///#endregion
-
 
 export const BusinessOwnerDashboardComponent = () => {
     const [ username, setUsername ] = useState(sessionStorage.getItem('username') || '');
@@ -34,6 +31,7 @@ export const BusinessOwnerDashboardComponent = () => {
         </Row>
         <Row className="d-flex justify-content-center align-items-center">   
             <Card bg="light" className='m-3' style={{ borderRadius: "0px", boxShadow: "0px 1px 4px #fecd00" }}>
+                {/*Button to go to the business owner related pages*/}
                 <Card.Body>
                     <Button className="m-3" onClick={() => goToPage('/listing')}>Create Business Listing</Button>
                     <Button className="m-3" onClick={() => goToPage('/viewlistings')}>View Business Listing</Button>              

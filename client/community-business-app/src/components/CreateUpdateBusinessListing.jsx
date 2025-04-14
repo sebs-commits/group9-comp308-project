@@ -61,16 +61,8 @@ const CreateUpdateBusinessComponent = () => {
             variables: { listingTicketId: businessListingId },
             skip: !businessListingId 
         });
-        //#region GQL
 
-
-        //makes sure to send deals to the news or dashboard?
-        // or have them visible to users on the view business listing page
-
-        //creeate a business listing later...
-
-        //#endregion
-
+        //handle submit button click
         const handleSubmit = async (event) => {
             event.preventDefault();
             // Validate phone number
@@ -101,7 +93,7 @@ const CreateUpdateBusinessComponent = () => {
                             phoneNumber: businessPhone,
                             businessDescription: businessDescription,
                             //pass the images
-                            images: imageList, //pass the images
+                            images: imageList, 
                             discounts: businessDeals,
                             reviews: data.listing?.reviews || [], // Use existing reviews if available, otherwise default to an empty array
                             creatorUsername: sessionStorage.getItem("username") || ''
@@ -291,7 +283,7 @@ const CreateUpdateBusinessComponent = () => {
 
                         {/*Copilot boilerplate suggestion on 2025-04-02" 'how could I add a 1 row 3 column table at line 149?' and 
                         'then how could I add images in each cell?'. Mofifications include each table cell contents, removing the thead elements,
-                        and cell as adding cells and content as needed*/}
+                        and cells. Also adding new cells content as needed*/}
                         <Table bordered className="mt-2">
                             <tbody>
                                 <tr>

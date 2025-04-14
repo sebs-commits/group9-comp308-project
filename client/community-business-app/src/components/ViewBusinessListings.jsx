@@ -72,6 +72,7 @@ const ViewBusinessComponent = () => {
     };
 
 
+    //handle submit function for the review form
     const handleSubmit = async (e, businessListingId, businessName, businessAddress, businessPhone, businessDescription, imageList, businessDeals, reviews, creatorUsername) => {
         e.preventDefault();
    
@@ -241,13 +242,14 @@ const ViewBusinessComponent = () => {
                                                     placeholder={Label.ENTER_REVIEW_DESCRIPTION}
                                                     value={review}
                                                     onChange={(e) => setReview(e.target.value)}
-                                                    
+                                                    /*Suggestions from Copilot for onKeyDown() on 2025-04-10 after prompt 'Why is preventDefault() not working?'*/
                                                     onKeyDown={(e) => {
                                                         if (e.key === "Enter") {
                                                             e.preventDefault(); // Prevent the default "Enter" key behavior
                                                         }
                                                     }}/>
-                                                    {/*Suggestions from Copilot for onKeyDown() on 2025-04-10 after prompt 'Why is preventDefault() not working?'*/}
+                                                    {/*end of suggestion*/}
+                                                   
                                             </Form.Group>
                                             <Button type="submit" variant="success" className='m-1' style={{ width: 'auto', height: 'auto' }}>
                                                 {Label.SUBMIT} 
