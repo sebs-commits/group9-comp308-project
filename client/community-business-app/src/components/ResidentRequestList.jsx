@@ -4,8 +4,9 @@ import { GET_USER_REQUESTS } from "../../shared/gql/request.gql";
 import Table from "react-bootstrap/Table";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
 
-const RequestList = () => {
+const ResidentRequestList = ({ onEdit }) => {
   const loggedInUserId = sessionStorage.getItem("uid");
 
   const { loading, error, data } = useQuery(GET_USER_REQUESTS, {
@@ -49,6 +50,7 @@ const RequestList = () => {
             <th>Type</th>
             <th>Request</th>
             <th>Location</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +61,15 @@ const RequestList = () => {
               <td>{request.type}</td>
               <td>{request.request}</td>
               <td>{request.location}</td>
+              <td>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => onEdit(request)}
+                >
+                  Update
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -67,4 +78,4 @@ const RequestList = () => {
   );
 };
 
-export default RequestList;
+export default ResidentRequestList;
