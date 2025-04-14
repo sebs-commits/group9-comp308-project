@@ -22,7 +22,9 @@ const userSchema = new Schema({
 
     location: { type: String, required: false, default: "" },
 
-    participation: { type: String, required: false, default: "" }
+    eventMatches: { type: String, required: false, default: "" },
+    requestMatches: { type: String, required: false, default: "" },
+    ignoredMatches: { type: String, required: false, default: "" },
 });
 
 const UserModel = mongoose.model('User', userSchema);

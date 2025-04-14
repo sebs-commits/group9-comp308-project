@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const geminiAI = new GoogleGenerativeAI("AIzaSyAVS4yoevOyTTjt2GmKvTRpHqqfnpZxxxE"); // Use a Google AI API key here
+const geminiAI = new GoogleGenerativeAI("AIzaSyDvBuMURQuFVDjImXMI33-P64qr2prTaUw"); // Use a Google AI API key here (using 0909htht@gmail.com rn)
 
 // Define the generation config
 const genConfig = {

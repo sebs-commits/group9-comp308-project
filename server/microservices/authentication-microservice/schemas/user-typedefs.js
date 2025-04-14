@@ -9,12 +9,15 @@ export const userTypeDefs = gql`
         password: String!
         interests: String
         location: String
-        participation: String
+        eventMatches: String
+        requestMatches: String
+        ignoredMatches: String
     }
 
     type Query {
         _microservice: String
 
+        users: [User]
         user(id: ID!): User
         getUserByUsername(username: String!): String
     }
@@ -24,6 +27,6 @@ export const userTypeDefs = gql`
         updateUser(id: ID!, username: String!, email: String!, type: String!): User
         loginUser(username: String!, password: String!): [String!]!\
         logout: String
-        updateVolunteer(id: ID!, interests: String!, location: String!, participation: String!): User
+        updateVolunteer(id: ID!, interests: String!, location: String!, eventMatches: String!, requestMatches: String!, ignoredMatches: String!): User
     }
 `;

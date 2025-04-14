@@ -14,7 +14,7 @@ export const Label = {
     SUBMIT: "Submit",
     CREATE: "Create",
     UPDATE: "Update",
-    UPDATEVOLUNTEER: "Update Volunteer",
+    UPDATEVOLUNTEER: "Update Volunteer Information",
     ERROR: "Error",
     SUCCESS: "Success",
     COPYRIGHT: "2025 Group 9",

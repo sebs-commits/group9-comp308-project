@@ -1,5 +1,22 @@
 import { gql } from "@apollo/client";
 
+export const GET_USERS = gql`
+    query Users {
+        users {
+            id
+            username
+            email
+            type
+            password
+            interests
+            location
+            eventMatches
+            requestMatches
+            ignoredMatches
+        }
+    }
+`;
+
 export const GET_USER = gql`
     query User($id: ID!) {
         user(id: $id) {
@@ -10,7 +27,9 @@ export const GET_USER = gql`
             password
             interests
             location
-            participation
+            eventMatches
+            requestMatches
+            ignoredMatches
         }
     }
 `;
@@ -32,12 +51,14 @@ export const CREATE_USER = gql`
 `;
 
 export const UPDATE_VOLUNTEER = gql`
-    mutation UpdateVolunteer($id: ID!, $interests: String!, $location: String!, $participation: String!) {
-        updateVolunteer(id: $id, interests: $interests, location: $location, participation: $participation) {
+    mutation UpdateVolunteer($id: ID!, $interests: String!, $location: String!, $eventMatches: String!, $requestMatches: String!, $ignoredMatches: String!) {
+        updateVolunteer(id: $id, interests: $interests, location: $location, eventMatches: $eventMatches, requestMatches: $requestMatches, ignoredMatches: $ignoredMatches) {
             id
             interests
             location
-            participation
+            eventMatches
+            requestMatches
+            ignoredMatches
         }
     }
 `;

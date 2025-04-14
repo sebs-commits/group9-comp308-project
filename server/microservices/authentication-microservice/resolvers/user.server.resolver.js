@@ -8,7 +8,19 @@ export const userResolvers = {
     Query: {
         _microservice: () => "This is a micro service query",
 
+        users: async () => {
+            try {
+                const users = await UserModel.find();
+                console.log("Users: ", users);
+                return users;
+            } catch(error) {
+                console.error(`An error occurred while fetching users`, error);
+                throw new Error("Error in user query - user.server.resolver.js");
+            }
+        },
+
         user: async (_, { id }) => {
+            console.log(id);
             try {
                 const userFound = await UserModel.findById(id);
                 console.log("UserFound: ", userFound);
@@ -68,9 +80,9 @@ export const userResolvers = {
             return 'Logged out successfully!';
         },
 
-        updateVolunteer: async (_, { id, interests, location, participation }) => {
+        updateVolunteer: async (_, { id, interests, location, eventMatches, requestMatches, ignoredMatches }) => {
             try {
-                await UserModel.findByIdAndUpdate(id, { interests, location, participation }, { new: true });
+                await UserModel.findByIdAndUpdate(id, { interests, location, eventMatches, requestMatches, ignoredMatches }, { new: true });
             } catch(error) {
                 console.error(`An error occurred while updating a user: `, error);
                 throw new Error("Error in updateVolunteer - user.server.resolver.js");

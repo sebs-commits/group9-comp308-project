@@ -12,6 +12,7 @@ import { useMutation, useQuery, useLazyQuery } from '@apollo/client';
 import { Label, Message } from '../../shared/resources';
 import { CREATE_USER, UPDATE_VOLUNTEER, GET_USER } from '../../shared/gql/authentication.gql';
 import CustomToast from '../../../shell-app/shared/components/CustomToast';
+import { GET_EVENT, GET_NON_EXPIRED_EVENTS } from '../../../events-administration-app/shared/gql/event.gql';
 //#endregion
 
 //Matches the backend type list
@@ -37,7 +38,12 @@ const UpdateVolunteerComponent = () => {
     const [ id, setID ] = useState('');
     const [ interests, setInterests ] = useState('None');
     const [ location, setLocation ] = useState('Nowhere');
-    const [ participation, setParticipation ] = useState('Nothing');
+    const [ eventMatches, setEventMatches ] = useState('');
+    //const [ deconstructedEventMatches, setDeconstructedEventMatches ] = useState([]);
+    const [ requestMatches, setRequestMatches ] = useState('');
+    const [ ignoredMatches, setIgnoredMatches ] = useState('');
+    //const [ deconstructedIgnoredMatches, setDeconstructedIgnoredMatches ] = useState([]);
+
 
     //console.log("Before GET_USER");
 
@@ -65,12 +71,19 @@ const UpdateVolunteerComponent = () => {
             const id = res?.data?.user?.id || null; 
             const interests = res?.data?.user?.interests || 'None'; 
             const location = res?.data?.user?.location || 'Nowhere'; 
-            const participation = res?.data?.user?.participation || 'Nothing'; 
+            const eventMatches = res?.data?.user?.eventMatches || ''; 
+            const requestMatches = res?.data?.user?.requestMatches || ''; 
+            const ignoredMatches = res?.data?.user?.ignoredMatches || ''; 
+
+            //const deconstructedEventMatches = setDeconstructedEventMatches(eventMatches.split("|").filter(Boolean).map((match) => match.trim()));
+            //const deconstructedIgnoredMatches = setDeconstructedIgnoredMatches(ignoredMatches.split("|").filter(Boolean).map((match) => match.trim()));
 
             setID(id);
             setInterests(interests);
             setLocation(location);
-            setParticipation(participation);
+            setEventMatches(eventMatches);
+            setRequestMatches(requestMatches);
+            setIgnoredMatches(ignoredMatches);
         }
         fetch();
     }, [data]);
@@ -102,8 +115,8 @@ const UpdateVolunteerComponent = () => {
 
         try {
 
-            console.log("UpdateVolunteer: ", id, ", ", interests, ", ", location, ", ", participation);
-            await updateVolunteer({ variables: { id, interests, location, participation } });
+            console.log("UpdateVolunteer: ", id, ", ", interests, ", ", location, ", ", eventMatches, ", ", requestMatches, ", ", ignoredMatches);
+            await updateVolunteer({ variables: { id, interests, location, eventMatches, requestMatches, ignoredMatches } });
 
             displayToastMsg(Label.SUCCESS, Message.USER_VOLUNTEER_UPDATED_SUCCESSFULLY, "success");
         } catch(error) {
@@ -113,39 +126,94 @@ const UpdateVolunteerComponent = () => {
         }    
     }; 
 
+    /*const [ events, setEvents ] = useState([]);
+    const [ getEvent ] = useQuery(GET_EVENT, {
+        skip: true,
+    });
+    const [ getEvents ] = useQuery(GET_NON_EXPIRED_EVENTS, {
+        skip: true,
+    });
+
+    const handleIgnoreEvent = async (eventId) => {
+
+        try {
+            const event = await getEvent({ variables: { id: eventId } });
+
+            if (!event) {console.error("Event not found:", eventId);}
+
+            ignoredMatches = ignoredMatches === "" ? (ignoredMatches, "|", eventId) : eventId;
+
+            console.log("UpdateVolunteer: ", id, ", ", interests, ", ", location, ", ", eventMatches, ", ", requestMatches, ", ", ignoredMatches);
+            await updateVolunteer({ variables: { id, interests, location, eventMatches, requestMatches, ignoredMatches } });
+
+            displayToastMsg(Label.SUCCESS, "Successfully Ignored Event", "success");
+        } catch (error) {
+            console.error("Failed to ignore event:", error);
+            displayToastMsg("Error", "Something went wrong", "danger");
+        }
+    };*/
+
     return <>
-        <div className="px-5 pb-4">
-            <h4 className="pt-4 pb-2">{Label.formUserTitle(Label.UPDATEVOLUNTEER)}</h4>
-            <Form noValidate onSubmit={handleSubmit}>
-                <Row>
-                    {/**Interests */}
-                    <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="interests">
-                        <Form.Label>{Label.INTERESTS}</Form.Label>
-                        <Form.Control required
-                                      type="text"
-                                      placeholder={Label.INTERESTS}
-                                      value={interests}
-                                      onChange={(e) => setInterests(e.target.value)}/>
-                    </Form.Group>
+    
+        <div>
+            <Row>
+                {/*<Col>
+                    <div className="px-5 pb-4">
+                        <h4 className="pt-4 pb-2">Update Event Matches</h4>
 
-                    {/**Location */}
-                    <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="location">
-                        <Form.Label>{Label.LOCATION}</Form.Label>
-                        <Form.Control required
-                                      type="text"
-                                      placeholder={Label.LOCATION}
-                                      value={location}
-                                      onChange={(e) => setLocation(e.target.value)}/>
-                    </Form.Group>                           
-                </Row>
-               
-                <Button type="submit" variant="success" className="button my-2">
-                    <FaPaperPlane />
-                    <span style={{paddingLeft: "5px"}}>{Label.SUBMIT} </span>
-                </Button>
-            </Form>
-
-            <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}/>
+                        {events.length > 0 ? (
+                            events.map((event) => (
+                            <div key={event.id} className="d-flex justify-content-between align-items-center border rounded p-3 mb-2 bg-light shadow-sm">
+                                <div>
+                                    <strong>{event.name}</strong>
+                                </div>
+                                <Button variant="outline-danger" size="sm" onClick={() => handleIgnoreEvent(event.id)} >Ignore</Button>
+                            </div>
+                            ))
+                        ) : (
+                            <p className="text-muted">No matched events yet.</p>
+                        )}
+                        
+    
+                        <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}/>
+                    </div> 
+                </Col>*/}
+                <Col>
+                    <div className="px-5 pb-4">
+                        <h4 className="pt-4 pb-2">Update Volunteer Information</h4>
+                        <Form noValidate onSubmit={handleSubmit}>
+                            <Row>
+                                {/**Interests */}
+                                <Form.Group className="pb-2" as={Col} md={{ span: 6, offset: 3 }} controlId="interests">
+                                    <Form.Label>{Label.INTERESTS}</Form.Label>
+                                    <Form.Control required
+                                                type="text"
+                                                placeholder={Label.INTERESTS}
+                                                value={interests}
+                                                onChange={(e) => setInterests(e.target.value)}/>
+                                </Form.Group>
+    
+                                {/**Location */}
+                                <Form.Group className="py-2" as={Col} md={{ span: 6, offset: 3 }} controlId="location">
+                                    <Form.Label>{Label.LOCATION}</Form.Label>
+                                    <Form.Control required
+                                                type="text"
+                                                placeholder={Label.LOCATION}
+                                                value={location}
+                                                onChange={(e) => setLocation(e.target.value)}/>
+                                </Form.Group>                           
+                            </Row>
+                        
+                            <Button type="submit" variant="success" className="button my-2">
+                                <FaPaperPlane />
+                                <span style={{paddingLeft: "5px"}}>{Label.UPDATE} </span>
+                            </Button>
+                        </Form>
+    
+                        <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}/>
+                    </div>   
+                </Col>
+            </Row>
         </div>        
     </>
 }
