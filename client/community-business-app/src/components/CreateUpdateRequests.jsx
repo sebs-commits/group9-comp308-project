@@ -6,10 +6,11 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { FaUndo, FaPaperPlane } from "react-icons/fa";
 import { useMutation } from "@apollo/client";
-import { CREATE_REQUEST } from "../../shared/gql/request.gql";
+import { CREATE_REQUEST, UPDATE_REQUEST } from "../../shared/gql/request.gql";
 import { Label, Message } from "../../shared/resources";
 import CustomToast from "../../../shell-app/shared/components/CustomToast";
 import ResidentRequestList from "./ResidentRequestList";
+
 // Matches the backend type list
 const REQUEST_TYPE = {
   HELP: "help",
@@ -32,13 +33,12 @@ const CreateUpdateRequestComponent = () => {
   const navigate = useNavigate();
 
   //#region States
-  const [creatorId, setCreatorId] = useState(
-    sessionStorage.getItem("uid") || "id"
-  );
+  const [creatorId] = useState(sessionStorage.getItem("uid") || "id");
   const [title, setTitle] = useState("");
   const [type, setType] = useState(REQUEST_TYPE.HELP);
   const [request, setRequest] = useState("");
-  const [location, setLocation] = useState(LOCATIONS[0]); //This will default to first location in the list
+  const [location, setLocation] = useState(LOCATIONS[0]); // Default to the first location
+  const [editingRequestId, setEditingRequestId] = useState(null); // Track the request being edited
 
   const [message, setMessage] = useState("");
   const [header, setHeader] = useState("");
@@ -58,6 +58,7 @@ const CreateUpdateRequestComponent = () => {
 
   //#region GQL
   const [createRequest] = useMutation(CREATE_REQUEST);
+  const [updateRequest] = useMutation(UPDATE_REQUEST);
   //#endregion
 
   const handleSubmit = async (event) => {
@@ -71,34 +72,63 @@ const CreateUpdateRequestComponent = () => {
     }
 
     try {
-      await createRequest({
-        variables: { creatorId, title, type, request, location },
-      });
-      displayToastMsg(
-        Label.SUCCESS,
-        Message.REQUEST_SAVED_SUCCESSFULLY,
-        "success"
-      );
+      if (editingRequestId) {
+        await updateRequest({
+          variables: {
+            _id: editingRequestId,
+            creatorId,
+            title,
+            type,
+            request,
+            location,
+          },
+        });
+        displayToastMsg(
+          Label.SUCCESS,
+          Message.REQUEST_UPDATED_SUCCESSFULLY,
+          "success"
+        );
+      } else {
+        // Create request logic
+        await createRequest({
+          variables: { creatorId, title, type, request, location },
+        });
+        displayToastMsg(
+          Label.SUCCESS,
+          Message.REQUEST_SAVED_SUCCESSFULLY,
+          "success"
+        );
+      }
 
+      // Reset form fields
       setTitle("");
       setType(REQUEST_TYPE.HELP);
       setRequest("");
       setLocation(LOCATIONS[0]); // Reset to default location
+      setEditingRequestId(null);
     } catch (error) {
       displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
       console.error(
         `An error occurred while creating or updating a request: `,
         error
       );
-      throw error;
     }
+  };
+
+  const handleEdit = (request) => {
+    // Populate form fields
+    setTitle(request.title);
+    setType(request.type);
+    setRequest(request.request);
+    setLocation(request.location);
+    setEditingRequestId(request.id); // Set the id of the request being edited
   };
 
   return (
     <>
       <div className="px-5 pb-4">
         <h4 className="pt-4 pb-2">
-          {Label.setRequestsTitle(true ? Label.CREATE : Label.UPDATE)}
+          {editingRequestId ? Label.UPDATE : Label.CREATE}
         </h4>
         <Form noValidate onSubmit={handleSubmit}>
           <Row>
@@ -198,8 +228,12 @@ const CreateUpdateRequestComponent = () => {
             <span style={{ paddingLeft: "5px" }}> {Label.SUBMIT} </span>
           </Button>
         </Form>
+        {/* Gonna pass down the toast as a prop */}
 
-        <ResidentRequestList />
+        <ResidentRequestList
+          onEdit={handleEdit}
+          displayToastMsg={displayToastMsg}
+        />
 
         <CustomToast
           header={header}
