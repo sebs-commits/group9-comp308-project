@@ -4,22 +4,39 @@ import { useMutation } from "@apollo/client";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
-import NewsList from "./NewsList";
+import ResidentNewsList from "./ResidentNewsList";
 
-import { CREATE_NEWS, GET_ALL_NEWS } from "../../shared/gql/news.gql";
+import {
+  CREATE_NEWS,
+  UPDATE_NEWS,
+  GET_ALL_NEWS,
+} from "../../shared/gql/news.gql";
+
 const CreateNews = () => {
   const navigate = useNavigate();
 
   const [creatorId] = useState(sessionStorage.getItem("uid") || "id"); // this will set it to id for now
   const [headline, setHeadline] = useState("");
   const [textBody, setTextBody] = useState("");
+  const [image, setImage] = useState(null);
+  const [editingNewsId, setEditingNewsId] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [image, setImage] = useState(null);
 
   const [createNews, { loading }] = useMutation(CREATE_NEWS, {
     refetchQueries: [{ query: GET_ALL_NEWS }],
   });
+
+  const [updateNews] = useMutation(UPDATE_NEWS, {
+    refetchQueries: [{ query: GET_ALL_NEWS }],
+  });
+
+  const handleEdit = (newsItem) => {
+    setHeadline(newsItem.headline);
+    setTextBody(newsItem.textBody);
+    setImage(newsItem.image);
+    setEditingNewsId(newsItem._id);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,25 +44,41 @@ const CreateNews = () => {
     setSuccess("");
 
     try {
-      await createNews({
-        variables: {
-          creatorId,
-          headline,
-          textBody,
-          image,
-        },
-      });
+      if (editingNewsId) {
+        await updateNews({
+          variables: {
+            _id: editingNewsId,
+            creatorId,
+            headline,
+            textBody,
+            image,
+          },
+        });
+        setSuccess("News updated successfully!");
+      } else {
+        // Create news logic
+        await createNews({
+          variables: {
+            creatorId,
+            headline,
+            textBody,
+            image,
+          },
+        });
+        setSuccess("News created successfully!");
+      }
 
-      setSuccess("News created successfully!");
-
+      // Reset form fields
       setHeadline("");
       setTextBody("");
       setImage(null);
+      setEditingNewsId(null);
     } catch (error) {
-      console.error("Error creating news:", error);
-      setError("Failed to create news. Please try again.");
+      console.error("Error creating/updating news:", error);
+      setError("Failed to create/update news. Please try again.");
     }
   };
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -70,7 +103,7 @@ const CreateNews = () => {
 
   return (
     <Container>
-      <h2>Create News</h2>
+      <h2>{editingNewsId ? "Update News" : "Create News"}</h2>
 
       {error && <div>{error}</div>}
       {success && <div>{success}</div>}
@@ -124,12 +157,16 @@ const CreateNews = () => {
             Cancel
           </Button>
           <Button variant="primary" type="submit" disabled={loading}>
-            {loading ? "Submitting..." : "Create News"}
+            {loading
+              ? "Submitting..."
+              : editingNewsId
+              ? "Update News"
+              : "Create News"}
           </Button>
         </div>
       </Form>
 
-      <NewsList />
+      <ResidentNewsList onEdit={handleEdit} />
     </Container>
   );
 };
