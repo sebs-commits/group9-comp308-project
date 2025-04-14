@@ -163,7 +163,8 @@ const ViewBusinessComponent = () => {
     }
 
     return <> {                              
-                <div className="d-flex flex-wrap justify-content-center" style={{height: "91vh"}}>
+                <div className="d-flex flex-column" style={{minHeight: "100vh"}}>
+                    <div className="flex-grow-1 d-flex flex-column justify-content-start align-items-center">
                     { businessListings?.length === 0 ? 
                      <Card bg="light" style={{ width:"300px", height:"200px", borderRadius: "0px", boxShadow: "0px 1px 4px #fecd00", marginTop: "50px" }}>
                         <Card.Body>
@@ -279,6 +280,7 @@ const ViewBusinessComponent = () => {
                             </Table>
                         ))
                     }
+                    </div>
                 </div>
             }
             

@@ -228,9 +228,10 @@ const CreateUpdateBusinessComponent = () => {
                 fetch();
             }, [businessListingId]); //fetch when the businessListingId changes
 
-    return <>
-        <div className="px-5 pb-4" style={{height: "91vh"}}>
-            <h4 className="pt-4 pb-2">{Label.BUSINESS_PAGE_TITLE}</h4>
+    return <>     
+     <div className="d-flex flex-column px-5 pb-4" style={{ minHeight: "100vh" }}>
+        <h4 className="pt-4 pb-2">{Label.BUSINESS_PAGE_TITLE}</h4>
+        <div className="flex-grow-1 d-flex flex-column justify-content-start align-items-center">            
             <Form noValidate onSubmit={handleSubmit}>
                 <Row>
 
@@ -350,6 +351,7 @@ const CreateUpdateBusinessComponent = () => {
 
             <CustomToast header={header} message={message} showA={showA} toggleShowA={toggleShowA} bg={bg}></CustomToast>
         </div>  
+        </div>
 
          {/*Footer*/}
          <div style={{ backgroundColor: "#6c757d", height: "50px" }}>
