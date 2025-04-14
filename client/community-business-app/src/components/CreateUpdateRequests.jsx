@@ -104,7 +104,7 @@ const CreateUpdateRequestComponent = () => {
       setTitle("");
       setType(REQUEST_TYPE.HELP);
       setRequest("");
-      setLocation(LOCATIONS[0]); // Reset to default location 
+      setLocation(LOCATIONS[0]); // Reset to default location
       setEditingRequestId(null);
     } catch (error) {
       displayToastMsg(Label.ERROR, Message.TRY_AGAIN, "danger");
@@ -112,7 +112,6 @@ const CreateUpdateRequestComponent = () => {
         `An error occurred while creating or updating a request: `,
         error
       );
-      throw error;
     }
   };
 
@@ -229,8 +228,12 @@ const CreateUpdateRequestComponent = () => {
             <span style={{ paddingLeft: "5px" }}> {Label.SUBMIT} </span>
           </Button>
         </Form>
+        {/* Gonna pass down the toast as a prop */}
 
-        <ResidentRequestList onEdit={handleEdit} />
+        <ResidentRequestList
+          onEdit={handleEdit}
+          displayToastMsg={displayToastMsg}
+        />
 
         <CustomToast
           header={header}
