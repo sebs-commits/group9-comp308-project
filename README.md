@@ -18,3 +18,8 @@ git pull
 
 
 
+almaynard-rgb contributions:
+•	Developed business owner roles and integrated into the existing authentication logic.
+•	Built and connected React front-end components for business listings, deals, reviews and customer engagement.
+•	Implemented backend microservices using Node.js, Mongoose, MongoDB, and GraphQL to support dynamic business listing content.
+(Note: AI features were part of the broader project but not implemented by almaynard-rgb).
